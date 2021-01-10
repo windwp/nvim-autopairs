@@ -4,10 +4,12 @@ A minimalist autopairs for Neovim written by Lua.
 
 Requires neovim 5.0+
 
+### Setup
 ``` lua
 require('nvim-autopairs').setup()
 
 ```
+
 ## Default value
 
 ``` lua
@@ -19,7 +21,7 @@ local html_break_line_filetype = {'html' , 'vue' , 'typescriptreact' , 'svelte' 
 
 ```
 
-### override default value
+### Override default value
 
 ``` lua
 require('nvim-autopairs').setup({
@@ -45,7 +47,7 @@ Before        Input         After
 
 ```
 
-## sample of mapping `<CR>`
+#### Sample of mapping `<CR>`
 
 ``` lua
 -- this is my mapping with completion-nvim
