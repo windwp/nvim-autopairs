@@ -1,49 +1,47 @@
-MPairs={}
-local charMap    = { "'" , '"' , '{' , '[' , '(' , '`'}
-local charEndMap = { "'" , '"' , '}' , ']' , ')' , '`'}
+MPairs = {}
+local pairs_map = {
+    ["'"] = "'",
+    ['"'] = '"',
+    ['('] = ')',
+    ['['] = ']',
+    ['{'] = '}',
+    ['`'] = '`',
+}
 local disable_filetype = { "TelescopePrompt" }
 local break_line_filetype = {'javascript' , 'typescript' , 'typescriptreact' , 'go'}
 local html_break_line_filetype = {'html' , 'vue' , 'typescriptreact' , 'svelte' , 'javascriptreact'}
 
 MPairs.setup = function(opts)
   opts                     = opts or {}
-  charMap                  = opts.charMap or charMap
-  charEndMap               = opts.charEndMap or charEndMap
+  pairs_map                = opts.pairs_map or pairs_map
   disable_filetype         = opts.disable_filetype or disable_filetype
   break_line_filetype      = opts.break_line_filetype or break_line_filetype
   html_break_line_filetype = opts.html_break_line_filetype or html_break_line_filetype
 
-  for _, value in pairs(charMap) do
-    local charEnd=''
-    for key, iCharEnd in pairs(charMap) do
-      if iCharEnd== value then
-        charEnd= charEndMap[key]
-      end
+  for char, char_end in pairs(pairs_map) do
+    local mapCommand = string.format([[v:lua.MPairs.autopairs("%s","%s")]], char, char_end)
+    if char == '"' then
+      mapCommand = string.format([[v:lua.MPairs.autopairs('%s','%s')]], char, char_end)
     end
-    local char=value
-    local mapCommand = string.format([[v:lua.MPairs.autopairs("%s","%s")]],char,charEnd)
-    if value == '"' then
-      mapCommand = string.format([[v:lua.MPairs.autopairs('%s','%s')]],char,charEnd)
-    end
-    vim.api.nvim_set_keymap('i' , char, mapCommand, {expr = true , noremap = true})
-    -- map  char to move right when close pairs
+    vim.api.nvim_set_keymap('i', char, mapCommand, {expr = true, noremap = true})
+    -- map char to move right when close pairs
     if char~="'" and char ~= '"' and char ~= "`" then
-      mapCommand = string.format([[v:lua.MPairs.check_jump('%s')]],charEnd)
-      vim.api.nvim_set_keymap('i', charEnd, mapCommand, {expr = true, noremap = true})
+      mapCommand = string.format([[v:lua.MPairs.check_jump('%s')]], char_end)
+      vim.api.nvim_set_keymap('i', char_end, mapCommand, {expr = true, noremap = true})
     end
   end
   -- delete pairs when press <bs>
-  vim.api.nvim_set_keymap('i' , "<bs>", "v:lua.MPairs.autopair_bs()" ,{expr = true , noremap = true})
+  vim.api.nvim_set_keymap('i', "<bs>", "v:lua.MPairs.autopair_bs()", {expr = true, noremap = true})
 end
 
 local function esc(cmd)
   return vim.api.nvim_replace_termcodes(cmd, true, false, true)
 end
 
-MPairs.autopairs = function(char,charEnd)
+MPairs.autopairs = function(char,char_end)
   local result= MPairs.check_add(char)
   if result == 1 then
-   return esc(char..charEnd.."<c-g>U<left>")
+   return esc(char..char_end.."<c-g>U<left>")
   elseif result == 2 then
     return esc("<c-g>U<right>")
   else
@@ -94,12 +92,8 @@ MPairs.check_add = function(char)
       return 0
   end
 
-  local charEnd = ''
-  for key, iCharEnd in pairs(charMap) do
-    if iCharEnd == char then charEnd= charEndMap[key]
-    end
-  end
-  if next_char == charEnd then
+  local char_end = pairs_map[char]
+  if next_char == char_end then
     -- ((  many char cursor)) => add
     -- (   many char cursor)) => not add
     local count_prev_char = 0
@@ -108,7 +102,7 @@ MPairs.check_add = function(char)
       local c=line:sub(i,i)
       if c == char then
         count_prev_char = count_prev_char + 1
-      elseif c == charEnd then
+      elseif c == char_end then
         count_next_char = count_next_char + 1
       end
     end
@@ -160,15 +154,8 @@ MPairs.autopair_bs = function()
   local line = vim.fn.getline('.')
   local next_char = line:sub(next_col, next_col)
   local prev_char = line:sub(next_col - 1 , next_col - 1)
-  local charEnd = ''
-  local isFound = false
-  for i, iChar in pairs(charMap) do
-    if iChar == prev_char then
-      charEnd = charEndMap[i]
-      isFound =true
-    end
-  end
-  if next_char == charEnd and isFound == true   then
+  local char_end = pairs_map[prev_char]
+  if char_end ~= nil and next_char == char_end then
     return esc("<c-g>U<bs><right><bs>")
   end
   return esc("<bs>")
@@ -177,3 +164,5 @@ end
 MPairs.esc = esc
 
 return MPairs
+
+-- vim: ts=2 sw=2

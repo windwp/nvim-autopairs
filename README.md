@@ -10,18 +10,24 @@ require('nvim-autopairs').setup()
 
 ```
 
-## Default value
+## Default values
 
 ``` lua
-local charMap    = { "'" , '"' , '{' , '[' , '(' , '`'}
-local charEndMap = { "'" , '"' , '}' , ']' , ')' , '`'}
+local pairs_map = {
+    ["'"] = "'",
+    ['"'] = '"',
+    ['('] = ')',
+    ['['] = ']',
+    ['{'] = '}',
+    ['`'] = '`',
+}
 local disable_filetype = { "TelescopePrompt" }
 local break_line_filetype = {'javascript' , 'typescript' , 'typescriptreact' , 'go'}
 local html_break_line_filetype = {'html' , 'vue' , 'typescriptreact' , 'svelte' , 'javascriptreact'}
 
 ```
 
-### Override default value
+### Override default values
 
 ``` lua
 require('nvim-autopairs').setup({
