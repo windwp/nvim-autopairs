@@ -2,7 +2,7 @@
 
 A minimalist autopairs for Neovim written by Lua.
 
-Requires neovim 5.0+
+Requires neovim 0.5+
 
 ### Setup
 ``` lua
