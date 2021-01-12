@@ -8,7 +8,7 @@ local pairs_map = {
     ['`'] = '`',
 }
 local disable_filetype = { "TelescopePrompt" }
-local break_line_filetype = {'javascript' , 'typescript' , 'typescriptreact' , 'go'}
+local break_line_filetype = {'javascript', 'typescript', 'typescriptreact', 'go', 'lua'}
 local html_break_line_filetype = {'html' , 'vue' , 'typescriptreact' , 'svelte' , 'javascriptreact'}
 
 MPairs.setup = function(opts)
@@ -38,7 +38,7 @@ local function esc(cmd)
   return vim.api.nvim_replace_termcodes(cmd, true, false, true)
 end
 
-MPairs.autopairs = function(char,char_end)
+MPairs.autopairs = function(char, char_end)
   local result= MPairs.check_add(char)
   if result == 1 then
    return esc(char..char_end.."<c-g>U<left>")
@@ -57,6 +57,31 @@ MPairs.check_jump = function(char)
     return esc("<c-g>U<right>")
   end
   return esc(char)
+end
+
+local function is_in_quote(line, pos, quote)
+  local cIndex = 0
+  local last_quote=''
+  local length = string.len(line)
+  local result = false
+  while cIndex < length and cIndex < pos  do
+    cIndex = cIndex + 1
+      if result == true
+          and quote == line:sub(cIndex, cIndex)
+          and quote == last_quote
+          and line[cIndex-1]~="\\"
+        then
+        result = false
+        break;
+      end
+      if result == false
+        and quote == line:sub(cIndex , cIndex)
+        then
+        last_quote = quote
+        result = true
+      end
+  end
+  return result
 end
 
 MPairs.check_add = function(char)
@@ -81,9 +106,8 @@ MPairs.check_add = function(char)
         return  2
     end
     -- ("|")  => (""|)
-    local prev2_char = line:sub(next_col - 2, next_col - 2)
-    local next2_char = line:sub(next_col + 1, next_col + 1)
-    if prev2_char ~= char and pairs_map[prev2_char] == next2_char then
+    --  ""       |"      "  => ""       "|      "
+    if is_in_quote(line, next_col - 1, char) then
       return 2
     end
   end
@@ -94,7 +118,7 @@ MPairs.check_add = function(char)
   end
 
   -- don't add pairs on alphabet character
-  -- |abcde => not add
+
   if next_char:match("[a-zA-Z]") then
       return 0
   end
