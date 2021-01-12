@@ -25,7 +25,7 @@ MPairs.setup = function(opts)
     end
     vim.api.nvim_set_keymap('i', char, mapCommand, {expr = true, noremap = true})
     -- map char to move right when close pairs
-    if char~="'" and char ~= '"' and char ~= "`" then
+    if char== "(" or char == '[' or char == "{" then
       mapCommand = string.format([[v:lua.MPairs.check_jump('%s')]], char_end)
       vim.api.nvim_set_keymap('i', char_end, mapCommand, {expr = true, noremap = true})
     end
@@ -75,27 +75,34 @@ MPairs.check_add = function(char)
   end
 
   -- move right when have quote on end line
-  -- situtaion  "cursor"  => ""cursor
+  -- situtaion  "|"  => ""|
   if (next_char == "'" or next_char == '"') and next_char == char then
     if next_col == string.len(line) then
         return  2
     end
+    -- ("|")  => (""|)
+    local prev2_char = line:sub(next_col - 2, next_col - 2)
+    local next2_char = line:sub(next_col + 1, next_col + 1)
+    if prev2_char ~= char and pairs_map[prev2_char] == next2_char then
+      return 2
+    end
   end
 
-  -- situtaion  cursor(  => not add
+  -- situtaion  |(  => not add
   if next_char == char then
       return  0
   end
 
   -- don't add pairs on alphabet character
+  -- |abcde => not add
   if next_char:match("[a-zA-Z]") then
       return 0
   end
 
   local char_end = pairs_map[char]
   if next_char == char_end then
-    -- ((  many char cursor)) => add
-    -- (   many char cursor)) => not add
+    -- ((  many char |)) => add
+    -- (   many char |)) => not add
     local count_prev_char = 0
     local count_next_char = 0
     for i = 1, #line, 1 do
