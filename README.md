@@ -80,3 +80,13 @@ end
 
 remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 ```
+## FAQ
+
+- Is this support autopair of 2 character?
+> No
+
+- Do you have any plan to add more feature ?
+>No, The main code of nvim-autopairs is only 200 line with comment,
+>I don't want to make everything complicated.
+>If you want a flymode or something else you can use [jiangmiao autopairs](https://github.com/jiangmiao/auto-pairs)
+>If you want more feature please try to use [lexima](https://github.com/cohama/lexima.vim)
