@@ -93,14 +93,22 @@ MPairs.check_add = function(char)
   local next_col = vim.fn.col('.')
   local line = vim.fn.getline('.')
   local next_char = line:sub(next_col, next_col)
+  local prev_char = line:sub(next_col- 1, next_col -1)
+
+  -- don' t add single quote if prev char is word
+  -- a| => not add
+  print(vim.inspect(prev_char))
+  if char == "'"  and prev_char:match("%w")then
+    return 0
+  end
   -- when on end line col not work with autocomplete method so we need to skip it
   if next_col == string.len(line) + 1 then
       -- need to update completion nvim for check
       return 1
   end
 
-  -- move right when have quote on end line
-  -- situtaion  "|"  => ""|
+  -- move right when have quote on end line or in quote
+  -- situtaion  |"  => "|
   if (next_char == "'" or next_char == '"') and next_char == char then
     if next_col == string.len(line) then
         return  2
@@ -112,13 +120,14 @@ MPairs.check_add = function(char)
     end
   end
 
+
   -- situtaion  |(  => not add
   if next_char == char then
       return  0
   end
 
   -- don't add pairs on alphabet character
-
+  -- situtaion |abcde => not add
   if next_char:match("[a-zA-Z]") then
       return 0
   end
