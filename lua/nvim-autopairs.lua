@@ -97,7 +97,6 @@ MPairs.check_add = function(char)
 
   -- don' t add single quote if prev char is word
   -- a| => not add
-  print(vim.inspect(prev_char))
   if char == "'"  and prev_char:match("%w")then
     return 0
   end
