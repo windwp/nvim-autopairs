@@ -75,7 +75,6 @@ MUtils.completion_confirm=function()
   else
     return npairs.check_break_line_char()
   end
-  return npairs.esc("<cr>")
 end
 
 remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
