@@ -20,7 +20,7 @@ local break_line_rule ={
   },
   {
     pairs_map = {
-        ['<'] = '>',
+        ['>'] = '<',
     },
     filetypes ={ 'html' , 'vue' , 'typescriptreact' , 'svelte' , 'javascriptreact' }
   }
@@ -177,9 +177,13 @@ MPairs.check_break_line_char = function()
   local prev_char = vim.fn.getline('.'):sub(prev_col, prev_col)
   local next_char = vim.fn.getline('.'):sub(next_col, next_col)
   for _, rule in pairs(break_line_rule) do
+    print(prev_char)
+    print(vim.inspect(rule.pairs_map))
+    print(rule.pairs_map[prev_char])
     if result == 0 and rule.pairs_map[prev_char] == next_char then
       for _,ft in pairs(rule.filetypes) do
         if ft == vim.bo.filetype then
+          print(vim.inspect(vim.bo.filetype))
           result = 1
           break
         end
