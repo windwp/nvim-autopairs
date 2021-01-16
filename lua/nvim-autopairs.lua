@@ -85,7 +85,7 @@ local function is_in_quote(line, pos, quote)
       if result == true
           and quote == line:sub(cIndex, cIndex)
           and quote == last_quote
-          and line[cIndex-1]~="\\"
+          and line:sub(cIndex -1, cIndex -1)~= "\\"
         then
         result = false
         break;
