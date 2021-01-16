@@ -1,4 +1,5 @@
 MPairs = {}
+
 local pairs_map = {
     ["'"] = "'",
     ['"'] = '"',
@@ -7,16 +8,31 @@ local pairs_map = {
     ['{'] = '}',
     ['`'] = '`',
 }
+
+local break_line_rule ={
+  {
+    pairs_map = {
+        ['('] = ')',
+        ['['] = ']',
+        ['{'] = '}',
+    },
+    filetypes ={ 'javascript', 'typescript', 'typescriptreact', 'go', 'lua', "java", "csharp" }
+  },
+  {
+    pairs_map = {
+        ['<'] = '>',
+    },
+    filetypes ={ 'html' , 'vue' , 'typescriptreact' , 'svelte' , 'javascriptreact' }
+  }
+}
 local disable_filetype = { "TelescopePrompt" }
-local break_line_filetype = {'javascript', 'typescript', 'typescriptreact', 'go', 'lua'}
-local html_break_line_filetype = {'html' , 'vue' , 'typescriptreact' , 'svelte' , 'javascriptreact'}
 
 MPairs.setup = function(opts)
   opts                     = opts or {}
   pairs_map                = opts.pairs_map or pairs_map
   disable_filetype         = opts.disable_filetype or disable_filetype
-  break_line_filetype      = opts.break_line_filetype or break_line_filetype
-  html_break_line_filetype = opts.html_break_line_filetype or html_break_line_filetype
+  break_line_rule[1].filetypes = opts.break_line_filetype  or break_line_rule[1].filetypes
+  break_line_rule[2].filetypes = opts.html_break_line_filetype or break_line_rule[2].filetypes
 
   for char, char_end in pairs(pairs_map) do
     local mapCommand = string.format([[v:lua.MPairs.autopairs("%s","%s")]], char, char_end)
@@ -138,7 +154,7 @@ MPairs.check_add = function(char)
     local count_prev_char = 0
     local count_next_char = 0
     for i = 1, #line, 1 do
-      local c=line:sub(i,i)
+      local c = line:sub(i, i)
       if c == char then
         count_prev_char = count_prev_char + 1
       elseif c == char_end then
@@ -155,32 +171,21 @@ end
 -- break line on <CR> and html
 -- use it for add new line after enter
 MPairs.check_break_line_char = function()
-  local result=0
+  local result = 0
   local prev_col = vim.fn.col('.') - 1
   local next_col = vim.fn.col('.')
   local prev_char = vim.fn.getline('.'):sub(prev_col, prev_col)
   local next_char = vim.fn.getline('.'):sub(next_col, next_col)
-
-  -- triple back tick
-  if vim.bo.filetype =='markdown' and vim.fn.getline('.') == "```" then
-  -- if vim.fn.getline('.') == "```" then
-    return esc([[<c-g>U<esc>A<cr><cr>```<up>]])
-  end
-
-  for _,ft in pairs(html_break_line_filetype) do
-    if ft == vim.bo.filetype and prev_char == '>' and next_char == '<' then
-      result = 1
-      break
+  for _, rule in pairs(break_line_rule) do
+    if result == 0 and rule.pairs_map[prev_char] == next_char then
+      for _,ft in pairs(rule.filetypes) do
+        if ft == vim.bo.filetype then
+          result = 1
+          break
+        end
+      end
     end
   end
-
-  for _,ft in pairs(break_line_filetype) do
-    if ft == vim.bo.filetype and prev_char == '{' and next_char=='}' then
-      result = 1
-      break;
-    end
-  end
-
   if result == 1 then
     return esc("<cr><c-o>O")
   end
