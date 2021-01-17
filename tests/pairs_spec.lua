@@ -29,10 +29,22 @@ local data = {
     after  = [[aa"|" aa]]
   },
    {
+    name = "don't add single quote with previous alphabet char" ,
+    key    = [[']],
+    before = [[aa| aa]],
+    after  = [[aa'| aa]]
+  },
+   {
     name = "don't add quote after alphabet char" ,
     key    = [["]],
-    before = [[aa|aa]],
-    after  = [[aa"|aa]]
+    before = [[aa  |aa]],
+    after  = [[aa  "|aa]]
+  },
+   {
+    name = "don't add pair after alphabet char" ,
+    key    = [[(]],
+    before = [[aa  |aa]],
+    after  = [[aa  (|aa]]
   },
   {
     name = "move right end line " ,
@@ -51,6 +63,13 @@ local data = {
     key    = [["]],
     before = [[("abcd\"|")]],
     after  = [[("abcd\""|)]]
+  },
+  {
+    name = "move right when inside single quote with special slash",
+    filetype="javascript",
+    key    = [[']],
+    before = [[nvim_set_var('test_thing|')]],
+    after  = [[nvim_set_var('test_thing'|)]]
   },
   {
     name = "breakline on {" ,
@@ -82,9 +101,17 @@ local data = {
   }
 }
 
+local run_data = {}
+for _, value in pairs(data) do
+  if value.only == true then
+    table.insert(run_data, value)
+    break
+  end
+end
+if #run_data == 0 then run_data = data end
 
 describe('autopairs ', function()
-  for _, value in pairs(data) do
+  for _, value in pairs(run_data) do
     it("test "..value.name, function()
       local before = string.gsub(value.before , '%|' , "")
       local after = string.gsub(value.after , '%|' , "")

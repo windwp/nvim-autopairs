@@ -1,4 +1,4 @@
-MPairs = {}
+local MPairs = {}
 
 local pairs_map = {
     ["'"] = "'",
@@ -66,8 +66,8 @@ MPairs.autopairs = function(char, char_end)
 end
 
 MPairs.check_jump = function(char)
-  local next_col = vim.fn.col('.')
-  local line = vim.fn.getline('.')
+  local next_col  = vim.fn.col('.')
+  local line      = vim.fn.getline('.')
   local next_char = line:sub(next_col, next_col)
   if  char == next_char then
     return esc("<c-g>U<right>")
@@ -75,27 +75,24 @@ MPairs.check_jump = function(char)
   return esc(char)
 end
 
-local function is_in_quote(line, pos, quote)
-  local cIndex = 0
-  local last_quote=''
-  local length = string.len(line)
-  local result = false
-  while cIndex < length and cIndex < pos  do
+
+local function is_in_quote(line, pos)
+  local cIndex     = 0
+  local last_quote = ''
+  local result     = false
+  while cIndex < string.len(line) and cIndex < pos  do
     cIndex = cIndex + 1
-      if result == true
-          and quote == line:sub(cIndex, cIndex)
-          and quote == last_quote
-          and line:sub(cIndex -1, cIndex -1)~= "\\"
-        then
-        result = false
-        break;
-      end
-      if result == false
-        and quote == line:sub(cIndex , cIndex)
-        then
-        last_quote = quote
+    local char = line:sub(cIndex, cIndex)
+    if
+      result == true and
+      char == last_quote and
+      line:sub(cIndex -1, cIndex -1) ~= "\\"
+    then
+       result = false
+     elseif result == false and (char == "'" or char == '"') then
+        last_quote = char
         result = true
-      end
+    end
   end
   return result
 end
@@ -111,11 +108,6 @@ MPairs.check_add = function(char)
   local next_char = line:sub(next_col, next_col)
   local prev_char = line:sub(next_col- 1, next_col -1)
 
-  -- don' t add single quote if prev char is word
-  -- a| => not add
-  if char == "'"  and prev_char:match("%w")then
-    return 0
-  end
   -- when on end line col not work with autocomplete method so we need to skip it
   if next_col == string.len(line) + 1 then
       -- need to update completion nvim for check
@@ -130,11 +122,16 @@ MPairs.check_add = function(char)
     end
     -- ("|")  => (""|)
     --  ""       |"      "  => ""       "|      "
-    if is_in_quote(line, next_col - 1, char) then
+    if is_in_quote(line, next_col - 1) then
       return 2
     end
   end
 
+  -- don' t add single quote if prev char is word
+  -- a| => not add
+  if char == "'"  and prev_char:match("%w")then
+    return 0
+  end
 
   -- situtaion  |(  => not add
   if next_char == char then
@@ -206,6 +203,7 @@ MPairs.autopair_bs = function()
 end
 
 MPairs.esc = esc
+_G.MPairs = MPairs
 
 return MPairs
 
