@@ -108,12 +108,6 @@ MPairs.check_add = function(char)
   local next_char = line:sub(next_col, next_col)
   local prev_char = line:sub(next_col- 1, next_col -1)
 
-  -- when on end line col not work with autocomplete method so we need to skip it
-  if next_col == string.len(line) + 1 then
-      -- need to update completion nvim for check
-      return 1
-  end
-
   -- move right when have quote on end line or in quote
   -- situtaion  |"  => "|
   if (next_char == "'" or next_char == '"') and next_char == char then
@@ -126,11 +120,16 @@ MPairs.check_add = function(char)
       return 2
     end
   end
-
   -- don' t add single quote if prev char is word
   -- a| => not add
   if char == "'"  and prev_char:match("%w")then
     return 0
+  end
+
+-- when on end line col not work with autocomplete method so we need to skip it
+  if next_col == string.len(line) + 1 then
+      -- need to update completion nvim for check
+      return 1
   end
 
   -- situtaion  |(  => not add

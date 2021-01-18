@@ -18,6 +18,12 @@ end
 local data = {
   {
     name = "add normal bracket" ,
+    key    = [[{]],
+    before = [[aaaa| ]],
+    after  = [[aaaa{|} ]]
+  },
+  {
+    name = "add normal bracket" ,
     key    = [[(]],
     before = [[aaaa| ]],
     after  = [[aaaa(|) ]]
@@ -33,6 +39,12 @@ local data = {
     key    = [[']],
     before = [[aa| aa]],
     after  = [[aa'| aa]]
+  },
+   {
+    name = "don't add single quote on end line",
+    key    = [[<right>']],
+    before = [[c aa|]],
+    after  = [[c aa'|]]
   },
    {
     name = "don't add quote after alphabet char" ,
