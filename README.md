@@ -22,7 +22,7 @@ local pairs_map = {
     ['`'] = '`',
 }
 local disable_filetype = { "TelescopePrompt" }
-local break_line_filetype = nil
+local break_line_filetype = nil -- mean all file type
 local html_break_line_filetype = {'html' , 'vue' , 'typescriptreact' , 'svelte' , 'javascriptreact'}
 
 ```
@@ -89,10 +89,12 @@ remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap =
 ## FAQ
 
 - Is this support autopair of 2 character?
-> No , any PR is welcome :)
+> No, Any PR is welcome :)
 
-- Do you have any plan to add more feature ?
->No, The main code of nvim-autopairs is only 200 line with comment,
+- Do you have any plan to add more feature (flymode ,end-wise) ?
+>No, It is a minimalist autopairs.
 >I don't want to make everything complicated.
+>
 >If you want a flymode or something else you can use [jiangmiao autopairs](https://github.com/jiangmiao/auto-pairs)
+>
 >If you want more feature please try to use [lexima](https://github.com/cohama/lexima.vim)
