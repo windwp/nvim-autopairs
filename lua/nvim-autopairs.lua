@@ -16,7 +16,7 @@ local break_line_rule ={
         ['['] = ']',
         ['{'] = '}',
     },
-    filetypes ={ 'javascript', 'typescript', 'typescriptreact', 'go', 'lua', "java", "csharp" }
+    filetypes = { 'javascript', 'typescript', 'typescriptreact', 'go', 'lua', 'java', 'csharp', 'json', 'jsonc', 'rust' }
   },
   {
     pairs_map = {
