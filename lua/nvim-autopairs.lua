@@ -9,41 +9,67 @@ local pairs_map = {
     ['`'] = '`',
 }
 
+local disable_filetype = { "TelescopePrompt" }
+
 local break_line_rule ={
   {
     pairs_map = {
-        ['('] = ')',
-        ['['] = ']',
-        ['{'] = '}',
+      ['('] = ')',
+      ['['] = ']',
+      ['{'] = '}',
     },
-    filetypes = { 'javascript', 'typescript', 'typescriptreact', 'go', 'lua', 'java', 'csharp', 'json', 'jsonc', 'rust' }
+    disable_filetype = nil,
+    filetype = nil
   },
   {
     pairs_map = {
         ['>'] = '<',
     },
-    filetypes ={ 'html' , 'vue' , 'typescriptreact' , 'svelte' , 'javascriptreact' }
+    disable_filetype = nil,
+    filetype = { 'html' , 'vue' , 'typescriptreact' , 'svelte' , 'javascriptreact' }
   }
 }
-local disable_filetype = { "TelescopePrompt" }
+
+local function is_in_table(tbl, val)
+  for _, value in pairs(tbl) do
+    if string.match(val, value) then return true end
+  end
+  return false
+end
+local function check_filetype(tbl, filetype)
+  if tbl == nil then return true end
+  return is_in_table(tbl, filetype)
+end
+
+local function check_disable_ft(tbl, filetype)
+  if tbl == nil then return true end
+  return not is_in_table(tbl, filetype)
+end
+
 
 MPairs.setup = function(opts)
   opts                     = opts or {}
   pairs_map                = opts.pairs_map or pairs_map
   disable_filetype         = opts.disable_filetype or disable_filetype
-  break_line_rule[1].filetypes = opts.break_line_filetype  or break_line_rule[1].filetypes
-  break_line_rule[2].filetypes = opts.html_break_line_filetype or break_line_rule[2].filetypes
+  break_line_rule[1].filetypes        = opts.break_line_filetype or break_line_rule[1].filetype
+  break_line_rule[1].disable_filetype = opts.break_line_disable_filetype  or disable_filetype
+  break_line_rule[2].filetype         = opts.html_break_line_filetype or break_line_rule[2].filetype
+  break_line_rule[2].disable_filetype = opts.html_break_line_disable_filetype or disable_filetype
 
   for char, char_end in pairs(pairs_map) do
-    local mapCommand = string.format([[v:lua.MPairs.autopairs("%s","%s")]], char, char_end)
-    if char == '"' then
-      mapCommand = string.format([[v:lua.MPairs.autopairs('%s','%s')]], char, char_end)
-    end
-    vim.api.nvim_set_keymap('i', char, mapCommand, {expr = true, noremap = true})
-    -- map char to move right when close pairs
-    if char== "(" or char == '[' or char == "{" then
-      mapCommand = string.format([[v:lua.MPairs.check_jump('%s')]], char_end)
-      vim.api.nvim_set_keymap('i', char_end, mapCommand, {expr = true, noremap = true})
+    if string.len(char) == 1 then
+      local mapCommand = string.format([[v:lua.MPairs.autopairs("%s","%s")]], char, char_end)
+      if char == '"' then
+        mapCommand = string.format([[v:lua.MPairs.autopairs('%s','%s')]], char, char_end)
+      end
+      vim.api.nvim_set_keymap('i', char, mapCommand, {expr = true, noremap = true})
+      -- map char to move right when close pairs
+      if char== "(" or char == '[' or char == "{" then
+        mapCommand = string.format([[v:lua.MPairs.check_jump('%s')]], char_end)
+        vim.api.nvim_set_keymap('i', char_end, mapCommand, {expr = true, noremap = true})
+      end
+    else
+      print(string.format("Skip [%s] plugin not support more than 1 character"), char)
     end
   end
   -- delete pairs when press <bs>
@@ -98,15 +124,11 @@ local function is_in_quote(line, pos)
 end
 
 MPairs.check_add = function(char)
-  for _,v in pairs(disable_filetype) do
-    if v == vim.bo.filetype then
-        return
-    end
-  end
+  if not check_disable_ft(disable_filetype, vim.bo.filetype) then return 0 end
   local next_col = vim.fn.col('.')
   local line = vim.fn.getline('.')
   local next_char = line:sub(next_col, next_col)
-  local prev_char = line:sub(next_col- 1, next_col -1)
+  local prev_char = line:sub(next_col -1, next_col -1)
 
   -- move right when have quote on end line or in quote
   -- situtaion  |"  => "|
@@ -126,21 +148,21 @@ MPairs.check_add = function(char)
     return 0
   end
 
--- when on end line col not work with autocomplete method so we need to skip it
+  -- when on end line col not work with autocomplete method so we need to skip it
   if next_col == string.len(line) + 1 then
-      -- need to update completion nvim for check
-      return 1
+    -- need to update completion nvim for check
+    return 1
   end
 
   -- situtaion  |(  => not add
   if next_char == char then
-      return  0
+    return  0
   end
 
   -- don't add pairs on alphabet character
   -- situtaion |abcde => not add
   if next_char:match("[a-zA-Z]") then
-      return 0
+    return 0
   end
 
   local char_end = pairs_map[char]
@@ -173,14 +195,14 @@ MPairs.check_break_line_char = function()
   local prev_char = vim.fn.getline('.'):sub(prev_col, prev_col)
   local next_char = vim.fn.getline('.'):sub(next_col, next_col)
   for _, rule in pairs(break_line_rule) do
-    if result == 0 and rule.pairs_map[prev_char] == next_char then
-      for _,ft in pairs(rule.filetypes) do
-        if ft == vim.bo.filetype then
-          result = 1
-          break
-        end
+    if
+      result == 0 and rule.pairs_map[prev_char] == next_char and
+      check_filetype(rule.filetype, vim.bo.filetype) and
+      check_disable_ft(rule.disable_filetype, vim.bo.filetype)
+      then
+        result = 1
+        break
       end
-    end
   end
   if result == 1 then
     return esc("<cr><c-o>O")

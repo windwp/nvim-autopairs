@@ -114,16 +114,18 @@ local data = {
 }
 
 local run_data = {}
+local isOnly = false
 for _, value in pairs(data) do
   if value.only == true then
     table.insert(run_data, value)
+    isOnly = true
     break
   end
 end
 if #run_data == 0 then run_data = data end
 
-describe('autopairs ', function()
-  for _, value in pairs(run_data) do
+local function Test(test_data)
+  for _, value in pairs(test_data) do
     it("test "..value.name, function()
       local before = string.gsub(value.before , '%|' , "")
       local after = string.gsub(value.after , '%|' , "")
@@ -154,7 +156,38 @@ describe('autopairs ', function()
       end
     end)
   end
-  print("end")
+end
+
+describe('autopairs ', function()
+  Test(run_data)
+  run_data = {
+    {
+      name = "nil breaklin_file_type " ,
+      filetype="javascript",
+      key    = [[<cr>]],
+      before = [[a[|] ]],
+      after  = "] "
+    },
+  }
+
+  npairs.setup({
+    break_line_filetype = nil
+  })
+
+  Test(run_data)
+  run_data = {
+    {
+      name = "regex file tye" ,
+      filetype="javascript",
+      key    = [[<cr>]],
+      before = [[a[|] ]],
+      after  = "] "
+    },
+  }
+  npairs.setup({
+    break_line_filetype ={"java.*"}
+  })
+
+
+  Test(run_data)
 end)
-
-

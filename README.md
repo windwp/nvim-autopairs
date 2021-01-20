@@ -22,7 +22,7 @@ local pairs_map = {
     ['`'] = '`',
 }
 local disable_filetype = { "TelescopePrompt" }
-local break_line_filetype = {'javascript' , 'typescript' , 'typescriptreact' , 'go'}
+local break_line_filetype = nil
 local html_break_line_filetype = {'html' , 'vue' , 'typescriptreact' , 'svelte' , 'javascriptreact'}
 
 ```
@@ -34,6 +34,10 @@ require('nvim-autopairs').setup({
   disable_filetype = { "TelescopePrompt" , "vim" },
 })
 ```
+### Rule
+
+- Pairs map only accept 1 character
+- You can use regex on filetype
 
 ### Break line on html or inside pairs
 
@@ -85,7 +89,7 @@ remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap =
 ## FAQ
 
 - Is this support autopair of 2 character?
-> No
+> No , any PR is welcome :)
 
 - Do you have any plan to add more feature ?
 >No, The main code of nvim-autopairs is only 200 line with comment,
