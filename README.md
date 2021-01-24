@@ -86,6 +86,24 @@ end
 
 remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 ```
+
+### Don't add pairs if it already have a close pairs in same line
+
+if **next character** is a close pairs and it doesn't have an open pairs in same line then it will not add a close pairs
+
+``` text
+Before        Input         After
+------------------------------------
+(  |))         (            (  (|))
+
+```
+
+``` lua
+-- default is true if you want to disable it set it to false
+require('nvim-autopairs').setup({
+  check_line_pair = false
+})
+```
 ## FAQ
 
 - Is this support autopair of 2 character?

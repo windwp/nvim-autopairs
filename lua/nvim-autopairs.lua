@@ -10,7 +10,7 @@ local pairs_map = {
 }
 
 local disable_filetype = { "TelescopePrompt" }
-
+local check_line_pair = true
 local break_line_rule ={
   {
     pairs_map = {
@@ -51,6 +51,7 @@ MPairs.setup = function(opts)
   opts                     = opts or {}
   pairs_map                = opts.pairs_map or pairs_map
   disable_filetype         = opts.disable_filetype or disable_filetype
+  if opts.check_line_pair ~= nil then check_line_pair = opts.check_line_pair end
   break_line_rule[1].filetypes        = opts.break_line_filetype or break_line_rule[1].filetype
   break_line_rule[1].disable_filetype = opts.break_line_disable_filetype  or disable_filetype
   break_line_rule[2].filetype         = opts.html_break_line_filetype or break_line_rule[2].filetype
@@ -69,7 +70,7 @@ MPairs.setup = function(opts)
         vim.api.nvim_set_keymap('i', char_end, mapCommand, {expr = true, noremap = true})
       end
     else
-      print(string.format("Skip [%s] plugin not support more than 1 character"), char)
+      print(string.format("Skip [%s], autopairs plugin is not support that "), char)
     end
   end
   -- delete pairs when press <bs>
@@ -166,7 +167,7 @@ MPairs.check_add = function(char)
   end
 
   local char_end = pairs_map[char]
-  if next_char == char_end then
+  if check_line_pair and next_char == char_end  then
     -- ((  many char |)) => add
     -- (   many char |)) => not add
     local count_prev_char = 0
