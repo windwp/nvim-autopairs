@@ -190,4 +190,42 @@ describe('autopairs ', function()
 
 
   Test(run_data)
+
+  npairs.setup({
+    ignored_next_char = "%w" -- default
+  })
+
+  Test({
+    {
+      name = "don't add pair if next char is aplhanumeric",
+      key    = [[(]],
+      before = [[|foo ]],
+      after  = [[(|foo ]]
+    },
+    {
+      name = "add pair if next char is non-alphanumeric",
+      key    = [[{]],
+      before = [[|.foo ]],
+      after  = [[{|}.foo ]]
+    },
+  })
+
+  npairs.setup({
+    ignored_next_char = "[%w%.]" -- alphanumeric and `.`
+  })
+
+  Test({
+    {
+      name = "don't add pair if next char is .",
+      key    = [[(]],
+      before = [[|.foo ]],
+      after  = [[(|.foo ]]
+    },
+    {
+      name = "add pair if next char is +",
+      key    = [[{]],
+      before = [[|+foo ]],
+      after  = [[{|}+foo ]]
+    },
+  })
 end)

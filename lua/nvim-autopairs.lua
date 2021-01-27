@@ -30,6 +30,8 @@ local break_line_rule ={
   }
 }
 
+local ignored_next_char = "%w"
+
 local function is_in_table(tbl, val)
   for _, value in pairs(tbl) do
     if string.match(val, value) then return true end
@@ -56,6 +58,7 @@ MPairs.setup = function(opts)
   break_line_rule[1].disable_filetype = opts.break_line_disable_filetype  or disable_filetype
   break_line_rule[2].filetype         = opts.html_break_line_filetype or break_line_rule[2].filetype
   break_line_rule[2].disable_filetype = opts.html_break_line_disable_filetype or disable_filetype
+  ignored_next_char = opts.ignored_next_char or ignored_next_char
 
   for char, char_end in pairs(pairs_map) do
     if string.len(char) == 1 then
@@ -160,9 +163,10 @@ MPairs.check_add = function(char)
     return  0
   end
 
-  -- don't add pairs on alphabet character
-  -- situtaion |abcde => not add
-  if next_char:match("[a-zA-Z]") then
+  -- don't add pairs based on `ignored_next_char`
+  -- situation: ignored_next_char = "%w" -> |abcde => not add
+  --            ignored_next_char = "[%w%.]" -> |.abcde => not add
+  if next_char:match(ignored_next_char) then
     return 0
   end
 
