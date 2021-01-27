@@ -24,6 +24,7 @@ local pairs_map = {
 local disable_filetype = { "TelescopePrompt" }
 local break_line_filetype = nil -- mean all file type
 local html_break_line_filetype = {'html' , 'vue' , 'typescriptreact' , 'svelte' , 'javascriptreact'}
+local ignored_next_char = "%w"
 
 ```
 
@@ -104,6 +105,34 @@ require('nvim-autopairs').setup({
   check_line_pair = false
 })
 ```
+
+### Don't add pairs if the next char is alphanumeric
+
+By default, nvim-autopairs will do this
+``` text
+Before        Input         After
+------------------------------------
+|foobar        (            (|foobar
+|.foobar       (            (|).foobar
+|+foobar       (            (|)+foobar
+```
+
+You can customize how nvim-autopairs will behave if it encounters a specific
+character
+``` lua
+require('nvim-autopairs').setup({
+  ignored_next_char = "[%w%.]" -- will ignore alphanumeric and `.` symbol
+})
+```
+
+``` text
+Before        Input         After
+------------------------------------
+|foobar        (            (|foobar
+|.foobar       (            (|.foobar
+|+foobar       (            (|)+foobar
+```
+
 ## FAQ
 
 - Is this support autopair of 2 character?
