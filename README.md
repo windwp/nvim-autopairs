@@ -62,7 +62,6 @@ Before        Input         After
 
 ### using completion nvim
 ``` lua
--- this is my mapping with completion-nvim
 local remap = vim.api.nvim_set_keymap
 local npairs = require('nvim-autopairs')
 
@@ -91,8 +90,6 @@ remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap =
 ```
 #### using nvim-compe
 ``` lua
-
--- this is my mapping with completion-nvim
 local remap = vim.api.nvim_set_keymap
 local npairs = require('nvim-autopairs')
 
