@@ -119,7 +119,7 @@ local function is_in_quote(line, pos)
       line:sub(cIndex -1, cIndex -1) ~= "\\"
     then
        result = false
-     elseif result == false and (char == "'" or char == '"') then
+     elseif result == false and (char == "'" or char == '"' or char == '`') then
         last_quote = char
         result = true
     end
@@ -136,7 +136,7 @@ MPairs.check_add = function(char)
 
   -- move right when have quote on end line or in quote
   -- situtaion  |"  => "|
-  if (next_char == "'" or next_char == '"') and next_char == char then
+  if (next_char == "'" or next_char == '"' or next_char == '`') and next_char == char then
     if next_col == string.len(line) then
         return  2
     end

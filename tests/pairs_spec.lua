@@ -70,6 +70,13 @@ local data = {
     before = [[("abcd|")]],
     after  = [[("abcd"|)]]
   },
+
+  {
+    name = "move right when inside grave with special slash" ,
+    key    = [[`]],
+    before = [[(`abcd\"|`)]],
+    after  = [[(`abcd\"`|)]]
+  },
   {
     name = "move right when inside quote with special slash" ,
     key    = [["]],
