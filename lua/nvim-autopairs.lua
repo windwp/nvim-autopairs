@@ -158,6 +158,7 @@ MPairs.check_add = function(char)
     return 1
   end
 
+
   -- situtaion  |(  => not add
   if next_char == char then
     return  0
