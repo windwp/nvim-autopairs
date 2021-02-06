@@ -103,9 +103,10 @@ MUtils.completion_confirm=function()
       vim.fn["compe#confirm"]()
       return npairs.esc("<c-y>")
     else
-      vim.fn.nvim_select_popupmenu_item(0, false, false,{})
-      vim.fn["compe#confirm"]()
-      return npairs.esc("<c-n><c-y>")
+      vim.defer_fn(function()
+        vim.fn["compe#confirm"]("<cr>")
+      end, 20)
+      return npairs.esc("<c-n>")
     end
   else
     return npairs.check_break_line_char()
