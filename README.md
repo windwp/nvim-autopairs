@@ -110,6 +110,7 @@ MUtils.completion_confirm=function()
     end
   else
     return npairs.check_break_line_char()
+  end
 end
 
 
