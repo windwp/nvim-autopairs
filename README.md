@@ -76,7 +76,7 @@ MUtils.completion_confirm=function()
       require'completion'.confirmCompletion()
       return npairs.esc("<c-y>")
     else
-      vim.fn.nvim_select_popupmenu_item(0 , false , false ,{})
+      vim.api.nvim_select_popupmenu_item(0 , false , false ,{})
       require'completion'.confirmCompletion()
       return npairs.esc("<c-n><c-y>")
     end
