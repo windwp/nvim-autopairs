@@ -109,22 +109,24 @@ MPairs.check_jump = function(char)
   return esc(char)
 end
 
+local is_quote = function (char)
+    return char == "'" or char == '"' or char == '`'
+end
 
-local function is_in_quote(line, pos)
-  local cIndex     = 0
-  local last_quote = ''
-  local result     = false
+local function is_in_quote(line, pos, quote)
+  local cIndex = 0
+  local result = false
+
   while cIndex < string.len(line) and cIndex < pos  do
     cIndex = cIndex + 1
     local char = line:sub(cIndex, cIndex)
     if
       result == true and
-      char == last_quote and
+      char == quote and
       line:sub(cIndex -1, cIndex -1) ~= "\\"
     then
        result = false
-     elseif result == false and (char == "'" or char == '"' or char == '`') then
-        last_quote = char
+    elseif result == false and char == quote then
         result = true
     end
   end
@@ -154,26 +156,21 @@ MPairs.check_add = function(char)
 
   -- move right when have quote on end line or in quote
   -- situtaion  |"  => "|
-  if (next_char == "'" or next_char == '"' or next_char == '`') and next_char == char then
+  if is_quote(next_char) and next_char == char then
     if next_col == string.len(line) then
         return  2
     end
     -- ("|")  => (""|)
     --  ""       |"      "  => ""       "|      "
-    if is_in_quote(line, next_col - 1) then
+    if is_in_quote(line, next_col - 1, char) then
       return 2
     end
   end
-  -- don' t add single quote if prev char is word
+
+  -- don' t add single quote if prev char is a word
   -- a| => not add
   if char == "'"  and prev_char:match("%w")then
     return 0
-  end
-
-  -- when on end line col not work with autocomplete method so we need to skip it
-  if next_col == string.len(line) + 1 then
-    -- need to update completion nvim for check
-    return 1
   end
 
 
@@ -189,21 +186,28 @@ MPairs.check_add = function(char)
     return 0
   end
 
-  local char_end = pairs_map[char]
-  if check_line_pair and next_char == char_end  then
+  if check_line_pair then
+    local char_end = pairs_map[char]
     -- ((  many char |)) => add
     -- (   many char |)) => not add
-    local count_prev_char = 0
-    local count_next_char = 0
-    for i = 1, #line, 1 do
-      local c = line:sub(i, i)
-      if c == char then
-        count_prev_char = count_prev_char + 1
-      elseif c == char_end then
-        count_next_char = count_next_char + 1
+    if next_char == char_end then
+      local count_prev_char = 0
+      local count_next_char = 0
+      for i = 1, #line, 1 do
+        local c = line:sub(i, i)
+        if c == char then
+          count_prev_char = count_prev_char + 1
+        elseif c == char_end then
+          count_next_char = count_next_char + 1
+        end
+      end
+      if count_prev_char ~= count_next_char then
+        return 0
       end
     end
-    if count_prev_char ~= count_next_char then
+
+    -- " abc | xyz => not add
+    if is_quote(char) and is_in_quote(line, next_col -1, char) then
       return 0
     end
   end

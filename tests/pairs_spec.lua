@@ -53,6 +53,18 @@ local data = {
     after  = [[aa  "|aa]]
   },
    {
+    name = "don't add quote inside quote" ,
+    key    = [["]],
+    before = [["aa  |  aa]],
+    after  = [["aa  "|  aa]]
+  },
+   {
+    name = "add quote if not inside quote" ,
+    key    = [["]],
+    before = [["aa " |  aa]],
+    after  = [["aa " "|"  aa]]
+  },
+   {
     name = "don't add pair after alphabet char" ,
     key    = [[(]],
     before = [[aa  |aa]],
@@ -167,9 +179,10 @@ end
 
 describe('autopairs ', function()
   Test(run_data)
+  if isOnly then return end
   run_data = {
     {
-      name = "nil breaklin_file_type " ,
+      name = "nil breakline_file_type " ,
       filetype="javascript",
       key    = [[<cr>]],
       before = [[a[|] ]],
@@ -184,7 +197,7 @@ describe('autopairs ', function()
   Test(run_data)
   run_data = {
     {
-      name = "regex file tye" ,
+      name = "regex file type" ,
       filetype="javascript",
       key    = [[<cr>]],
       before = [[a[|] ]],
