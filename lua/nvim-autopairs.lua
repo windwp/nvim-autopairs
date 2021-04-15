@@ -11,6 +11,7 @@ local pairs_map = {
 
 local disable_filetype = { "TelescopePrompt" }
 local check_line_pair = true
+local close_triple_quotes = false
 local break_line_rule ={
   {
     pairs_map = {
@@ -59,6 +60,7 @@ MPairs.setup = function(opts)
   break_line_rule[2].filetype         = opts.html_break_line_filetype or break_line_rule[2].filetype
   break_line_rule[2].disable_filetype = opts.html_break_line_disable_filetype or disable_filetype
   ignored_next_char = opts.ignored_next_char or ignored_next_char
+  close_triple_quotes = opts.close_triple_quotes or close_triple_quotes
 
   for char, char_end in pairs(pairs_map) do
     if string.len(char) == 1 then
@@ -90,6 +92,8 @@ MPairs.autopairs = function(char, char_end)
    return esc(char..char_end.."<c-g>U<left>")
   elseif result == 2 then
     return esc("<c-g>U<right>")
+  elseif result == 3 then
+    return esc(char..char..char..char.."<c-g>U<left><left><left>")
   else
     return esc(char)
   end
@@ -133,6 +137,20 @@ MPairs.check_add = function(char)
   local line = vim.fn.getline('.')
   local next_char = line:sub(next_col, next_col)
   local prev_char = line:sub(next_col -1, next_col -1)
+  local prevprev_char = line:sub(next_col -2, next_col -2)
+  local nextnext_char = line:sub(next_col +1, next_col +1)
+
+  if close_triple_quotes then
+    -- Keep adding one quote if surrounded by multiple quotes
+    if (prev_char == "'" or prev_char == '"' or prev_char == '`') and prevprev_char == prev_char and prev_char == char and char == next_char and next_char == nextnext_char then
+      return 1
+    end
+
+    -- Support three quotes
+    if (prev_char == "'" or prev_char == '"' or prev_char == '`') and prevprev_char == prev_char and prev_char == char then
+      return 3
+    end
+  end
 
   -- move right when have quote on end line or in quote
   -- situtaion  |"  => "|
