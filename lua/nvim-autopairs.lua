@@ -11,9 +11,8 @@ local default = {
     disable_filetype = {"TelescopePrompt", "spectre_panel"},
     ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]],"%s+", "")
 }
-M.setup = function(opt)
-    print(vim.inspect(M.setup))
 
+M.setup = function(opt)
     M.config = vim.tbl_extend('force', default, opt or {})
     M.config.rules = basic_rule.setup(M.config)
     api.nvim_exec ([[
