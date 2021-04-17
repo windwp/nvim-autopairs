@@ -1,20 +1,8 @@
 local helpers = {}
 local npairs = require('nvim-autopairs')
-_G.npairs = npairs;
-local utils = require('nvim-autopairs.utils')
-local api = vim.api
-
-utils.insert_char = function(text)
-		api.nvim_put({text}, "c", true, true)
-end
-
-utils.feed = function(text)
-    api.nvim_feedkeys (api.nvim_replace_termcodes(
-				text, true, false, true),
-		"x", true)
-end
 local log = require('nvim-autopairs._log')
-local eq = assert.are.same
+_G.npairs = npairs;
+local eq=_G.eq
 
 vim.api.nvim_set_keymap('i' , '<CR>','v:lua.npairs.check_break_line_char()', {expr = true , noremap = true})
 function helpers.feed(text, feed_opts)
@@ -32,8 +20,8 @@ local data = {
 
         name = "add normal bracket" ,
         key    = [[{]],
-        before = [[| ]],
-        after  = [[{|} ]]
+        before = [[x| ]],
+        after  = [[x{|} ]]
     },
 
     {
@@ -45,8 +33,8 @@ local data = {
     {
         name = "add normal bracket" ,
         key    = [[(]],
-        before = [[aaaa| ]],
-        after  = [[aaaa(|) ]]
+        before = [[aaaa|x ]],
+        after  = [[aaaa(|)x ]]
     },
     {
         name = "add normal quote" ,
@@ -55,19 +43,33 @@ local data = {
         after  = [[aa"|" aa]]
     },
     {
-        only = true,
-        name = "add normal quote" ,
+
+        name = "add python quote" ,
         filetype = "python",
         key    = [["]],
-        before = [[""|]],
-        after  = [["""|"""]]
+        before = [[""| ]],
+        after  = [["""|""" ]]
     },
-    -- {
-    --     name = "don't add single quote with previous alphabet char" ,
-    --     key    = [[']],
-    --     before = [[aa| aa]],
-    --     after  = [[aa'| aa]]
-    -- },
+
+    {
+        name = "add markdown quote" ,
+        filetype = "markdown",
+        key    = [[`]],
+        before = [[``| ]],
+        after  = [[```|``` ]]
+    },
+    {
+        name = "don't add single quote with previous alphabet char" ,
+        key    = [[']],
+        before = [[aa| aa ]],
+        after  = [[aa'| aa ]]
+    },
+    {
+        name = "don't add single quote with alphabet char" ,
+        key    = [[']],
+        before = [[a|x ]],
+        after  = [[a'|x ]]
+    },
     -- {
     --     name = "don't add single quote on end line",
     --     key    = [[<right>']],
@@ -98,12 +100,12 @@ local data = {
     --     before = [[aa  |aa]],
     --     after  = [[aa  (|aa]]
     -- },
-    -- {
-    --     name = "move right end line " ,
-    --     key    = [["]],
-    --     before = [[aaaa|"]],
-    --     after  = [[aaaa"|]]
-    -- },
+    {
+        name = "move right end line " ,
+        key    = [["]],
+        before = [[aaaa|"]],
+        after  = [[aaaa"|]]
+    },
     -- {
     --     name = "move right when inside quote" ,
     --     key    = [["]],
@@ -195,7 +197,7 @@ local function Test(test_data)
             local pos = vim.fn.getpos('.')
             if value.key ~= '<cr>' then
                 eq(after, result , "\n\n text error: " .. value.name .. "\n")
-                eq(p_after , pos[3], "\n\n pos error: " .. value.name .. "\n")
+                eq(p_after, pos[3] + 1, "\n\n pos error: " .. value.name .. "\n")
             else
                 local line2 = vim.fn.getline(line + 2)
                 eq(line + 1, pos[2], '\n\n breakline error:' .. value.name .. "\n")
