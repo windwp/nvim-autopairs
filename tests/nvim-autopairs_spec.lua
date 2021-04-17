@@ -33,8 +33,8 @@ local data = {
     {
         name = "add normal bracket" ,
         key    = [[(]],
-        before = [[aaaa|x ]],
-        after  = [[aaaa(|)x ]]
+        before = [[aaaa| x ]],
+        after  = [[aaaa(|) x ]]
     },
     {
         name = "add normal quote" ,
@@ -65,73 +65,81 @@ local data = {
         after  = [[aa'| aa ]]
     },
     {
+        -- only = true,
         name = "don't add single quote with alphabet char" ,
         key    = [[']],
         before = [[a|x ]],
         after  = [[a'|x ]]
     },
-    -- {
-    --     name = "don't add single quote on end line",
-    --     key    = [[<right>']],
-    --     before = [[c aa|]],
-    --     after  = [[c aa'|]]
-    -- },
-    -- {
-    --     name = "don't add quote after alphabet char" ,
-    --     key    = [["]],
-    --     before = [[aa  |aa]],
-    --     after  = [[aa  "|aa]]
-    -- },
-    -- {
-    --     name = "don't add quote inside quote" ,
-    --     key    = [["]],
-    --     before = [["aa  |  aa]],
-    --     after  = [["aa  "|  aa]]
-    -- },
-    -- {
-    --     name = "add quote if not inside quote" ,
-    --     key    = [["]],
-    --     before = [["aa " |  aa]],
-    --     after  = [["aa " "|"  aa]]
-    -- },
-    -- {
-    --     name = "don't add pair after alphabet char" ,
-    --     key    = [[(]],
-    --     before = [[aa  |aa]],
-    --     after  = [[aa  (|aa]]
-    -- },
+    {
+        name = "don't add single quote on end line",
+        key    = [[<right>']],
+        before = [[c aa|]],
+        after  = [[c aa'|]]
+    },
+    {
+        name = "don't add quote after alphabet char" ,
+        key    = [["]],
+        before = [[aa  |aa]],
+        after  = [[aa  "|aa]]
+    },
+    {
+        name = "don't add quote inside quote" ,
+        key    = [["]],
+        before = [["aa  |  aa]],
+        after  = [["aa  "|  aa]]
+    },
+    {
+        name = "add quote if not inside quote" ,
+        key    = [["]],
+        before = [["aa " |  aa]],
+        after  = [["aa " "|"  aa]]
+    },
+    {
+        name = "don't add pair after alphabet char" ,
+        key    = [[(]],
+        before = [[aa  |aa]],
+        after  = [[aa  (|aa]]
+    },
+    {
+        only = true,
+        name = "move right on square bracket" ,
+        key    = [[)]],
+        before = [[(|) ]],
+        after  = [[()| ]]
+    },
     {
         name = "move right end line " ,
         key    = [["]],
         before = [[aaaa|"]],
         after  = [[aaaa"|]]
     },
-    -- {
-    --     name = "move right when inside quote" ,
-    --     key    = [["]],
-    --     before = [[("abcd|")]],
-    --     after  = [[("abcd"|)]]
-    -- },
+    {
+        name = "move right when inside quote" ,
+        key    = [["]],
+        before = [[("abcd|")]],
+        after  = [[("abcd"|)]]
+    },
 
-    -- {
-    --     name = "move right when inside grave with special slash" ,
-    --     key    = [[`]],
-    --     before = [[(`abcd\"|`)]],
-    --     after  = [[(`abcd\"`|)]]
-    -- },
-    -- {
-    --     name = "move right when inside quote with special slash" ,
-    --     key    = [["]],
-    --     before = [[("abcd\"|")]],
-    --     after  = [[("abcd\""|)]]
-    -- },
-    -- {
-    --     name = "move right when inside single quote with special slash",
-    --     filetype="javascript",
-    --     key    = [[']],
-    --     before = [[nvim_set_var('test_thing|')]],
-    --     after  = [[nvim_set_var('test_thing'|)]]
-    -- },
+    {
+        name = "move right when inside grave with special slash" ,
+        key    = [[`]],
+        before = [[(`abcd\"|`)]],
+        after  = [[(`abcd\"`|)]]
+    },
+    {
+        name = "move right when inside quote with special slash" ,
+        key    = [["]],
+        before = [[("abcd\"|")]],
+        after  = [[("abcd\""|)]]
+    },
+    {
+        name = "move right when inside single quote with special slash",
+        filetype="javascript",
+        key    = [[']],
+        before = [[nvim_set_var('test_thing|')]],
+        after  = [[nvim_set_var('test_thing'|)]]
+    },
     -- {
     --     name = "breakline on {" ,
     --     filetype="javascript",
