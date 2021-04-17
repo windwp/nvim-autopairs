@@ -177,3 +177,5 @@ Before        Input         After
 >If you want a flymode or something else you can use [jiangmiao autopairs](https://github.com/jiangmiao/auto-pairs)
 >
 >If you want more feature please try to use [lexima](https://github.com/cohama/lexima.vim)
+
+https://github.com/tpope/vim-endwise

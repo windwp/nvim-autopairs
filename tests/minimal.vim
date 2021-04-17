@@ -1,7 +1,25 @@
 set rtp +=.
-set rtp +=~/.vim/autoload/plenary.nvim/
+set rtp +=../plenary.nvim/
+set rtp +=../nvim-treesitter
+set rtp +=../playground/
+
 runtime! plugin/plenary.vim
+runtime! plugin/nvim-treesitter.vim
+runtime! plugin/playground.vim
 
-lua require("plenary/busted")
-lua require("nvim-autopairs")
+set noswapfile
+set nobackup
 
+filetype indent off
+set nowritebackup
+set noautoindent
+set nocindent
+set nosmartindent
+set indentexpr=
+
+
+lua << EOF
+_G.__is_log = true
+require("plenary/busted")
+require("nvim-autopairs").setup()
+EOF
