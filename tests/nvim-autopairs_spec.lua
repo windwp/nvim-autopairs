@@ -102,12 +102,12 @@ local data = {
         after  = [[aa  (|aa]]
     },
     {
-        only = true,
-        name = "move right on square bracket" ,
-        key    = [[)]],
-        before = [[(|) ]],
-        after  = [[()| ]]
+        name = "don't add pair after dot char" ,
+        key    = [[(]],
+        before = [[aa  |.aa]],
+        after  = [[aa  (|.aa]]
     },
+
     {
         name = "move right end line " ,
         key    = [["]],
@@ -140,34 +140,49 @@ local data = {
         before = [[nvim_set_var('test_thing|')]],
         after  = [[nvim_set_var('test_thing'|)]]
     },
+    {
+        name = "delete bracket",
+        filetype="javascript",
+        key    = [[<bs>]],
+        before = [[aaa(|) ]],
+        after  = [[aaa| ]]
+    },
     -- {
-    --     name = "breakline on {" ,
-    --     filetype="javascript",
-    --     key    = [[<cr>]],
-    --     before = [[a{|}]],
-    --     after  = [[}]]
+    --     only = true,
+    --     name = "delete bracket",
+    --     filetype="python",
+    --     key    = [[<bs>]],
+    --     before = [[a"""|"""" ]],
+    --     after  = [[a| ]]
     -- },
-    -- {
-    --     name = "breakline on (" ,
-    --     filetype="javascript",
-    --     key    = [[<cr>]],
-    --     before = [[a(|)]],
-    --     after  = [[)]]
-    -- },
-    -- {
-    --     name = "breakline on ]" ,
-    --     filetype="javascript",
-    --     key    = [[<cr>]],
-    --     before = [[a[|] ]],
-    --     after  = "] "
-    -- },
-    -- {
-    --     name = "breakline on < html" ,
-    --     filetype="html",
-    --     key    = [[<cr>]],
-    --     before = [[<div>|</div>]],
-    --     after  = [[</div>]]
-    -- }
+    {
+        name = "breakline on {" ,
+        filetype="javascript",
+        key    = [[<cr>]],
+        before = [[a{|}]],
+        after  = [[}]]
+    },
+    {
+        name = "breakline on (" ,
+        filetype="javascript",
+        key    = [[<cr>]],
+        before = [[a(|)]],
+        after  = [[)]]
+    },
+    {
+        name = "breakline on ]" ,
+        filetype="javascript",
+        key    = [[<cr>]],
+        before = [[a[|] ]],
+        after  = "] "
+    },
+    {
+        name = "breakline on < html" ,
+        filetype = "html",
+        key    = [[<cr>]],
+        before = [[<div>|</div>]],
+        after  = [[</div>]]
+    }
 }
 
 local run_data = {}
@@ -195,6 +210,7 @@ local function Test(test_data)
             else
                 vim.bo.filetype = "text"
             end
+            npairs.on_attach(vim.api.nvim_get_current_buf())
             vim.fn.setline(line , before)
             vim.fn.setpos('.' ,{0, line, p_before , 0})
             log.debug("insert " .. value.key)
@@ -236,57 +252,4 @@ describe('autopairs ', function()
     -- })
 
     -- Test(run_data)
-    -- run_data = {
-    --     {
-    --         name = "regex file type" ,
-    --         filetype="javascript",
-    --         key    = [[<cr>]],
-    --         before = [[a[|] ]],
-    --         after  = "] "
-    --     },
-    -- }
-    -- npairs.setup({
-    --     break_line_filetype ={"java.*"}
-    -- })
-
-
-    -- Test(run_data)
-
-    -- npairs.setup({
-    --     ignored_next_char = "%w" -- default
-    -- })
-
-    -- Test({
-    --     {
-    --         name = "don't add pair if next char is aplhanumeric",
-    --         key    = [[(]],
-    --         before = [[|foo ]],
-    --         after  = [[(|foo ]]
-    --     },
-    --     {
-    --         name = "add pair if next char is non-alphanumeric",
-    --         key    = [[{]],
-    --         before = [[|.foo ]],
-    --         after  = [[{|}.foo ]]
-    --     },
-    -- })
-
-    -- npairs.setup({
-    --     ignored_next_char = "[%w%.]" -- alphanumeric and `.`
-    -- })
-
-    -- Test({
-    --     {
-    --         name = "don't add pair if next char is .",
-    --         key    = [[(]],
-    --         before = [[|.foo ]],
-    --         after  = [[(|.foo ]]
-    --     },
-    --     {
-    --         name = "add pair if next char is +",
-    --         key    = [[{]],
-    --         before = [[|+foo ]],
-    --         after  = [[{|}+foo ]]
-    --     },
-    -- })
 end)
