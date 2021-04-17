@@ -1,17 +1,30 @@
 
 local Rule = require('nvim-autopairs.rule')
-
-local check_func = require('nvim-autopairs.check_func')
+local cond = require('nvim-autopairs.conds')
 
 local basic = {
   Rule("```", "```", 'markdown'),
-  Rule("'", "'"),
+  Rule('"""', '"""', 'python'),
+  Rule({
+        start_pair = "'",
+        end_pair = "'",
+        pair_cond = {
+            cond.not_regex_check('%w')
+        }
+    }),
   Rule("`", "`"),
   Rule('"', '"'),
+
+  -- Rule({
+  --       start_pair = '"',
+  --       end_pair = '"',
+  --       move_cond = {
+  --           cond.move_right()
+  --       }
+  --   }),
   Rule("(", ")"),
   Rule("[", "]"),
   Rule("{", "}"),
-  Rule('"""', '"""', 'python'),
 }
 
 

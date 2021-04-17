@@ -2,6 +2,38 @@ local M={}
 local api = vim.api
 local log = require('nvim-autopairs._log')
 
+M.key = {
+    left = "<left>",
+    del = "<del>",
+    bs = "<bs>",
+    right = "<right>"
+}
+
+
+
+M.is_quote = function (char)
+    return char == "'" or char == '"' or char == '`'
+end
+
+M.is_in_quote = function(line, pos, quote)
+  local cIndex = 0
+  local result = false
+
+  while cIndex < string.len(line) and cIndex < pos  do
+    cIndex = cIndex + 1
+    local char = line:sub(cIndex, cIndex)
+    if
+      result == true and
+      char == quote and
+      line:sub(cIndex -1, cIndex -1) ~= "\\"
+    then
+       result = false
+    elseif result == false and char == quote then
+        result = true
+    end
+  end
+  return result
+end
 
 M.is_attached = function(bufnr)
     local _, check = pcall(api.nvim_buf_get_var, bufnr, "nvim-autopairs")
@@ -45,24 +77,49 @@ M.text_get_current_line = function(bufnr)
     return M.text_get_line(bufnr, row -1)
 end
 
+
+-- function M.text_prev_next(line, col, prev_count, next_char)
+--   prev_count = prev_count or 1
+--   next_char = next_char or prev_count
+
+--   if line then
+--     local prev = string.sub(line, math.max(col - prev_count + 1, 0), col)
+--     local next = string.sub(line, col + 1, math.min(col + next_char, #line + 1))
+--         return prev, next
+--   end
+-- end
+
 M.text_sub_char = function(line, start, num)
-    if num > 0 then num = num - 1
-    elseif num < 0 then num = num + 1 end
-    log.debug(vim.inspect(num))
-    return string.sub(line,
-        math.min(start, start + num),
-        math.max(start, start + num)
-    )
+    local finish = start
+    if num < 0 then
+        start = start + num + 1
+    else
+        finish = start + num -1
+    end
+    return string.sub(line, start, finish)
 end
 
+-- P(M.text_sub_char("aa'' aaa", 3, -1))
 M.insert_char = function(text)
 		api.nvim_put({text}, "c", false, true)
 end
 
-M.feed = function(text)
-    api.nvim_feedkeys (api.nvim_replace_termcodes(
-				text, true, false, true),
-		"n", true)
+M.feed = function(text, num)
+    -- num = num or 1
+    -- local result = ''
+    -- for _ = 1, num, 1 do
+    --     result = result .. text
+    -- end
+    -- log.debug("result" .. result)
+    -- api.nvim_feedkeys (api.nvim_replace_termcodes(
+    --     result, true, false, true),
+		-- "n", true)
+
+    for i = 1, num, 1 do
+        api.nvim_feedkeys (api.nvim_replace_termcodes(
+            text, true, false, true),
+        "n", true)
+    end
 end
 
 M.esc = function(cmd)
