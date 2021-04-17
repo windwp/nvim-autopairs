@@ -21,7 +21,8 @@ local function setup(opt)
         basic("(", ")"),
         basic("[", "]"),
         basic("{", "}"),
-        Rule(">", "<", 'html')
+        Rule(">", "<",
+            { 'html', 'typescript', 'typescriptreact', 'svelte', 'vue'})
             :with_move(cond.none())
             :with_pair(cond.none())
             :with_del(cond.none()),
