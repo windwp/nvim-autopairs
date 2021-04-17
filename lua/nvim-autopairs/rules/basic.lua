@@ -1,31 +1,25 @@
 
-local Rule = require('nvim-autopairs.rule')
+local Rule = require('nvim-autopairs.rule').new
 local cond = require('nvim-autopairs.conds')
+local basic = function(...)
+    return Rule(...)
+        :with_move(cond.move_right())
+        :with_pair(cond.not_after_regex_check('%w'))
+        :with_pair(cond.not_add_quote_inside_quote())
+end
 
-local basic = {
-  Rule("```", "```", 'markdown'),
-  Rule('"""', '"""', 'python'),
-  Rule({
-        start_pair = "'",
-        end_pair = "'",
-        pair_cond = {
-            cond.not_regex_check('%w')
-        }
-    }),
-  Rule("`", "`"),
-  Rule('"', '"'),
-
-  -- Rule({
-  --       start_pair = '"',
-  --       end_pair = '"',
-  --       move_cond = {
-  --           cond.move_right()
-  --       }
-  --   }),
-  Rule("(", ")"),
-  Rule("[", "]"),
-  Rule("{", "}"),
+local rules = {
+    Rule("```", "```", 'markdown'),
+    Rule('"""', '"""', 'python'),
+    basic("'", "'")
+        :with_pair(cond.not_before_regex_check("%w"))
+    ,
+    basic("`", "`"),
+    basic('"', '"'),
+    basic("(", ")"),
+    basic("[", "]"),
+    basic("{", "}"),
 }
 
 
-return basic
+return rules

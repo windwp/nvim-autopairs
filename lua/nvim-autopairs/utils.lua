@@ -9,7 +9,9 @@ M.key = {
     right = "<right>"
 }
 
-
+M.reset_vchar = function()
+  vim.cmd [[let v:char = ""]]
+end
 
 M.is_quote = function (char)
     return char == "'" or char == '"' or char == '`'
@@ -105,21 +107,16 @@ M.insert_char = function(text)
 end
 
 M.feed = function(text, num)
-    -- num = num or 1
-    -- local result = ''
-    -- for _ = 1, num, 1 do
-    --     result = result .. text
-    -- end
-    -- log.debug("result" .. result)
-    -- api.nvim_feedkeys (api.nvim_replace_termcodes(
-    --     result, true, false, true),
-		-- "n", true)
-
-    for i = 1, num, 1 do
-        api.nvim_feedkeys (api.nvim_replace_termcodes(
-            text, true, false, true),
-        "n", true)
+    num = num or 1
+    if num < 1 then num = 1 end
+    local result = ''
+    for _ = 1, num, 1 do
+        result = result .. text
     end
+    log.debug("result" .. result)
+    api.nvim_feedkeys (api.nvim_replace_termcodes(
+        result, true, false, true),
+		"n", true)
 end
 
 M.esc = function(cmd)
