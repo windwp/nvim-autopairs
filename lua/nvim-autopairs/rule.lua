@@ -23,11 +23,9 @@ function Rule.new(...)
         -- allow move when press close_pairs
         move_cond = nil,
         -- allow delete when press bs
-        del_cond = nil,
-        pair_cond = {function(_)
-            -- local prev_char, line, ts_node = unpack(opts)
-            return true
-        end},
+        del_cond = {function() return true end},
+        cr_cond = {function() return true end},
+        pair_cond = {function() return true end},
     },opt)
     return setmetatable(opt, {__index = Rule})
 end
@@ -76,6 +74,11 @@ end
 
 function Rule:can_del(opt)
     return can_do(self.del_cond, opt)
+end
+
+
+function Rule:can_cr(opt)
+    return can_do(self.cr_cond, opt)
 end
 
 return {new = Rule.new}

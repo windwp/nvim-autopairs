@@ -2,6 +2,10 @@ local utils = require('nvim-autopairs.utils')
 local log = require('nvim-autopairs._log')
 local cond={}
 
+cond.none = function()
+    return function() return false end
+end
+
 cond.not_before_regex_check = function(regex, length)
     length = length or 1
     return function(opts)

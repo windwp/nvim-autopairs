@@ -9,38 +9,84 @@ local state = {}
 
 local default = {
     disable_filetype = {"TelescopePrompt", "spectre_panel"},
-    ignored_next_char = "%w",
-    rules = basic_rule
+    ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]],"%s+", "")
 }
 M.setup = function(opt)
+    print(vim.inspect(M.setup))
+
     M.config = vim.tbl_extend('force', default, opt or {})
+    M.config.rules = basic_rule.setup(M.config)
     api.nvim_exec ([[
     augroup autopairs_buf
     autocmd!
     autocmd BufEnter * :lua require("nvim-autopairs").on_attach()
     augroup end
         ]],false)
-
 end
 
 M.on_attach = function(bufnr)
     bufnr = bufnr or api.nvim_get_current_buf()
-    if utils.is_attached(bufnr) then return end
     if not utils.check_disable_ft(M.config.disable_filetype, vim.bo.filetype) then return end
+    local rules = {};
+    for _, rule in pairs(M.config.rules) do
+        if utils.check_filetype(rule.filetypes,vim.bo.filetype) then
+            table.insert(rules, rule)
+        end
+    end
+    -- sort by length
+    table.sort(rules, function (a, b)
+        return (#a.start_pair or 0) > (#b.start_pair or 0)
+    end)
 
-    state.rules = M.config.rules
+    state.rules = rules
+    if utils.is_attached(bufnr) then return end
+
     api.nvim_exec(string.format([[
     augroup autopairs_insert_%d
     autocmd!
     autocmd InsertCharPre <buffer=%d> call luaeval("require('nvim-autopairs').autopairs_insert(%d, _A)", v:char)
         augroup end ]],
         bufnr, bufnr, bufnr), false)
+    api.nvim_buf_set_keymap(bufnr,
+        'i',
+        "<bs>",
+        string.format("v:lua.MPairs.autopairs_bs(%d)", bufnr), {expr = true, noremap = true})
 
     api.nvim_buf_set_var(bufnr, "nvim-autopairs", 1)
 end
 
-M.autopairs_bs = function()
-
+M.autopairs_bs = function(bufnr)
+    local line = utils.text_get_current_line(bufnr)
+    local _, col = utils.get_cursor()
+    local filetype = vim.bo.filetype
+    for _, rule in pairs(state.rules) do
+        if rule.start_pair and utils.check_filetype(rule.filetypes, filetype) then
+            local prev_char = utils.text_sub_char(line, col,-#rule.start_pair)
+            local next_char = utils.text_sub_char(line, col+1,#rule.start_pair)
+            if
+                rule.start_pair == prev_char
+                and rule.end_pair == next_char
+                and rule:can_del({
+                    bufnr = bufnr,
+                    prev_char = prev_char,
+                    next_char = next_char,
+                    line = line
+                })
+            then
+                log.debug('delete')
+                local input = ""
+                for _ = 1, (#rule.start_pair), 1 do
+                    input = input .. utils.key.bs
+                end
+                for _ = 1, #rule.end_pair, 1 do
+                    input = input .. utils.key.right .. utils.key.bs
+                end
+                log.debug(input)
+                return utils.esc("<c-g>U" .. input)
+            end
+        end
+    end
+    return utils.esc(utils.key.bs)
 end
 
 
@@ -84,7 +130,6 @@ M.autopairs_insert = function(bufnr, char)
                 end
 
                 if rule:can_pair(cond_opt) then
-                    -- log.debug('match')
                     vim.schedule(function()
                         utils.insert_char(rule.end_pair)
                         utils.feed(utils.key.left, #rule.end_pair)
@@ -96,8 +141,30 @@ M.autopairs_insert = function(bufnr, char)
     end
 end
 
-M.autopairs_cr=function()
+M.autopairs_cr = function(bufnr)
+    bufnr = bufnr or api.nvim_get_current_buf()
+    local line = utils.text_get_current_line(bufnr)
+    local _, col = utils.get_cursor()
+    local filetype = vim.bo.filetype
+    for _, rule in pairs(state.rules) do
+        if rule.start_pair and utils.check_filetype(rule.filetypes, filetype) then
+            local prev_char = utils.text_sub_char(line, col,-#rule.start_pair)
+            local next_char = utils.text_sub_char(line, col+1,#rule.start_pair)
+            if
+                rule.start_pair == prev_char
+                and rule.end_pair == next_char
+            then
+                return utils.esc("<cr><c-o>O")
+            end
+        end
+    end
+    return utils.esc("<cr>")
 end
+
+M.check_break_line_char = function()
+    return M.autopairs_cr()
+end
+
 M.esc = utils.esc
 _G.MPairs = M
 return M
