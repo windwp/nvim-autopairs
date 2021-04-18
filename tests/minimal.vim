@@ -18,7 +18,7 @@ set nosmartindent
 set indentexpr=
 
 lua << EOF
-_G.__is_log = true
+-- _G.__is_log = true
 require("plenary/busted")
 vim.cmd[[luafile ./tests/test_utils.lua]]
 require("nvim-autopairs").setup()

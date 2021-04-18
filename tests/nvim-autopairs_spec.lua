@@ -107,7 +107,12 @@ local data = {
         before = [[aa  |.aa]],
         after  = [[aa  (|.aa]]
     },
-
+    {
+        name = "don't add bracket have open bracket in same line" ,
+        key    = [[(]],
+        before = [[(   many char |))]],
+        after  = [[(   many char (|))]]
+    },
     {
         name = "move right end line " ,
         key    = [["]],
@@ -122,6 +127,18 @@ local data = {
     },
 
     {
+        name = "move right square bracket" ,
+        key    = [[)]],
+        before = [[("abcd|) ]],
+        after  = [[("abcd)| ]]
+    },
+    {
+        name = "move right bracket" ,
+        key    = [[}]],
+        before = [[("abcd|}} ]],
+        after  = [[("abcd}|} ]]
+    },
+    {
         name = "move right when inside grave with special slash" ,
         key    = [[`]],
         before = [[(`abcd\"|`)]],
@@ -133,6 +150,7 @@ local data = {
         before = [[("abcd\"|")]],
         after  = [[("abcd\""|)]]
     },
+
     {
         name = "move right when inside single quote with special slash",
         filetype="javascript",
@@ -199,7 +217,6 @@ if #run_data == 0 then run_data = data end
 local function Test(test_data)
     for _, value in pairs(test_data) do
         it("test "..value.name, function()
-            log.debug("Start" .. value.name)
             local before = string.gsub(value.before , '%|' , "")
             local after = string.gsub(value.after , '%|' , "")
             local p_before = string.find(value.before , '%|')
@@ -213,7 +230,6 @@ local function Test(test_data)
             npairs.on_attach(vim.api.nvim_get_current_buf())
             vim.fn.setline(line , before)
             vim.fn.setpos('.' ,{0, line, p_before , 0})
-            log.debug("insert " .. value.key)
             helpers.insert(value.key)
             vim.wait(10)
             helpers.feed("<esc>")
