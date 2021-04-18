@@ -13,6 +13,7 @@ M.reset_vchar = function()
   vim.cmd [[let v:char = ""]]
 end
 
+
 M.is_quote = function (char)
     return char == "'" or char == '"' or char == '`'
 end
@@ -24,6 +25,17 @@ end
 
 M.is_close_bracket = function (char)
     return char == ")" or char == ']' or char == '}'
+end
+
+M.is_equal = function (value,text, is_regex)
+    log.debug('value'..value)
+    if is_regex and string.match(text, value) then
+        log.debug('match')
+        return true
+    elseif text == value then
+        return true
+    end
+    return false
 end
 
 M.is_in_quote = function(line, pos, quote)
@@ -88,6 +100,13 @@ M.text_get_current_line = function(bufnr)
     return M.text_get_line(bufnr, row -1)
 end
 
+M.repeat_key=function(key,num)
+    local text=''
+    for _ = 1, num, 1 do
+       text=text..key
+    end
+    return text
+end
 
 -- function M.text_prev_next(line, col, prev_count, next_char)
 --   prev_count = prev_count or 1
@@ -99,6 +118,15 @@ end
 --         return prev, next
 --   end
 -- end
+M.text_cusor_line = function(line, col, prev_count, next_count, is_regex)
+    if is_regex then
+        prev_count = col
+        next_count = #line - col
+    end
+    local prev = M.text_sub_char(line, col, -prev_count)
+    local next = M.text_sub_char(line, col + 1, next_count)
+    return prev, next
+end
 
 M.text_sub_char = function(line, start, num)
     local finish = start

@@ -26,8 +26,17 @@ function Rule.new(...)
         del_cond = {},
         cr_cond = {},
         pair_cond = {},
+        -- only use on end_wise
+        is_endwise = false,
+        -- use regex to compalre
+        is_regex = false
     },opt)
     return setmetatable(opt, {__index = Rule})
+end
+
+function Rule:use_regex(value)
+    self.is_regex = value
+    return self
 end
 
 function Rule:with_move(cond)
@@ -56,7 +65,7 @@ function Rule:with_pair(cond)
 end
 
 function Rule:end_wise()
-
+    self.is_endwise = true
     return self
 end
 
