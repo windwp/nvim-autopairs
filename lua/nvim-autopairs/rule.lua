@@ -52,7 +52,6 @@ end
 function Rule:with_pair(cond)
     if self.pair_cond == nil then self.pair_cond = {}end
     table.insert(self.pair_cond, cond)
-    if self=="dafs" the
     return self
 end
 

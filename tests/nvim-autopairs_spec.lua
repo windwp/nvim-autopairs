@@ -1,5 +1,7 @@
 local helpers = {}
 local npairs = require('nvim-autopairs')
+local Rule = require('nvim-autopairs.rule')
+local cond = require('nvim-autopairs.conds')
 local log = require('nvim-autopairs._log')
 _G.npairs = npairs;
 local eq=_G.eq
@@ -17,7 +19,6 @@ end
 
 local data = {
     {
-
         name = "add normal bracket" ,
         key    = [[{]],
         before = [[x| ]],
@@ -165,14 +166,6 @@ local data = {
         before = [[aaa(|) ]],
         after  = [[aaa| ]]
     },
-    -- {
-    --     only = true,
-    --     name = "delete bracket",
-    --     filetype="python",
-    --     key    = [[<bs>]],
-    --     before = [[a"""|"""" ]],
-    --     after  = [[a| ]]
-    -- },
     {
         name = "breakline on {" ,
         filetype="javascript",
@@ -253,19 +246,20 @@ end
 describe('autopairs ', function()
     Test(run_data)
     if isOnly then return end
-    -- run_data = {
-    --     {
-    --         name = "nil breakline_file_type " ,
-    --         filetype="javascript",
-    --         key    = [[<cr>]],
-    --         before = [[a[|] ]],
-    --         after  = "] "
-    --     },
-    -- }
+    npairs.add_rules({
+        Rule("$$", "$$",{"tex", "latex"})
+        -- don't add a pair if the next character is %
+        :with_pair(cond.not_after_regex_check("%%"))
+    })
+    run_data = {
+        {
+            name     = "test add_rules" ,
+            filetype = "latex",
+            key      = [[$]],
+            before   = [[asdas$| ]],
+            after    = [[asdas$$|$$ ]],
+        },
+    }
+    Test(run_data)
 
-    -- npairs.setup({
-    --     break_line_filetype = nil
-    -- })
-
-    -- Test(run_data)
 end)

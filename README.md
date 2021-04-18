@@ -40,7 +40,7 @@ npairs.add_rule({
 })
 -- you can use some builtin condition
 
-local cond = require('nvim-autopairs.cond')
+local cond = require('nvim-autopairs.conds')
 print(vim.inspect(cond))
 
 npairs.add_rules({

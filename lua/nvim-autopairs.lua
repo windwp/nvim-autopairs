@@ -93,7 +93,6 @@ M.autopairs_bs = function(bufnr)
                     line = line
                 })
             then
-                log.debug('delete')
                 local input = ""
                 for _ = 1, (#rule.start_pair), 1 do
                     input = input .. utils.key.bs
@@ -101,7 +100,6 @@ M.autopairs_bs = function(bufnr)
                 for _ = 1, #rule.end_pair, 1 do
                     input = input .. utils.key.right .. utils.key.bs
                 end
-                log.debug(input)
                 return utils.esc("<c-g>U" .. input)
             end
         end
