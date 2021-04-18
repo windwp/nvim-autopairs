@@ -1,6 +1,7 @@
 ##  nvim-autopairs
 
 A minimalist autopairs for Neovim written by Lua.
+It can support multipple character
 
 Requires neovim 0.5+
 
@@ -13,17 +14,8 @@ require('nvim-autopairs').setup()
 ## Default values
 
 ``` lua
-local pairs_map = {
-    ["'"] = "'",
-    ['"'] = '"',
-    ['('] = ')',
-    ['['] = ']',
-    ['{'] = '}',
-    ['`'] = '`',
-}
+
 local disable_filetype = { "TelescopePrompt" }
-local break_line_filetype = nil -- mean all file type
-local html_break_line_filetype = {'html' , 'vue' , 'typescriptreact' , 'svelte' , 'javascriptreact'}
 local ignored_next_char = "%w"
 
 ```
@@ -37,8 +29,49 @@ require('nvim-autopairs').setup({
 ```
 ### Rule
 
-- Pairs map only accept 1 character
-- You can use regex on filetype
+It can support multipple character
+
+``` lua
+local Rule = require('nvim-autopairs.rule')
+local npairs = require('nvim-autopairs')
+
+npairs.add_rule({
+    Rule("$$","$$","tex")
+})
+-- you can use some builtin condition
+
+local cond = require('nvim-autopairs.cond')
+print(vim.inspect(cond))
+
+npairs.add_rules({
+  Rule("$", "$",{"tex", "latex"})
+    -- don't add a pair if the next character is %
+    :with_pair(cond.not_after_regex_check("%%"))
+    -- don't add a pair if  the previous character is xxx
+    :with_pair(cond.not_before_regex_check("xxx", 3))
+    -- don't move right when repeat character
+    :with_move(cond.none())
+    -- don't delete if the next character is xx
+    :with_del(cond.not_after_regex_check("xx"))
+    -- disable  add newline  when press <cr>
+    :with_cr(cond.none())
+  },
+)
+
+
+npairs.add_rules({
+  Rule("$$","$$","tex")
+    :with_pair(function(otps)
+        print(vim.inspect(otps))
+        if opts.line=="aa $$" then
+        -- don't add pair on that line
+          return false
+        end
+    end)
+   }
+)
+--- check ./lua/nvim-autopairs/rules/basic.lua
+```
 
 ### Break line on html or inside pairs
 
@@ -81,7 +114,7 @@ MUtils.completion_confirm=function()
       return npairs.esc("<c-n><c-y>")
     end
   else
-    return npairs.check_break_line_char()
+    return npairs.autopairs_cr()
   end
 end
 
@@ -89,6 +122,7 @@ end
 remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 ```
 #### using nvim-compe
+
 ``` lua
 local remap = vim.api.nvim_set_keymap
 local npairs = require('nvim-autopairs')
@@ -108,7 +142,7 @@ MUtils.completion_confirm=function()
       return npairs.esc("<c-n>")
     end
   else
-    return npairs.check_break_line_char()
+    return npairs.autopairs_cr()
   end
 end
 
@@ -166,16 +200,4 @@ Before        Input         After
 
 
 ## FAQ
-
-- Is this support autopair of 2 character?
-> No, Any PR is welcome :)
-
-- Do you have any plan to add more feature (flymode ,end-wise) ?
->No, It is a minimalist autopairs.
->I don't want to make everything complicated.
->
->If you want a flymode or something else you can use [jiangmiao autopairs](https://github.com/jiangmiao/auto-pairs)
->
->If you want more feature please try to use [lexima](https://github.com/cohama/lexima.vim)
-
 https://github.com/tpope/vim-endwise

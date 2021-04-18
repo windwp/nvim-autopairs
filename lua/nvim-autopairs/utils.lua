@@ -17,6 +17,15 @@ M.is_quote = function (char)
     return char == "'" or char == '"' or char == '`'
 end
 
+M.is_bracket = function (char)
+    return char == "(" or char == '[' or char == '{'
+end
+
+
+M.is_close_bracket = function (char)
+    return char == ")" or char == ']' or char == '}'
+end
+
 M.is_in_quote = function(line, pos, quote)
   local cIndex = 0
   local result = false

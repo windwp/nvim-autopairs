@@ -23,7 +23,27 @@ M.setup = function(opt)
         ]],false)
 end
 
+M.add_rule = function (rule)
+    table.insert(M.config.rules, rule)
+end
+
+
+M.disable=function()
+    state.disabled = true
+end
+
+M.enable = function()
+    state.disabled = false
+end
+
+M.add_rules = function (rules)
+    for _, rule in pairs(rules) do
+        table.insert(M.config.rules, rule)
+    end
+end
+
 M.on_attach = function(bufnr)
+    if state.disabled then return end
     bufnr = bufnr or api.nvim_get_current_buf()
     if not utils.check_disable_ft(M.config.disable_filetype, vim.bo.filetype) then return end
     local rules = {};
@@ -55,6 +75,7 @@ M.on_attach = function(bufnr)
 end
 
 M.autopairs_bs = function(bufnr)
+    if state.disabled then return end
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
     local filetype = vim.bo.filetype
@@ -92,55 +113,56 @@ end
 local skip_next = false
 
 M.autopairs_insert = function(bufnr, char)
+    if state.disabled then return end
     if skip_next then skip_next = false return end
     local line = utils.text_get_current_line(bufnr)
-    -- log.debug("-----------------")
-    -- log.debug("line:" .. line)
-    -- log.debug("char:" .. char)
     local _, col = utils.get_cursor()
-    local filetype = vim.bo.filetype
     local new_text = line:sub(1, col) .. char .. line:sub(col + 1,#line)
     -- log.debug("new_text:[" .. new_text .. "]")
     for _, rule in pairs(state.rules) do
-        if rule.start_pair and utils.check_filetype(rule.filetypes, filetype) then
+        if rule.start_pair then
             local prev_char = utils.text_sub_char(new_text, col + 1,-#rule.start_pair)
-            local next_char = utils.text_sub_char(new_text, col + 2,#rule.start_pair)
-            if prev_char == rule.start_pair then
-                -- log.debug("start_pair" .. rule.start_pair)
-                -- log.debug('prev_char' .. prev_char)
-                -- log.debug('next_char' .. next_char)
-                local cond_opt = {
-                    text = new_text,
-                    rule = rule,
-                    bufnr = bufnr,
-                    col = col,
-                    char = char,
-                    line = line,
-                    prev_char = prev_char,
-                    next_char = next_char,
-                }
+            local next_char = utils.text_sub_char(new_text, col + 2,#rule.end_pair)
+            local cond_opt = {
+                text = new_text,
+                rule = rule,
+                bufnr = bufnr,
+                col = col,
+                char = char,
+                line = line,
+                prev_char = prev_char,
+                next_char = next_char,
+            }
+            -- log.debug("start_pair" .. rule.start_pair)
+            -- log.debug('prev_char' .. prev_char)
+            -- log.debug('next_char' .. next_char)
+            if
+                next_char == rule.end_pair
+                and rule:can_move(cond_opt)
+            then
+                utils.reset_vchar()
+                vim.schedule(function()
+                    utils.feed(utils.key.right, -1)
+                end)
+                return false
+            end
 
-                if rule:can_move(cond_opt) then
-                    utils.reset_vchar()
-                    vim.schedule(function()
-                        utils.feed(utils.key.right, -1)
-                    end)
-                    return false
-                end
-
-                if rule:can_pair(cond_opt) then
-                    vim.schedule(function()
-                        utils.insert_char(rule.end_pair)
-                        utils.feed(utils.key.left, #rule.end_pair)
-                    end)
-                    return
-                end
+            if
+                prev_char == rule.start_pair
+                and rule:can_pair(cond_opt)
+            then
+                vim.schedule(function()
+                    utils.insert_char(rule.end_pair)
+                    utils.feed(utils.key.left, #rule.end_pair)
+                end)
+                return
             end
         end
     end
 end
 
 M.autopairs_cr = function(bufnr)
+    if state.disabled then return end
     bufnr = bufnr or api.nvim_get_current_buf()
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
@@ -148,10 +170,16 @@ M.autopairs_cr = function(bufnr)
     for _, rule in pairs(state.rules) do
         if rule.start_pair and utils.check_filetype(rule.filetypes, filetype) then
             local prev_char = utils.text_sub_char(line, col,-#rule.start_pair)
-            local next_char = utils.text_sub_char(line, col+1,#rule.start_pair)
+            local next_char = utils.text_sub_char(line, col+1,#rule.end_pair)
             if
                 rule.start_pair == prev_char
                 and rule.end_pair == next_char
+                and rule:can_cr({
+                    bufnr = bufnr,
+                    prev_char = prev_char,
+                    next_char = next_char,
+                    line = line
+                })
             then
                 return utils.esc("<cr><c-o>O")
             end

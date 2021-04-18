@@ -1,8 +1,5 @@
-
-local Rule = require('nvim-autopairs.rule').new
-local log = require('nvim-autopairs._log')
+local Rule = require('nvim-autopairs.rule')
 local cond = require('nvim-autopairs.conds')
-
 
 local function setup(opt)
     local basic = function(...)
@@ -12,15 +9,19 @@ local function setup(opt)
                 :with_pair(cond.not_add_quote_inside_quote())
     end
     local rules = {
+        Rule("<!--", "-->", 'html'):with_cr(cond.none()),
         Rule("```", "```", 'markdown'),
         Rule('"""', '"""', 'python'),
         basic("'", "'")
             :with_pair(cond.not_before_regex_check("%w")) ,
         basic("`", "`"),
         basic('"', '"'),
-        basic("(", ")"),
-        basic("[", "]"),
-        basic("{", "}"),
+        basic("(", ")")
+            :with_pair(cond.check_is_bracket_line()),
+        basic("[", "]")
+            :with_pair(cond.check_is_bracket_line()),
+        basic("{", "}")
+            :with_pair(cond.check_is_bracket_line()),
         Rule(">", "<",
             { 'html', 'typescript', 'typescriptreact', 'svelte', 'vue'})
             :with_move(cond.none())

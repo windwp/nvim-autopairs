@@ -23,9 +23,9 @@ function Rule.new(...)
         -- allow move when press close_pairs
         move_cond = nil,
         -- allow delete when press bs
-        del_cond = {function() return true end},
-        cr_cond = {function() return true end},
-        pair_cond = {function() return true end},
+        del_cond = {},
+        cr_cond = {},
+        pair_cond = {},
     },opt)
     return setmetatable(opt, {__index = Rule})
 end
@@ -42,18 +42,31 @@ function Rule:with_del(cond)
     return self
 end
 
-function Rule:with_pair(cond)
-    if self.pair_cond == nil then self.pair_cond = {}end
-    table.insert(self.pair_cond, cond)
+
+function Rule:with_cr(cond)
+    if self.cr_cond == nil then self.cr_cond = {}end
+    table.insert(self.cr_cond, cond)
     return self
 end
 
+function Rule:with_pair(cond)
+    if self.pair_cond == nil then self.pair_cond = {}end
+    table.insert(self.pair_cond, cond)
+    if self=="dafs" the
+    return self
+end
+
+function Rule:end_wise()
+
+    return self
+end
 
 local function can_do(conds, opt)
     if type(conds) == 'table' then
         for _, cond in pairs(conds) do
-            if not cond(opt) then
-                return false
+            local result = cond(opt)
+            if result ~= nil then
+                return result
             end
         end
         return true
@@ -81,4 +94,4 @@ function Rule:can_cr(opt)
     return can_do(self.cr_cond, opt)
 end
 
-return {new = Rule.new}
+return Rule.new

@@ -17,7 +17,7 @@ utils.feed = function(text,num)
     for _ = 1, num, 1 do
         result = result .. text
     end
-    log.debug("result" .. result)
+    -- log.debug("result" .. result)
     api.nvim_feedkeys (api.nvim_replace_termcodes(
         result, true, false, true),
 		"x", true)
