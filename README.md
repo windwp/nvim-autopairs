@@ -196,5 +196,3 @@ Before        Input         After
 ```
 
 
-## FAQ
-https://github.com/tpope/vim-endwise
