@@ -1,5 +1,6 @@
 local utils = require('nvim-autopairs.utils')
 local log = require('nvim-autopairs._log')
+
 local cond={}
 
 -- cond
@@ -79,23 +80,22 @@ end
 
 cond.move_right = function ()
     return function(opts)
-        log.debug("move_right")
-        if utils.is_close_bracket(opts.char) then
-            return true
-        end
-        -- move right when have quote on end line or in quote
-        -- situtaion  |"  => "|
-        if
-            utils.is_quote(opts.char)
-            and opts.next_char == opts.char
-        then
-            if opts.col + 1 == string.len(opts.line) then
+        log.debug('move_right')
+        if opts.next_char == opts.char then
+            if utils.is_close_bracket(opts.char) then
                 return true
             end
-            -- ("|")  => (""|)
-            --  ""       |"      "  => ""       "|      "
-            if utils.is_in_quote(opts.text, opts.col  - 1, opts.char) then
-                return  true
+            -- move right when have quote on end line or in quote
+            -- situtaion  |"  => "|
+            if utils.is_quote(opts.char) then
+                if opts.col + 1 == string.len(opts.line) then
+                    return true
+                end
+                -- ("|")  => (""|)
+                --  ""       |"      "  => ""       "|      "
+                if utils.is_in_quote(opts.text, opts.col  - 1, opts.char) then
+                    return  true
+                end
             end
         end
         return false

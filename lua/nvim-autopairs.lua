@@ -116,7 +116,7 @@ M.autopairs_insert = function(bufnr, char)
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
     local new_text = line:sub(1, col) .. char .. line:sub(col + 1,#line)
-    -- log.debug("new_text:[" .. new_text .. "]")
+    log.debug("new_text:[" .. new_text .. "]")
     for _, rule in pairs(state.rules) do
         if rule.start_pair then
             local prev_char = utils.text_sub_char(new_text, col + 1,-#rule.start_pair)
@@ -131,9 +131,9 @@ M.autopairs_insert = function(bufnr, char)
                 prev_char = prev_char,
                 next_char = next_char,
             }
-            -- log.debug("start_pair" .. rule.start_pair)
-            -- log.debug('prev_char' .. prev_char)
-            -- log.debug('next_char' .. next_char)
+            log.debug("start_pair" .. rule.start_pair)
+            log.debug('prev_char' .. prev_char)
+            log.debug('next_char' .. next_char)
             if
                 next_char == rule.end_pair
                 and rule:can_move(cond_opt)

@@ -151,6 +151,13 @@ local data = {
         before = [[("abcd\"|")]],
         after  = [[("abcd\""|)]]
     },
+    {
+        name = "move right on close bracket",
+        filetype="javascript",
+        key    = [[)]],
+        before = [[("(dsadsa|" gs})]],
+        after  = [[("(dsadsa)|" gs})]]
+    },
 
     {
         name = "move right when inside single quote with special slash",
@@ -223,6 +230,7 @@ local function Test(test_data)
             npairs.on_attach(vim.api.nvim_get_current_buf())
             vim.fn.setline(line , before)
             vim.fn.setpos('.' ,{0, line, p_before , 0})
+            -- log.debug("insert: " .. value.key)
             helpers.insert(value.key)
             vim.wait(10)
             helpers.feed("<esc>")
