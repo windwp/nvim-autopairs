@@ -11,6 +11,12 @@ local function setup(opt)
     local rules = {
         Rule("<!--", "-->", 'html'):with_cr(cond.none()),
         Rule("```", "```", 'markdown'),
+        Rule("```.*$", "```", 'markdown')
+            :with_move(cond.none())
+            :with_del(cond.none())
+            :with_pair(cond.none())
+            :use_regex(true)
+        ,
         Rule('"""', '"""', 'python'),
         basic("'", "'")
             :with_pair(cond.not_before_regex_check("%w")) ,

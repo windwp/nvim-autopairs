@@ -29,9 +29,6 @@ M.is_close_bracket = function (char)
 end
 
 M.is_equal = function (value,text, is_regex)
-    log.debug(vim.inspect( is_regex)) 
-    log.debug("text" .. value)
-    log.debug("text" .. text)
     if is_regex and string.match(text, value) then
         return true
     elseif text == value then

@@ -11,7 +11,6 @@ npairs.add_rules({
     Rule("x%d%d%d%d*$", "number", "lua")
       :use_regex(true)
       :replace_endpair(function(opts)
-          -- print(vim.inspect(opts))
             return opts.prev_char:sub(#opts.prev_char - 3,#opts.prev_char)
 
       end)
@@ -203,6 +202,13 @@ local data = {
         key    = [[<cr>]],
         before = [[a[|] ]],
         after  = "] "
+    },
+    {
+        name = "breakline on markdown " ,
+        filetype="markdown",
+        key    = [[<cr>]],
+        before = [[``` lua|```]],
+        after  = [[```]]
     },
     {
         name = "breakline on < html" ,

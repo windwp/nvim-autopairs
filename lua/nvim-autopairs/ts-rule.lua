@@ -3,7 +3,7 @@ local cond = require('nvim-autopairs.conds')
 local ts_conds = require('nvim-autopairs.ts-conds')
 
 return {
-    endwise=function (...)
+    endwise = function (...)
         local params = {...}
         assert(type(params[4]) == 'string', 'type ')
 

@@ -178,6 +178,7 @@ M.autopairs_cr = function(bufnr)
     bufnr = bufnr or api.nvim_get_current_buf()
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
+    -- log.debug("on_cr")
     for _, rule in pairs(state.rules) do
         if rule.start_pair then
             local prev_char, next_char = utils.text_cusor_line(
@@ -186,6 +187,9 @@ M.autopairs_cr = function(bufnr)
                 #rule.start_pair,
                 #rule.end_pair, rule.is_regex
             )
+            -- log.debug('prev_char' .. rule.start_pair)
+            -- log.debug('prev_char' .. prev_char)
+            -- log.debug('next_char' .. next_char)
             if
                 rule.is_endwise
                 and utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
@@ -200,13 +204,13 @@ M.autopairs_cr = function(bufnr)
             then
                 log.debug('do endwise')
                 return utils.esc(
-                        rule.end_pair
-                        ..  utils.repeat_key(utils.key.left, 3)
-                        .."<cr><esc><<O"
-                    )
+                    rule.end_pair
+                    .. utils.repeat_key(utils.key.left, 3)
+                    .. "<cr><esc><<O"
+                )
             end
             if
-                rule.start_pair == prev_char
+                utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
                 and rule.end_pair == next_char
                 and rule:can_cr({
                     check_ts = false,
@@ -217,7 +221,7 @@ M.autopairs_cr = function(bufnr)
                     line = line
                 })
             then
-                log.debug('do _cr')
+                log.debug('do_cr')
                 return utils.esc("<cr><c-o>O")
             end
         end

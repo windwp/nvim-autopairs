@@ -194,4 +194,14 @@ Before        Input         After
 |+foobar       (            (|)+foobar
 ```
 
+### Plugin Intergation
+if you use another plugin you can temporary to disable autopair
+``` lua
+     require('nvim-autopairs').disable()
+     -- do your task
+     require('nvim-autopairs').enable()
+```
+### Endwise
+
+[endwise](./doc/endwise.md)
 
