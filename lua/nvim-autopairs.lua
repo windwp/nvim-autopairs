@@ -163,8 +163,9 @@ M.autopairs_insert = function(bufnr, char)
                 -- utils.set_vchar(char .. rule.end_pair)
                 utils.set_vchar("")
                 vim.schedule(function()
-                    utils.insert_char(char .. rule:get_end_pair(cond_opt))
-                    utils.feed(utils.key.left, #rule.end_pair)
+                    local end_pair = rule:get_end_pair(cond_opt)
+                    utils.insert_char(char .. end_pair)
+                    utils.feed(utils.key.left, #end_pair)
                 end)
                 return
             end

@@ -19,7 +19,7 @@ function Rule.new(...)
     opt = vim.tbl_extend('force', {
         start_pair = nil,
         end_pair = nil,
-        replace_endpair = nil,
+        end_pair_func = false,
         filetypes = nil,
         -- allow move when press close_pairs
         move_cond = nil,
@@ -40,15 +40,14 @@ function Rule:use_regex(value)
     return self
 end
 function Rule:get_end_pair(opts)
-    log.debug(self.replace_endpair)
-    if self.replace_endpair ~= nil then
-        return self.replace_endpair(opts)
+    if self.end_pair_func then
+        return self.end_pair_func(opts)
     end
-    return self.end_pair
+    return  self.end_pair
 end
 
 function Rule:replace_endpair(value)
-    self.replace_endpair = value
+    self.end_pair_func = value
     return self
 end
 
