@@ -1,6 +1,6 @@
 ##  nvim-autopairs
 
-A minimalist autopairs for Neovim written by Lua.
+A super powerful autopairs for Neovim.
 It support multipple character
 
 Requires neovim 0.5+
@@ -88,6 +88,7 @@ remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap =
 
 ### Rule
 
+nvim-autopairs use rule with condition to check pair.
 
 ``` lua
 local Rule = require('nvim-autopairs.rule')
@@ -113,7 +114,7 @@ npairs.add_rules({
     :with_move(cond.none())
     -- don't delete if the next character is xx
     :with_del(cond.not_after_regex_check("xx"))
-    -- disable  add newline  when press <cr>
+    -- disable  add newline when press <cr>
     :with_cr(cond.none())
   },
 )

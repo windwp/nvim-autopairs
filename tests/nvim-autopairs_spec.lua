@@ -12,7 +12,6 @@ npairs.add_rules({
       :use_regex(true)
       :replace_endpair(function(opts)
           -- print(vim.inspect(opts))
-            -- return "dfsafsa"
             return opts.prev_char:sub(#opts.prev_char - 3,#opts.prev_char)
 
       end)
@@ -227,12 +226,11 @@ local data = {
         after  = [[u1234|number ]]
     },
     {
-        only = true,
         name="text regex",
         filetype = "lua",
         key="4",
         before = [[x123| ]],
-        after  = [[x1234|vv ]]
+        after  = [[x1234|1234 ]]
     }
 }
 
