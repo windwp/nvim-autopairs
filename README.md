@@ -1,7 +1,7 @@
 ##  nvim-autopairs
 
 A minimalist autopairs for Neovim written by Lua.
-It can support multipple character
+It support multipple character
 
 Requires neovim 0.5+
 
@@ -27,69 +27,7 @@ require('nvim-autopairs').setup({
   disable_filetype = { "TelescopePrompt" , "vim" },
 })
 ```
-### Rule
 
-It can support multipple character
-
-``` lua
-local Rule = require('nvim-autopairs.rule')
-local npairs = require('nvim-autopairs')
-
-npairs.add_rule({
-    Rule("$$","$$","tex")
-})
--- you can use some builtin condition
-
-local cond = require('nvim-autopairs.conds')
-print(vim.inspect(cond))
-
-npairs.add_rules({
-  Rule("$", "$",{"tex", "latex"})
-    -- don't add a pair if the next character is %
-    :with_pair(cond.not_after_regex_check("%%"))
-    -- don't add a pair if  the previous character is xxx
-    :with_pair(cond.not_before_regex_check("xxx", 3))
-    -- don't move right when repeat character
-    :with_move(cond.none())
-    -- don't delete if the next character is xx
-    :with_del(cond.not_after_regex_check("xx"))
-    -- disable  add newline  when press <cr>
-    :with_cr(cond.none())
-  },
-)
-
-
-npairs.add_rules({
-  Rule("$$","$$","tex")
-    :with_pair(function(otps)
-        print(vim.inspect(otps))
-        if opts.line=="aa $$" then
-        -- don't add pair on that line
-          return false
-        end
-    end)
-   }
-)
---- check ./lua/nvim-autopairs/rules/basic.lua
-```
-
-### Break line on html or inside pairs
-
-By default nvim-autopairs don't mapping `<CR>` on insert mode
-if you want to do that you need to mapping it by your self
-
-``` text
-Before        Input         After
-------------------------------------
-{|}           <CR>          {
-                                |
-                            }
-------------------------------------
-<div>|</div>    <CR>       <div>
-                                |
-                           </div>
-
-```
 
 #### Sample of mapping `<CR>`
 
@@ -148,7 +86,73 @@ remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap =
 
 ```
 
+### Rule
 
+
+``` lua
+local Rule = require('nvim-autopairs.rule')
+local npairs = require('nvim-autopairs')
+
+npairs.add_rule({
+    Rule("$$","$$","tex")
+})
+
+
+-- you can use some builtin condition
+
+local cond = require('nvim-autopairs.conds')
+print(vim.inspect(cond))
+
+npairs.add_rules({
+  Rule("$", "$",{"tex", "latex"})
+    -- don't add a pair if the next character is %
+    :with_pair(cond.not_after_regex_check("%%"))
+    -- don't add a pair if  the previous character is xxx
+    :with_pair(cond.not_before_regex_check("xxx", 3))
+    -- don't move right when repeat character
+    :with_move(cond.none())
+    -- don't delete if the next character is xx
+    :with_del(cond.not_after_regex_check("xx"))
+    -- disable  add newline  when press <cr>
+    :with_cr(cond.none())
+  },
+)
+
+
+npairs.add_rules({
+  Rule("$$","$$","tex")
+    :with_pair(function(otps)
+        print(vim.inspect(otps))
+        if opts.line=="aa $$" then
+        -- don't add pair on that line
+          return false
+        end
+    end)
+   }
+)
+
+-- you can use regex
+--  press u1234 => u1234number
+npairs.add_rules({
+    Rule("u%d%d%d%d*$", "number", "lua")
+      :use_regex(true)
+})
+
+
+--  press u1234 => u12341234
+npairs.add_rules({
+    Rule("x%d%d%d%d*$", "number", "lua")
+      :use_regex(true)
+      :replace_endpair(function(opts)
+          -- print(vim.inspect(opts))
+          return opts.prev_char:sub(#opts.prev_char - 3,#opts.prev_char)
+      end)
+})
+
+
+--- check ./lua/nvim-autopairs/rules/basic.lua
+
+```
 
 ### Don't add pairs if it already have a close pairs in same line
 
@@ -161,12 +165,6 @@ Before        Input         After
 
 ```
 
-``` lua
--- default is true if you want to disable it set it to false
-require('nvim-autopairs').setup({
-  check_line_pair = false
-})
-```
 
 ### Don't add pairs if the next char is alphanumeric
 

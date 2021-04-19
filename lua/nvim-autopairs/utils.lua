@@ -9,8 +9,9 @@ M.key = {
     right = "<right>"
 }
 
-M.reset_vchar = function()
-  vim.cmd [[let v:char = ""]]
+M.set_vchar = function(text)
+    text = text:gsub('"', '\\"')
+  vim.cmd(string.format([[let v:char = "%s"]],text))
 end
 
 
@@ -28,9 +29,10 @@ M.is_close_bracket = function (char)
 end
 
 M.is_equal = function (value,text, is_regex)
-    log.debug('value'..value)
+    log.debug(vim.inspect( is_regex)) 
+    log.debug("text" .. value)
+    log.debug("text" .. text)
     if is_regex and string.match(text, value) then
-        log.debug('match')
         return true
     elseif text == value then
         return true
@@ -123,7 +125,7 @@ M.text_cusor_line = function(line, col, prev_count, next_count, is_regex)
         prev_count = col
         next_count = #line - col
     end
-    local prev = M.text_sub_char(line, col, -prev_count)
+    local prev = M.text_sub_char(line, col, - prev_count)
     local next = M.text_sub_char(line, col + 1, next_count)
     return prev, next
 end
@@ -151,7 +153,7 @@ M.feed = function(text, num)
         result = result .. text
     end
     log.debug("result" .. result)
-    api.nvim_feedkeys (api.nvim_replace_termcodes(
+    api.nvim_feedkeys(api.nvim_replace_termcodes(
         result, true, false, true),
 		"n", true)
 end

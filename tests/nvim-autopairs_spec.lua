@@ -6,6 +6,17 @@ local log = require('nvim-autopairs._log')
 _G.npairs = npairs;
 local eq=_G.eq
 
+npairs.add_rules({
+    Rule("u%d%d%d%d*$", "number", "lua"):use_regex(true),
+    Rule("x%d%d%d%d*$", "number", "lua")
+      :use_regex(true)
+      :replace_endpair(function(opts)
+          -- print(vim.inspect(opts))
+            -- return "dfsafsa"
+            return opts.prev_char:sub(#opts.prev_char - 3,#opts.prev_char)
+
+      end)
+})
 vim.api.nvim_set_keymap('i' , '<CR>','v:lua.npairs.check_break_line_char()', {expr = true , noremap = true})
 function helpers.feed(text, feed_opts)
     feed_opts = feed_opts or 'n'
@@ -44,7 +55,7 @@ local data = {
         after  = [[aa"|" aa]]
     },
     {
-
+        -- only = true,
         name = "add python quote" ,
         filetype = "python",
         key    = [["]],
@@ -200,6 +211,28 @@ local data = {
         key    = [[<cr>]],
         before = [[<div>|</div>]],
         after  = [[</div>]]
+    },
+    {
+        name = "press multiple key" ,
+        filetype = "html",
+        key    = [[((((]],
+        before = [[a| ]],
+        after  = [[a((((|)))) ]]
+    },
+    {
+        name="text regex",
+        filetype = "lua",
+        key="4",
+        before = [[u123| ]],
+        after  = [[u1234|number ]]
+    },
+    {
+        only = true,
+        name="text regex",
+        filetype = "lua",
+        key="4",
+        before = [[x123| ]],
+        after  = [[x1234|vv ]]
     }
 }
 
