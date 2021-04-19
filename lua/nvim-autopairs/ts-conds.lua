@@ -1,7 +1,6 @@
 local conds = {}
 local _, ts_utils = pcall(require, 'nvim-treesitter.ts_utils')
 local log = require('nvim-autopairs._log')
-local ts_lib=require('nvim-autopairs.ts-utils')
 local parsers = require'nvim-treesitter.parsers'
 
 conds.is_ts_node = function(nodename)
@@ -20,8 +19,8 @@ conds.is_ts_node = function(nodename)
                 -- if match then we need tocheck parent node
                 local _,_, linenr_target = target:range()
                 local _,_, linenr_parent = target:parent():range()
-                log.debug(linenr_target)
-                log.debug(linenr_parent)
+                log.debug(target:range())
+                log.debug(target:parent():range())
                 if linenr_parent - linenr_target == 1 then
                     return true
                 end

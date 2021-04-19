@@ -81,13 +81,17 @@ M.autopairs_bs = function(bufnr)
     if state.disabled then return end
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
-    local filetype = vim.bo.filetype
     for _, rule in pairs(state.rules) do
-        if rule.start_pair and utils.check_filetype(rule.filetypes, filetype) then
-            local prev_char = utils.text_sub_char(line, col,-#rule.start_pair)
-            local next_char = utils.text_sub_char(line, col+1,#rule.start_pair)
+        if rule.start_pair then
+            local prev_char, next_char = utils.text_cusor_line(
+                line,
+                col,
+                #rule.start_pair,
+                #rule.end_pair,
+                rule.is_regex
+            )
             if
-                rule.start_pair == prev_char
+                utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
                 and rule.end_pair == next_char
                 and rule:can_del({
                     bufnr = bufnr,
@@ -119,11 +123,15 @@ M.autopairs_insert = function(bufnr, char)
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
     local new_text = line:sub(1, col) .. char .. line:sub(col + 1,#line)
-    log.debug("new_text:[" .. new_text .. "]")
+    -- log.debug("new_text:[" .. new_text .. "]")
     for _, rule in pairs(state.rules) do
         if rule.start_pair then
-            local prev_char = utils.text_sub_char(new_text, col + 1,-#rule.start_pair)
-            local next_char = utils.text_sub_char(new_text, col + 2,#rule.end_pair)
+            local prev_char, next_char = utils.text_cusor_line(
+                new_text,
+                col + 1,
+                #rule.start_pair,
+                #rule.end_pair, rule.is_regex
+            )
             local cond_opt = {
                 text = new_text,
                 rule = rule,
@@ -134,14 +142,14 @@ M.autopairs_insert = function(bufnr, char)
                 prev_char = prev_char,
                 next_char = next_char,
             }
-            log.debug("start_pair" .. rule.start_pair)
-            log.debug('prev_char' .. prev_char)
-            log.debug('next_char' .. next_char)
+            -- log.debug("start_pair" .. rule.start_pair)
+            -- log.debug('prev_char' .. prev_char)
+            -- log.debug('next_char' .. next_char)
             if
                 next_char == rule.end_pair
                 and rule:can_move(cond_opt)
             then
-                utils.reset_vchar()
+                utils.set_vchar("")
                 vim.schedule(function()
                     utils.feed(utils.key.right, -1)
                 end)
@@ -149,11 +157,13 @@ M.autopairs_insert = function(bufnr, char)
             end
 
             if
-                prev_char == rule.start_pair
+                utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_pair(cond_opt)
             then
+                -- utils.set_vchar(char .. rule.end_pair)
+                utils.set_vchar("")
                 vim.schedule(function()
-                    utils.insert_char(rule.end_pair)
+                    utils.insert_char(char .. rule:get_end_pair(cond_opt))
                     utils.feed(utils.key.left, #rule.end_pair)
                 end)
                 return
@@ -163,21 +173,18 @@ M.autopairs_insert = function(bufnr, char)
 end
 
 M.autopairs_cr = function(bufnr)
-    log.debug("on_cr")
     if state.disabled then return end
     bufnr = bufnr or api.nvim_get_current_buf()
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
-    local filetype = vim.bo.filetype
     for _, rule in pairs(state.rules) do
-        if rule.start_pair and utils.check_filetype(rule.filetypes, filetype) then
+        if rule.start_pair then
             local prev_char, next_char = utils.text_cusor_line(
                 line,
                 col,
                 #rule.start_pair,
                 #rule.end_pair, rule.is_regex
             )
-            log.debug(vim.inspect( prev_char))
             if
                 rule.is_endwise
                 and utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
@@ -190,7 +197,7 @@ M.autopairs_cr = function(bufnr)
                     line = line
                 })
             then
-                log.debug('correct_endwise')
+                log.debug('do endwise')
                 return utils.esc(
                         rule.end_pair
                         ..  utils.repeat_key(utils.key.left, 3)
@@ -209,10 +216,9 @@ M.autopairs_cr = function(bufnr)
                     line = line
                 })
             then
-                log.debug('map _cr')
+                log.debug('do _cr')
                 return utils.esc("<cr><c-o>O")
             end
-            log.debug("end_cr")
         end
     end
     return utils.esc("<cr>")
