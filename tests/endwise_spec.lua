@@ -76,6 +76,7 @@ local _, ts_utils = pcall(require, 'nvim-treesitter.ts_utils')
 _G.TU = ts_utils
 
 local function Test(test_data)
+    log.debug("aaa")
     for _, value in pairs(test_data) do
         it("test "..value.name, function()
             local text_before = {}
