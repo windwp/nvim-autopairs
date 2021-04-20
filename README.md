@@ -213,6 +213,7 @@ if you use another plugin you can temporary to disable autopair
      -- do your task
      require('nvim-autopairs').enable()
 ```
+
 ### Endwise
 
 [endwise](./doc/endwise.md)

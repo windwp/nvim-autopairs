@@ -27,6 +27,16 @@ M.add_rule = function (rule)
     table.insert(M.config.rules, rule)
 end
 
+M.remove_rule = function (pair)
+    local tbl={}
+    for _, r in pairs(M.config.rules) do
+        if r.start_pair ~= pair then
+            table.insert(tbl, r)
+        end
+    end
+    M.config.rules = tbl
+end
+
 M.add_rules = function (rules)
     for _, rule in pairs(rules) do
         table.insert(M.config.rules, rule)
@@ -69,24 +79,25 @@ M.on_attach = function(bufnr)
                 rule.key_map = rule.start_pair:sub((#rule.start_pair))
             end
             local key = string.format('"%s"', rule.key_map)
-            if rule.key_map == '"' then key =[['"']] end
+            if rule.key_map == '"' then key = [['"']] end
             local mapping = string.format("v:lua.MPairs.autopairs_map(%d,%s)", bufnr, key)
             api.nvim_buf_set_keymap(bufnr, "i", rule.key_map, mapping, {expr = true, noremap = true})
 
-            if rule.key_map== "(" or rule.key_map == '[' or rule.key_map == "{" then
+            if rule.key_map == "(" or rule.key_map == '[' or rule.key_map == "{" then
                 key = rule.end_pair:sub(#rule.end_pair)
                 mapping = string.format([[v:lua.MPairs.autopairs_map(%d, '%s')]], bufnr,key )
                 vim.api.nvim_buf_set_keymap(bufnr, 'i',key, mapping, {expr = true, noremap = true})
             end
         else
-            if rule.key_map ~="" then
+            if rule.key_map ~= "" then
                 local mapping = string.format("v:lua.MPairs.autopairs_map(%d,'%s')", bufnr, rule.key_map)
                 api.nvim_buf_set_keymap(bufnr, "i", rule.key_map, mapping, {expr = true, noremap = true})
-            else
+            elseif rule.is_endwise == false then
                 enable_insert_auto = true
             end
         end
     end
+
     if enable_insert_auto then
         api.nvim_exec(string.format([[
         augroup autopairs_insert_%d
@@ -189,7 +200,7 @@ M.autopairs_map = function(bufnr, char)
                 and rule:can_pair(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
-                if add_char == 0 then char = ""end
+                if add_char == 0 then char = "" end
                 return utils.esc(char .. end_pair .. utils.repeat_key(utils.key.left,#end_pair))
             end
         end

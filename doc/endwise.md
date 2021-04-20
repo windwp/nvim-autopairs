@@ -1,10 +1,14 @@
 #Endwise (experiment)
 
+** warning** you endwise base on treesitter is not always correct.
+treesitter group all error node with parent node so we can't find
+a perfect solution for this.
+
 I don't have time to add rule for all language.
-so you can create your rule and make a PR. Thank
+You can create your rule and make a PR.
+Thank
 
 read docs in readme.md about rules first.
-
 and install TSPlayground
 
 ``` lua
@@ -28,14 +32,16 @@ npairs.add_rules({
 })
 
 ```
+
 -- run TSPlaygroudnToggle and get treesitter name
 
 ![treesitter](./images/endwise.png)
+
 
 if that builtin endwise rule is not correct you can make your custom rule
 conditon
 
 take a look of that file and write your function
 
-`lua/nvim-autopairs/ts-rule.lua`
-`lua/nvim-autopairs/ts-conds.lua`
+* `lua/nvim-autopairs/ts-rule.lua`
+* `lua/nvim-autopairs/ts-conds.lua`
