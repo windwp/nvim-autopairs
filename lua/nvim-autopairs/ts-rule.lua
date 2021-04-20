@@ -5,7 +5,7 @@ local ts_conds = require('nvim-autopairs.ts-conds')
 return {
     endwise = function (...)
         local params = {...}
-        assert(type(params[4]) == 'string', 'type ')
+        assert(type(params[4]) == 'string', 'treesitter name is string or"" ')
 
         return Rule(...)
             :with_pair(cond.none())

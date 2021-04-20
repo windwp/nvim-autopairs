@@ -62,18 +62,43 @@ M.on_attach = function(bufnr)
 
     state.rules = rules
     if utils.is_attached(bufnr) then return end
+    local enable_insert_auto = false
+    for _, rule in pairs(state.rules) do
+        if rule.is_regex == false then
+            if rule.key_map == "" then
+                rule.key_map = rule.start_pair:sub((#rule.start_pair))
+            end
+            local key = string.format('"%s"', rule.key_map)
+            if rule.key_map == '"' then key =[['"']] end
+            local mapping = string.format("v:lua.MPairs.autopairs_map(%d,%s)", bufnr, key)
+            api.nvim_buf_set_keymap(bufnr, "i", rule.key_map, mapping, {expr = true, noremap = true})
 
-    api.nvim_exec(string.format([[
-    augroup autopairs_insert_%d
-    autocmd!
-    autocmd InsertCharPre <buffer=%d> call luaeval("require('nvim-autopairs').autopairs_insert(%d, _A)", v:char)
-        augroup end ]],
-        bufnr, bufnr, bufnr), false)
+            if rule.key_map== "(" or rule.key_map == '[' or rule.key_map == "{" then
+                key = rule.end_pair:sub(#rule.end_pair)
+                mapping = string.format([[v:lua.MPairs.autopairs_map(%d, '%s')]], bufnr,key )
+                vim.api.nvim_buf_set_keymap(bufnr, 'i',key, mapping, {expr = true, noremap = true})
+            end
+        else
+            if rule.key_map ~="" then
+                local mapping = string.format("v:lua.MPairs.autopairs_map(%d,'%s')", bufnr, rule.key_map)
+                api.nvim_buf_set_keymap(bufnr, "i", rule.key_map, mapping, {expr = true, noremap = true})
+            else
+                enable_insert_auto = true
+            end
+        end
+    end
+    if enable_insert_auto then
+        api.nvim_exec(string.format([[
+        augroup autopairs_insert_%d
+        autocmd!
+        autocmd InsertCharPre <buffer=%d> call luaeval("require('nvim-autopairs').autopairs_insert(%d, _A)", v:char)
+            augroup end ]],
+            bufnr, bufnr, bufnr), false)
+    end
     api.nvim_buf_set_keymap(bufnr,
         'i',
         "<bs>",
         string.format("v:lua.MPairs.autopairs_bs(%d)", bufnr), {expr = true, noremap = true})
-
     api.nvim_buf_set_var(bufnr, "nvim-autopairs", 1)
 end
 
@@ -83,6 +108,7 @@ M.autopairs_bs = function(bufnr)
     local _, col = utils.get_cursor()
     for _, rule in pairs(state.rules) do
         if rule.start_pair then
+
             local prev_char, next_char = utils.text_cusor_line(
                 line,
                 col,
@@ -117,15 +143,67 @@ end
 
 local skip_next = false
 
+
+M.autopairs_map = function(bufnr, char)
+    if state.disabled then return end
+    if skip_next then skip_next = false return end
+    local line = utils.text_get_current_line(bufnr)
+    local _, col = utils.get_cursor()
+    local new_text = line:sub(1, col) .. char .. line:sub(col + 1,#line)
+    local add_char = 1
+    for _, rule in pairs(state.rules) do
+        if rule.start_pair then
+            if rule.is_regex and rule.key_map ~= "" then
+                new_text = line:sub(1, col) .. line:sub(col + 1,#line)
+                add_char = 0
+            end
+            log.debug("new_text:[" .. new_text .. "]")
+            local prev_char, next_char = utils.text_cusor_line(
+                new_text,
+                col+ add_char,
+                #rule.start_pair,
+                #rule.end_pair, rule.is_regex
+            )
+            local cond_opt = {
+                text = new_text,
+                rule = rule,
+                bufnr = bufnr,
+                col = col,
+                char = char,
+                line = line,
+                prev_char = prev_char,
+                next_char = next_char,
+            }
+            -- log.debug("start_pair" .. rule.start_pair)
+            -- log.debug('prev_char' .. prev_char)
+            -- log.debug('next_char' .. next_char)
+            if
+                next_char == rule.end_pair
+                and rule.is_regex==false
+                and rule:can_move(cond_opt)
+            then
+                return utils.esc( utils.key.right)
+            end
+            if
+                utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
+                and rule:can_pair(cond_opt)
+            then
+                local end_pair = rule:get_end_pair(cond_opt)
+                if add_char == 0 then char = ""end
+                return utils.esc(char .. end_pair .. utils.repeat_key(utils.key.left,#end_pair))
+            end
+        end
+    end
+    return char
+end
 M.autopairs_insert = function(bufnr, char)
     if state.disabled then return end
     if skip_next then skip_next = false return end
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
     local new_text = line:sub(1, col) .. char .. line:sub(col + 1,#line)
-    -- log.debug("new_text:[" .. new_text .. "]")
     for _, rule in pairs(state.rules) do
-        if rule.start_pair then
+        if rule.start_pair and rule.is_regex and rule.key_map == "" then
             local prev_char, next_char = utils.text_cusor_line(
                 new_text,
                 col + 1,
@@ -160,17 +238,16 @@ M.autopairs_insert = function(bufnr, char)
                 utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_pair(cond_opt)
             then
-                -- utils.set_vchar(char .. rule.end_pair)
-                utils.set_vchar("")
+                local end_pair = rule:get_end_pair(cond_opt)
+                utils.set_vchar(char .. end_pair)
                 vim.schedule(function()
-                    local end_pair = rule:get_end_pair(cond_opt)
-                    utils.insert_char(char .. end_pair)
                     utils.feed(utils.key.left, #end_pair)
                 end)
                 return
             end
         end
     end
+    return char
 end
 
 M.autopairs_cr = function(bufnr)

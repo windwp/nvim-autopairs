@@ -6,8 +6,7 @@ local parsers = require'nvim-treesitter.parsers'
 conds.is_ts_node = function(nodename)
     return function (opts)
         if not opts.check_ts then return true end
-        if nodename == nil then return true end
-
+        if nodename == "" then return true end
         parsers.get_parser():parse()
         local target = ts_utils.get_node_at_cursor()
         if target ~= nil and target:type() == nodename then
@@ -22,7 +21,9 @@ conds.is_ts_node = function(nodename)
                 local _,_, linenr_target = target:range()
                 local _,_, linenr_parent = target:parent():range()
                 log.debug(target:range())
+                log.debug(ts_utils.get_node_text(target))
                 log.debug(target:parent():range())
+                log.debug(ts_utils.get_node_text(target:parent()))
                 if linenr_parent - linenr_target == 1 then
                     return true
                 end
