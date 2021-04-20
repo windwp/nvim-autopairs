@@ -30,7 +30,6 @@ ts.setup {
 
 local data = {
     {
-        only = true,
         name     = "lua if add endwise" ,
         filepath = './tests/endwise/init.lua',
         filetype = "lua",
@@ -40,13 +39,13 @@ local data = {
         after    = [[end ]]
     },
     {
-        name     = "lua if is have endwise" ,
+        name     = "add newline have endwise" ,
         filepath = './tests/endwise/init.lua',
         filetype = "lua",
         linenr   = 5,
         key      = [[<cr>]],
-        before   = [[if data== 'fdsafdsa' then|end ]],
-        after    = [[end ]]
+        before   = [[if data== 'fdsafdsa' then|end]],
+        after    = [[end]]
     },
     {
         name     = "don't add endwise on match rule" ,

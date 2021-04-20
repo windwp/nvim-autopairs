@@ -140,6 +140,7 @@ npairs.add_rules({
 })
 
 
+
 --  press u1234 => u12341234
 npairs.add_rules({
     Rule("x%d%d%d%d*$", "number", "lua")
@@ -150,6 +151,17 @@ npairs.add_rules({
       end)
 })
 
+
+-- you can do anything with regex +special key
+-- example press tab will upper text
+-- press b1234s<tab> => B1234S1234S
+Rule("b%d%d%d%d%w$", "", "vim")
+  :use_regex(true,"<tab>")
+  :replace_endpair(function(opts)
+        return
+            opts.prev_char:sub(#opts.prev_char - 4,#opts.prev_char)
+            .."<esc>viwU"
+  end)
 
 --- check ./lua/nvim-autopairs/rules/basic.lua
 

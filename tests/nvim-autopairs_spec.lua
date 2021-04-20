@@ -3,6 +3,7 @@ local npairs = require('nvim-autopairs')
 local Rule = require('nvim-autopairs.rule')
 local cond = require('nvim-autopairs.conds')
 local log = require('nvim-autopairs._log')
+local utils = require('nvim-autopairs.utils')
 _G.npairs = npairs;
 local eq=_G.eq
 
@@ -11,8 +12,15 @@ npairs.add_rules({
     Rule("x%d%d%d%d*$", "number", "lua")
       :use_regex(true)
       :replace_endpair(function(opts)
+            log.debug(opts.prev_char)
             return opts.prev_char:sub(#opts.prev_char - 3,#opts.prev_char)
-
+      end),
+    Rule("b%d%d%d%d%w$", "", "vim")
+      :use_regex(true,"<tab>")
+      :replace_endpair(function(opts)
+            return
+                opts.prev_char:sub(#opts.prev_char - 4,#opts.prev_char)
+                .."<esc>viwUi"
       end)
 })
 vim.api.nvim_set_keymap('i' , '<CR>','v:lua.npairs.check_break_line_char()', {expr = true , noremap = true})
@@ -232,11 +240,19 @@ local data = {
         after  = [[u1234|number ]]
     },
     {
-        name="text regex",
+        name="text regex with custome end_pair",
         filetype = "lua",
         key="4",
         before = [[x123| ]],
         after  = [[x1234|1234 ]]
+    },
+    {
+        name="text regex with custome key",
+        filetype = "vim",
+        key="<tab>",
+        before = [[b1234s| ]],
+        after  = [[B|1234S1234S ]]
+
     }
 }
 
@@ -264,6 +280,7 @@ local function Test(test_data)
             else
                 vim.bo.filetype = "text"
             end
+            utils.set_attach(vim.api.nvim_get_current_buf(),0)
             npairs.on_attach(vim.api.nvim_get_current_buf())
             vim.fn.setline(line , before)
             vim.fn.setpos('.' ,{0, line, p_before , 0})

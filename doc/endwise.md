@@ -23,7 +23,7 @@ npairs.add_rules({
 -- then$ is a lua regex
 -- end is a match pair
 -- lua is a filetype
--- if_statement is a treesitter name you can use nil to skip it
+-- if_statement is a treesitter name.  "" will skip check with treesitter
     endwise('then$', 'end', 'lua', 'if_statement')
 })
 

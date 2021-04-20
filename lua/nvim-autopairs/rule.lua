@@ -17,6 +17,7 @@ function Rule.new(...)
         end
     end
     opt = vim.tbl_extend('force', {
+        key_map = "",
         start_pair = nil,
         end_pair = nil,
         end_pair_func = false,
@@ -35,8 +36,9 @@ function Rule.new(...)
     return setmetatable(opt, {__index = Rule})
 end
 
-function Rule:use_regex(value)
+function Rule:use_regex(value,key_map)
     self.is_regex = value
+    self.key_map = key_map or ""
     return self
 end
 function Rule:get_end_pair(opts)

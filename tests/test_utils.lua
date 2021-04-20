@@ -7,11 +7,11 @@ utils.insert_char = function(text)
 end
 
 utils.feed = function(text,num)
-    if num > 0 then
-        num = num + 1
-    else
-        num = 1
-    end
+    -- if num > 0 then
+    --     num = num + 1
+    -- else
+    --     num = 1
+    -- end
 
     local result = ''
     for _ = 1, num, 1 do

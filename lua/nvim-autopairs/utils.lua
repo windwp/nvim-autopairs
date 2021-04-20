@@ -62,6 +62,11 @@ M.is_attached = function(bufnr)
     return check == 1
 end
 
+
+M.set_attach = function(bufnr,value)
+    api.nvim_buf_set_var(bufnr, "nvim-autopairs", value)
+end
+
 M.is_in_table = function(tbl, val)
     if tbl == nil then return false end
     for _, value in pairs(tbl) do
@@ -99,7 +104,7 @@ M.text_get_current_line = function(bufnr)
     return M.text_get_line(bufnr, row -1)
 end
 
-M.repeat_key=function(key,num)
+M.repeat_key = function(key, num)
     local text=''
     for _ = 1, num, 1 do
        text=text..key
