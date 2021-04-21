@@ -10,8 +10,8 @@ local function setup(opt)
     end
     local rules = {
         Rule("<!--", "-->", 'html'):with_cr(cond.none()),
-        Rule("```", "```", 'markdown'),
-        Rule("```.*$", "```", 'markdown')
+        Rule("```", "```", { 'markdown', 'vimwiki' }),
+        Rule("```.*$", "```", { 'markdown', 'vimwiki' })
             :with_move(cond.none())
             :with_del(cond.none())
             :with_pair(cond.none())
