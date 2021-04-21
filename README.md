@@ -136,15 +136,15 @@ npairs.add_rules({
 -- you can use regex
 --  press u1234 => u1234number
 npairs.add_rules({
-    Rule("u%d%d%d%d*$", "number", "lua")
+    Rule("u%d%d%d%d$", "number", "lua")
       :use_regex(true)
 })
 
 
 
---  press u1234 => u12341234
+--  press x1234 => x12341234
 npairs.add_rules({
-    Rule("x%d%d%d%d*$", "number", "lua")
+    Rule("x%d%d%d%d$", "number", "lua")
       :use_regex(true)
       :replace_endpair(function(opts)
           -- print(vim.inspect(opts))
