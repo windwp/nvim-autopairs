@@ -80,7 +80,6 @@ conds.is_not_ts_node_comment = function()
 
         parsers.get_parser():parse()
         local target = ts_utils.get_node_at_cursor()
-        log.debug(target:type())
         if target ~= nil and utils.is_in_table(opts.ts_node, target:type()) then
             return false
         end
