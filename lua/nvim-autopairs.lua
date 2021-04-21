@@ -5,16 +5,47 @@ local api = vim.api
 
 local M={}
 
-local state = {}
+M.state = {
+    disabled=false,
+    rules = {},
+    buf_ts = {}
+}
 
 local default = {
     disable_filetype = {"TelescopePrompt", "spectre_panel"},
-    ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]],"%s+", "")
+    ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]],"%s+", ""),
+    check_ts = false,
+    ts_config = {
+        lua = {'string', 'comment'}
+    }
 }
+
+M.init = function()
+    require "nvim-treesitter".define_modules {
+        autopairs = {
+            module_path = 'nvim-autopairs.internal',
+            is_supported = function()
+                return true
+            end
+        }
+    }
+
+end
 
 M.setup = function(opt)
     M.config = vim.tbl_extend('force', default, opt or {})
     M.config.rules = basic_rule.setup(M.config)
+
+    if M.config.check_ts then
+        local ok, ts_rule = pcall(require, 'nvim-autopairs.rules.ts_basic')
+        if ok then
+            M.config.rules = ts_rule.setup(M.config)
+        else
+            print("you need to install treesitter")
+        end
+
+    end
+
     api.nvim_exec ([[
     augroup autopairs_buf
     autocmd!
@@ -48,15 +79,15 @@ M.clear_rules = function()
 end
 
 M.disable=function()
-    state.disabled = true
+    M.state.disabled = true
 end
 
 M.enable = function()
-    state.disabled = false
+    M.state.disabled = false
 end
 
 M.on_attach = function(bufnr)
-    if state.disabled then return end
+    if M.state.disabled then return end
     bufnr = bufnr or api.nvim_get_current_buf()
     if not utils.check_disable_ft(M.config.disable_filetype, vim.bo.filetype) then return end
     local rules = {};
@@ -70,10 +101,20 @@ M.on_attach = function(bufnr)
         return (#a.start_pair or 0) > (#b.start_pair or 0)
     end)
 
-    state.rules = rules
+    M.state.rules = rules
+
+    if  M.state.buf_ts[bufnr] == true then
+        M.state.ts_node = M.config.ts_config[vim.bo.filetype]
+        if M.state.ts_node == nil then
+            M.state.ts_node = {'string', 'comment'}
+        end
+    else
+        M.state.ts_node = nil
+    end
+
     if utils.is_attached(bufnr) then return end
     local enable_insert_auto = false
-    for _, rule in pairs(state.rules) do
+    for _, rule in pairs(M.state.rules) do
         if rule.is_regex == false then
             if rule.key_map == "" then
                 rule.key_map = rule.start_pair:sub((#rule.start_pair))
@@ -114,10 +155,10 @@ M.on_attach = function(bufnr)
 end
 
 M.autopairs_bs = function(bufnr)
-    if state.disabled then return end
+    if M.state.disabled then return end
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
-    for _, rule in pairs(state.rules) do
+    for _, rule in pairs(M.state.rules) do
         if rule.start_pair then
 
             local prev_char, next_char = utils.text_cusor_line(
@@ -131,6 +172,7 @@ M.autopairs_bs = function(bufnr)
                 utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
                 and rule.end_pair == next_char
                 and rule:can_del({
+                    ts_node = M.state.ts_node,
                     bufnr = bufnr,
                     prev_char = prev_char,
                     next_char = next_char,
@@ -156,19 +198,19 @@ local skip_next = false
 
 
 M.autopairs_map = function(bufnr, char)
-    if state.disabled then return end
+    if M.state.disabled then return end
     if skip_next then skip_next = false return end
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
     local new_text = line:sub(1, col) .. char .. line:sub(col + 1,#line)
     local add_char = 1
-    for _, rule in pairs(state.rules) do
+    for _, rule in pairs(M.state.rules) do
         if rule.start_pair then
             if rule.is_regex and rule.key_map ~= "" then
                 new_text = line:sub(1, col) .. line:sub(col + 1,#line)
                 add_char = 0
             end
-            log.debug("new_text:[" .. new_text .. "]")
+            -- log.debug("new_text:[" .. new_text .. "]")
             local prev_char, next_char = utils.text_cusor_line(
                 new_text,
                 col+ add_char,
@@ -176,6 +218,7 @@ M.autopairs_map = function(bufnr, char)
                 #rule.end_pair, rule.is_regex
             )
             local cond_opt = {
+                ts_node = M.state.ts_node,
                 text = new_text,
                 rule = rule,
                 bufnr = bufnr,
@@ -208,12 +251,12 @@ M.autopairs_map = function(bufnr, char)
     return char
 end
 M.autopairs_insert = function(bufnr, char)
-    if state.disabled then return end
+    if M.state.disabled then return end
     if skip_next then skip_next = false return end
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
     local new_text = line:sub(1, col) .. char .. line:sub(col + 1,#line)
-    for _, rule in pairs(state.rules) do
+    for _, rule in pairs(M.state.rules) do
         if rule.start_pair and rule.is_regex and rule.key_map == "" then
             local prev_char, next_char = utils.text_cusor_line(
                 new_text,
@@ -222,6 +265,7 @@ M.autopairs_insert = function(bufnr, char)
                 #rule.end_pair, rule.is_regex
             )
             local cond_opt = {
+                ts_node = M.state.ts_node,
                 text = new_text,
                 rule = rule,
                 bufnr = bufnr,
@@ -262,12 +306,12 @@ M.autopairs_insert = function(bufnr, char)
 end
 
 M.autopairs_cr = function(bufnr)
-    if state.disabled then return end
+    if M.state.disabled then return end
     bufnr = bufnr or api.nvim_get_current_buf()
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
     -- log.debug("on_cr")
-    for _, rule in pairs(state.rules) do
+    for _, rule in pairs(M.state.rules) do
         if rule.start_pair then
             local prev_char, next_char = utils.text_cusor_line(
                 line,
@@ -282,7 +326,8 @@ M.autopairs_cr = function(bufnr)
                 rule.is_endwise
                 and utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_cr({
-                    check_ts = true,
+                    ts_node = M.state.ts_node,
+                    check_endwise_ts = true,
                     bufnr = bufnr,
                     rule = rule,
                     prev_char = prev_char,
@@ -301,7 +346,8 @@ M.autopairs_cr = function(bufnr)
                 utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
                 and rule.end_pair == next_char
                 and rule:can_cr({
-                    check_ts = false,
+                    ts_node = M.state.ts_node,
+                    check_endwise_ts = false,
                     bufnr = bufnr,
                     rule = rule,
                     prev_char = prev_char,

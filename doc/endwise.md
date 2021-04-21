@@ -1,6 +1,6 @@
 #Endwise (experiment)
 
-** warning** you endwise base on treesitter is not always correct.
+** warning** use endwise base on treesitter is not always correct.
 treesitter group all error node with parent node so we can't find
 a perfect solution for this.
 

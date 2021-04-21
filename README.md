@@ -17,6 +17,7 @@ require('nvim-autopairs').setup()
 
 local disable_filetype = { "TelescopePrompt" }
 local ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]],"%s+", "")
+local check_ts = false,
 
 ```
 
@@ -155,16 +156,49 @@ npairs.add_rules({
 -- you can do anything with regex +special key
 -- example press tab will upper text
 -- press b1234s<tab> => B1234S1234S
-Rule("b%d%d%d%d%w$", "", "vim")
-  :use_regex(true,"<tab>")
-  :replace_endpair(function(opts)
-        return
-            opts.prev_char:sub(#opts.prev_char - 4,#opts.prev_char)
-            .."<esc>viwU"
-  end)
 
+npairs.add_rules({
+  Rule("b%d%d%d%d%w$", "", "vim")
+    :use_regex(true,"<tab>")
+    :replace_endpair(function(opts)
+          return
+              opts.prev_char:sub(#opts.prev_char - 4,#opts.prev_char)
+              .."<esc>viwU"
+    end)
+})
 --- check ./lua/nvim-autopairs/rules/basic.lua
 
+```
+
+### Treesitter
+You can use treesitter to check
+
+```lua
+local npairs = require("nvim-autopairs")
+
+npairs.setup({
+    check_ts = true,
+    ts_config = {
+        lua = {'string', 'comment'}-- it will not add pair on that treesitter node
+        javascript = {'template_string', 'comment'}
+        java = false,-- don't check treesitter on java
+    }
+})
+
+require('nvim-treesitter.configs').setup {
+    autopairs = {enable = true}
+}
+
+local ts_conds = require('nvim-autopairs.ts-conds')
+
+
+-- press % => %% is only inside comment or string
+npairs.add_rules({
+  Rule("%", "%", "lua")
+    :with_pair(ts_conds.is_ts_node({'string','comment'})),
+  Rule("$", "$", "lua")
+    :with_pair(ts_conds.is_not_ts_node({'function'}))
+})
 ```
 
 ### Don't add pairs if it already have a close pairs in same line
