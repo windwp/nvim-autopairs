@@ -1,7 +1,6 @@
 local basic = require('nvim-autopairs.rules.basic')
 local utils = require('nvim-autopairs.utils')
 local ts_conds = require('nvim-autopairs.ts-conds')
-local log = require('nvim-autopairs._log')
 local ts_extend = {
     "'",
     '"',
@@ -15,7 +14,6 @@ return {
         local rules=basic.setup(config)
         for _, rule in pairs(rules) do
             if utils.is_in_table(ts_extend, rule.start_pair) then
-                log.debug(rule.start_pair)
                 rule:with_pair(ts_conds.is_not_ts_node_comment())
             end
         end
