@@ -207,15 +207,19 @@ M.autopairs_map = function(bufnr, char)
     if skip_next then skip_next = false return end
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
-    local new_text = line:sub(1, col) .. char .. line:sub(col + 1,#line)
+    local new_text = ""
     local add_char = 1
     for _, rule in pairs(M.state.rules) do
         if rule.start_pair then
             if rule.is_regex and rule.key_map ~= "" then
                 new_text = line:sub(1, col) .. line:sub(col + 1,#line)
                 add_char = 0
+            else
+                new_text = line:sub(1, col) .. char .. line:sub(col + 1,#line)
+                add_char = 1
             end
-            -- log.debug("new_text:[" .. new_text .. "]")
+
+            log.debug("new_text:[" .. new_text .. "]")
             local prev_char, next_char = utils.text_cusor_line(
                 new_text,
                 col+ add_char,
@@ -233,9 +237,9 @@ M.autopairs_map = function(bufnr, char)
                 prev_char = prev_char,
                 next_char = next_char,
             }
-            -- log.debug("start_pair" .. rule.start_pair)
-            -- log.debug('prev_char' .. prev_char)
-            -- log.debug('next_char' .. next_char)
+            log.debug("start_pair" .. rule.start_pair)
+            log.debug('prev_char' .. prev_char)
+            log.debug('next_char' .. next_char)
             if
                 next_char == rule.end_pair
                 and rule.is_regex==false
