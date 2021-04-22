@@ -116,7 +116,7 @@ M.on_attach = function(bufnr)
     if utils.is_attached(bufnr) then return end
     local enable_insert_auto = false
     for _, rule in pairs(M.state.rules) do
-        if rule.key_map~=nil then
+        if rule.key_map ~= nil then
             if rule.is_regex == false then
                 if rule.key_map == "" then
                     rule.key_map = rule.start_pair:sub((#rule.start_pair))
@@ -126,10 +126,10 @@ M.on_attach = function(bufnr)
                 local mapping = string.format("v:lua.MPairs.autopairs_map(%d,%s)", bufnr, key)
                 api.nvim_buf_set_keymap(bufnr, "i", rule.key_map, mapping, {expr = true, noremap = true})
 
-                if rule.key_map == "(" or rule.key_map == '[' or rule.key_map == "{" then
-                    key = rule.end_pair:sub(#rule.end_pair)
-                    mapping = string.format([[v:lua.MPairs.autopairs_map(%d, '%s')]], bufnr,key )
-                    vim.api.nvim_buf_set_keymap(bufnr, 'i',key, mapping, {expr = true, noremap = true})
+                local key_end = rule.end_pair:sub(1,1)
+                if #key_end == 1 and key_end ~= rule.key_map and rule.move_cond ~= nil then
+                    mapping = string.format([[v:lua.MPairs.autopairs_map(%d, '%s')]], bufnr,key_end )
+                    vim.api.nvim_buf_set_keymap(bufnr, 'i',key_end, mapping, {expr = true, noremap = true})
                 end
             else
                 if rule.key_map ~= "" then
@@ -237,9 +237,9 @@ M.autopairs_map = function(bufnr, char)
                 prev_char = prev_char,
                 next_char = next_char,
             }
-            log.debug("start_pair" .. rule.start_pair)
-            log.debug('prev_char' .. prev_char)
-            log.debug('next_char' .. next_char)
+            -- log.debug("start_pair" .. rule.start_pair)
+            -- log.debug('prev_char' .. prev_char)
+            -- log.debug('next_char' .. next_char)
             if
                 next_char == rule.end_pair
                 and rule.is_regex==false

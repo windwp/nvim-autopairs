@@ -164,4 +164,10 @@ M.esc = function(cmd)
     return vim.api.nvim_replace_termcodes(cmd, true, false, true)
 end
 
+
+--- get prev_char with out key_map
+M.get_prev_char = function(opt)
+    return opt.line:sub(opt.col, opt.col + #opt.rule.start_pair -1)
+end
+
 return M

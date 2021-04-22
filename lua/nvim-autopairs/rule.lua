@@ -17,21 +17,20 @@ function Rule.new(...)
         end
     end
     opt = vim.tbl_extend('force', {
-        key_map = "",
-        start_pair = nil,
-        end_pair = nil,
+        key_map       = "",
+        start_pair    = nil,
+        end_pair      = nil,
+        -- function to dynamic update end pair
         end_pair_func = false,
-        filetypes = nil,
-        -- allow move when press close_pairs
-        move_cond = nil,
-        -- allow delete when press bs
-        del_cond = {},
-        cr_cond = {},
-        pair_cond = {},
+        filetypes     = nil,
+        move_cond     = nil,
+        del_cond      = {},
+        cr_cond       = {},
+        pair_cond     = {},
         -- only use on end_wise
-        is_endwise = false,
-        -- use regex to compalre
-        is_regex = false
+        is_endwise    = false,
+        -- use regex to compare
+        is_regex      = false
     },opt)
     return setmetatable(opt, {__index = Rule})
 end
@@ -41,6 +40,7 @@ function Rule:use_regex(value,key_map)
     self.key_map = key_map or ""
     return self
 end
+
 function Rule:get_end_pair(opts)
     if self.end_pair_func then
         return self.end_pair_func(opts)
@@ -81,7 +81,7 @@ end
 function Rule:only_cr(cond)
     self.key_map = nil
     self.pair_cond = false
-    self.move_cond =false
+    self.move_cond = false
     self.del_cond = false
     if cond then return self:with_cr(cond) end
     return self
@@ -124,5 +124,6 @@ end
 function Rule:can_cr(opt)
     return can_do(self.cr_cond, opt)
 end
+
 
 return Rule.new

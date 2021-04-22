@@ -22,7 +22,12 @@ npairs.add_rules({
             return
                 opts.prev_char:sub(#opts.prev_char - 4,#opts.prev_char)
                 .."<esc>viwUi"
-        end)
+        end),
+    Rule("-","+","vim")
+        :with_move(function(opt)
+            return utils.get_prev_char(opt) == "x"end)
+        :with_move(cond.done())
+
 })
 vim.api.nvim_set_keymap('i' , '<CR>','v:lua.npairs.check_break_line_char()', {expr = true , noremap = true})
 function helpers.feed(text, feed_opts)
@@ -261,6 +266,20 @@ local data = {
         before = [[b1234s| ]],
         after  = [[B|1234S1234S ]]
 
+    },
+    {
+        name="test move right custom char",
+        filetype="vim",
+        key="<tab>",
+        before = [[b1234s| ]],
+        after  = [[B|1234S1234S ]]
+    },
+    {
+        name="test move right custom char plus",
+        filetype="vim",
+        key="+",
+        before = [[x|+ ]],
+        after  = [[x+| ]]
     }
 }
 
