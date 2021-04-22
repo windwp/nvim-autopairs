@@ -17,6 +17,7 @@ require('nvim-autopairs').setup()
 
 local disable_filetype = { "TelescopePrompt" }
 local ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]],"%s+", "")
+local enable_moveright = true
 local check_ts = false,
 
 ```

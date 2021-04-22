@@ -3,8 +3,10 @@ local cond = require('nvim-autopairs.conds')
 
 local function setup(opt)
     local basic = function(...)
+        local move_func = opt.enable_moveright and cond.move_right or cond.none
+
         return Rule(...)
-                :with_move(cond.move_right())
+                :with_move(move_func())
                 :with_pair(cond.not_after_regex_check(opt.ignored_next_char))
                 :with_pair(cond.not_add_quote_inside_quote())
     end

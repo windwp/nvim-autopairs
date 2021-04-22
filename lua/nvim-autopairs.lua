@@ -15,22 +15,24 @@ local default = {
     disable_filetype = {"TelescopePrompt", "spectre_panel"},
     ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]],"%s+", ""),
     check_ts = false,
+    enable_moveright = true,
     ts_config = {
         lua = {'string', 'comment'}
     }
 }
 
 M.init = function()
-    require "nvim-treesitter".define_modules {
-
-        autopairs = {
-            module_path = 'nvim-autopairs.internal',
-            is_supported = function()
-                return true
-            end
+    local ok = pcall(require, 'nvim-treesitter')
+    if ok then
+        require "nvim-treesitter".define_modules {
+            autopairs = {
+                module_path = 'nvim-autopairs.internal',
+                is_supported = function()
+                    return true
+                end
+            }
         }
-    }
-
+    end
 end
 
 M.setup = function(opt)
