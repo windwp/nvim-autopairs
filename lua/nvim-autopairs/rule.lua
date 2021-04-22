@@ -87,9 +87,9 @@ function Rule:only_cr(cond)
     return self
 end
 
-function Rule:end_wise()
+function Rule:end_wise(cond)
     self.is_endwise = true
-    return self:only_cr()
+    return self:only_cr(cond)
 end
 
 local function can_do(conds, opt)

@@ -22,7 +22,7 @@ local cond = require('nvim-autopairs.conds')
 | not_inside_quote       | check is inside a quote           |
 
 ### TreeSitter Condition
-```lua 
+```lua
 local ts_conds = require('nvim-autopairs.ts-conds')
 ```
 
