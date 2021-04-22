@@ -8,20 +8,21 @@ _G.npairs = npairs;
 local eq=_G.eq
 
 npairs.add_rules({
-    Rule("u%d%d%d%d*$", "number", "lua"):use_regex(true),
-    Rule("x%d%d%d%d*$", "number", "lua")
-      :use_regex(true)
-      :replace_endpair(function(opts)
+    Rule("u%d%d%d%d$", "number", "lua")
+        :use_regex(true),
+    Rule("x%d%d%d%d$", "number", "lua")
+        :use_regex(true)
+        :replace_endpair(function(opts)
             log.debug(opts.prev_char)
             return opts.prev_char:sub(#opts.prev_char - 3,#opts.prev_char)
-      end),
+        end),
     Rule("b%d%d%d%d%w$", "", "vim")
-      :use_regex(true,"<tab>")
-      :replace_endpair(function(opts)
+        :use_regex(true,"<tab>")
+        :replace_endpair(function(opts)
             return
                 opts.prev_char:sub(#opts.prev_char - 4,#opts.prev_char)
                 .."<esc>viwUi"
-      end)
+        end)
 })
 vim.api.nvim_set_keymap('i' , '<CR>','v:lua.npairs.check_break_line_char()', {expr = true , noremap = true})
 function helpers.feed(text, feed_opts)

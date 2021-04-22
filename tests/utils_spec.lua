@@ -53,13 +53,7 @@ local data = {
     },
 }
 
-        log.debug("WORK FINE")
-        log.debug("WORK FINE")
-        log.debug("WORK FINE")
 describe('utils test substring ', function()
-    it("test log",function()
-        log.debug("WORK FINE")
-    end)
     for _, value in pairs(data) do
         it('test sub: ' .. value.text, function()
             local result = utils.text_sub_char(value.text, value.start, value.num)

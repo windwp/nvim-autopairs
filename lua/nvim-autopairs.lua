@@ -22,6 +22,7 @@ local default = {
 
 M.init = function()
     require "nvim-treesitter".define_modules {
+
         autopairs = {
             module_path = 'nvim-autopairs.internal',
             is_supported = function()
