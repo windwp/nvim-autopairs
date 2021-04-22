@@ -8,12 +8,8 @@ return {
         assert(type(params[4]) == 'string', 'treesitter name is string or "" ')
 
         return Rule(...)
-            :with_pair(cond.none())
-            :with_move(cond.none())
-            :with_del(cond.none())
-            :with_cr(ts_conds.is_endwise_node(params[4]))
             :use_regex(true)
-            :end_wise()
+            :end_wise(ts_conds.is_endwise_node(params[4]))
     end
 
 }

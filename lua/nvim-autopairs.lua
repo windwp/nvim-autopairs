@@ -116,31 +116,35 @@ M.on_attach = function(bufnr)
     if utils.is_attached(bufnr) then return end
     local enable_insert_auto = false
     for _, rule in pairs(M.state.rules) do
-        if rule.is_regex == false then
-            if rule.key_map == "" then
-                rule.key_map = rule.start_pair:sub((#rule.start_pair))
-            end
-            local key = string.format('"%s"', rule.key_map)
-            if rule.key_map == '"' then key = [['"']] end
-            local mapping = string.format("v:lua.MPairs.autopairs_map(%d,%s)", bufnr, key)
-            api.nvim_buf_set_keymap(bufnr, "i", rule.key_map, mapping, {expr = true, noremap = true})
-
-            if rule.key_map == "(" or rule.key_map == '[' or rule.key_map == "{" then
-                key = rule.end_pair:sub(#rule.end_pair)
-                mapping = string.format([[v:lua.MPairs.autopairs_map(%d, '%s')]], bufnr,key )
-                vim.api.nvim_buf_set_keymap(bufnr, 'i',key, mapping, {expr = true, noremap = true})
-            end
-        else
-            if rule.key_map ~= "" then
-                local mapping = string.format("v:lua.MPairs.autopairs_map(%d,'%s')", bufnr, rule.key_map)
+        if rule.key_map~=nil then
+            if rule.is_regex == false then
+                if rule.key_map == "" then
+                    rule.key_map = rule.start_pair:sub((#rule.start_pair))
+                end
+                local key = string.format('"%s"', rule.key_map)
+                if rule.key_map == '"' then key = [['"']] end
+                local mapping = string.format("v:lua.MPairs.autopairs_map(%d,%s)", bufnr, key)
                 api.nvim_buf_set_keymap(bufnr, "i", rule.key_map, mapping, {expr = true, noremap = true})
-            elseif rule.is_endwise == false then
-                enable_insert_auto = true
+
+                if rule.key_map == "(" or rule.key_map == '[' or rule.key_map == "{" then
+                    key = rule.end_pair:sub(#rule.end_pair)
+                    mapping = string.format([[v:lua.MPairs.autopairs_map(%d, '%s')]], bufnr,key )
+                    vim.api.nvim_buf_set_keymap(bufnr, 'i',key, mapping, {expr = true, noremap = true})
+                end
+            else
+                if rule.key_map ~= "" then
+                    local mapping = string.format("v:lua.MPairs.autopairs_map(%d,'%s')", bufnr, rule.key_map)
+                    api.nvim_buf_set_keymap(bufnr, "i", rule.key_map, mapping, {expr = true, noremap = true})
+                elseif rule.is_endwise == false then
+                    enable_insert_auto = true
+                end
             end
         end
     end
 
     if enable_insert_auto then
+        -- capture all key use it to trigger regex pairs
+        -- it can make an issue with paste from register
         api.nvim_exec(string.format([[
         augroup autopairs_insert_%d
         autocmd!

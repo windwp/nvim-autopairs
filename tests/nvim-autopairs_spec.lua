@@ -227,6 +227,13 @@ local data = {
         after  = [[</div>]]
     },
     {
+        name = "do not mapping on > html" ,
+        filetype = "html",
+        key    = [[>]],
+        before = [[<div|  ]],
+        after  = [[<div>|  ]]
+    },
+    {
         name = "press multiple key" ,
         filetype = "html",
         key    = [[((((]],

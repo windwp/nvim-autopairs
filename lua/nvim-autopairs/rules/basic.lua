@@ -12,9 +12,7 @@ local function setup(opt)
         Rule("<!--", "-->", 'html'):with_cr(cond.none()),
         Rule("```", "```", { 'markdown', 'vimwiki' }),
         Rule("```.*$", "```", { 'markdown', 'vimwiki' })
-            :with_move(cond.none())
-            :with_del(cond.none())
-            :with_pair(cond.none())
+            :only_cr()
             :use_regex(true)
         ,
         Rule('"""', '"""', 'python'),
@@ -28,11 +26,9 @@ local function setup(opt)
             :with_pair(cond.check_is_bracket_line()),
         basic("{", "}")
             :with_pair(cond.check_is_bracket_line()),
-        -- Rule(">", "<",
-        --     { 'html', 'typescript', 'typescriptreact', 'svelte', 'vue'})
-        --     :with_move(cond.none())
-        --     :with_pair(cond.none())
-        --     :with_del(cond.none()),
+        Rule(">", "<",
+            { 'html', 'typescript', 'typescriptreact', 'svelte', 'vue'})
+            :only_cr()
     }
     return rules
 end

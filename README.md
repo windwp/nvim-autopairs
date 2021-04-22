@@ -169,9 +169,10 @@ npairs.add_rules({
 --- check ./lua/nvim-autopairs/rules/basic.lua
 
 ```
+[Rules API](./doc/rules.md)
 
 ### Treesitter
-You can use treesitter to check
+You can use treesitter to check pair
 
 ```lua
 local npairs = require("nvim-autopairs")

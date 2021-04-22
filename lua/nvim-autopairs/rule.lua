@@ -78,9 +78,18 @@ function Rule:with_pair(cond)
     return self
 end
 
+function Rule:only_cr(cond)
+    self.key_map = nil
+    self.pair_cond = false
+    self.move_cond =false
+    self.del_cond = false
+    if cond then return self:with_cr(cond) end
+    return self
+end
+
 function Rule:end_wise()
     self.is_endwise = true
-    return self
+    return self:only_cr()
 end
 
 local function can_do(conds, opt)
