@@ -243,11 +243,11 @@ Before        Input         After
 ```
 
 ### Plugin Intergation
-if you use another plugin you can temporary to disable autopair
 ``` lua
-     require('nvim-autopairs').disable()
-     -- do your task
-     require('nvim-autopairs').enable()
+  require('nvim-autopairs').disable()
+  require('nvim-autopairs').enable()
+  require('nvim-autopairs').remove_rule('(')-- remove rule (
+  require('nvim-autopairs').clear_rules() -- clear all rule
 ```
 
 ### Endwise

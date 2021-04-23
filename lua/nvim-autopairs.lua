@@ -53,6 +53,7 @@ M.setup = function(opt)
     augroup autopairs_buf
     autocmd!
     autocmd BufEnter * :lua require("nvim-autopairs").on_attach()
+    autocmd FileType * :lua require("nvim-autopairs").on_attach()
     augroup end
         ]],false)
 end
@@ -92,7 +93,10 @@ end
 M.on_attach = function(bufnr)
     if M.state.disabled then return end
     bufnr = bufnr or api.nvim_get_current_buf()
-    if not utils.check_disable_ft(M.config.disable_filetype, vim.bo.filetype) then return end
+    if not utils.check_disable_ft(M.config.disable_filetype, vim.bo.filetype) then
+        M.state.rules = {}
+        return
+    end
     local rules = {};
     for _, rule in pairs(M.config.rules) do
         if utils.check_filetype(rule.filetypes,vim.bo.filetype) then
