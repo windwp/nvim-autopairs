@@ -54,6 +54,7 @@ conds.is_ts_node = function(nodes)
         if target ~= nil and utils.is_in_table(nodes, target:type()) then
             return true
         end
+        return false
     end
 end
 

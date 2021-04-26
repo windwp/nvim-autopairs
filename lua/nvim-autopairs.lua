@@ -17,7 +17,8 @@ local default = {
     check_ts = false,
     enable_moveright = true,
     ts_config = {
-        lua = {'string', 'comment'}
+        lua = {'string', 'source'},
+        javascript = {'string', 'template_string'}
     }
 }
 
@@ -225,7 +226,7 @@ M.autopairs_map = function(bufnr, char)
                 add_char = 1
             end
 
-            log.debug("new_text:[" .. new_text .. "]")
+            -- log.debug("new_text:[" .. new_text .. "]")
             local prev_char, next_char = utils.text_cusor_line(
                 new_text,
                 col+ add_char,

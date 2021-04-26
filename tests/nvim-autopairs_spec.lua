@@ -2,6 +2,8 @@ local helpers = {}
 local npairs = require('nvim-autopairs')
 local Rule = require('nvim-autopairs.rule')
 local cond = require('nvim-autopairs.conds')
+
+local ts_conds = require('nvim-autopairs.ts-conds')
 local log = require('nvim-autopairs._log')
 local utils = require('nvim-autopairs.utils')
 _G.npairs = npairs;
@@ -26,7 +28,9 @@ npairs.add_rules({
     Rule("-","+","vim")
         :with_move(function(opt)
             return utils.get_prev_char(opt) == "x"end)
-        :with_move(cond.done())
+        :with_move(cond.done()),
+    Rule("/**", "**/", "javascript")
+        :with_move(cond.none()),
 
 })
 vim.api.nvim_set_keymap('i' , '<CR>','v:lua.npairs.check_break_line_char()', {expr = true , noremap = true})
@@ -280,7 +284,14 @@ local data = {
         key="+",
         before = [[x|+ ]],
         after  = [[x+| ]]
-    }
+    },
+    {
+        name="test javascript comment",
+        filetype="javascript",
+        key="*",
+        before = [[/*| ]],
+        after  = [[/**|**/ ]]
+    },
 }
 
 local run_data = {}

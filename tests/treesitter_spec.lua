@@ -14,8 +14,8 @@ npairs.setup({
 })
 
 npairs.add_rules({
-  Rule("%", "%", "lua")
-    :with_pair(ts_conds.is_ts_node({'string','comment'}))
+    Rule("%", "%", "lua")
+        :with_pair(ts_conds.is_ts_node({'string', 'comment'})),
 })
 vim.api.nvim_set_keymap('i' , '<CR>','v:lua.npairs.check_break_line_char()', {expr = true , noremap = true})
 
@@ -66,6 +66,16 @@ local data = {
         },
         after    = [[ [[  abcde %|% ]]
     },
+    {
+        only = true,
+        name = "ts_conds is_ts_node failed",
+        filepath = './tests/endwise/init.lua',
+        linenr   = 5,
+        filetype = "lua",
+        key="%",
+        before = {[[local abcd| = ' visual  ']]},
+        after  = [[local abcd%| = ' visual  ']]
+    }
 }
 
 local run_data = _G.Test_filter(data)
