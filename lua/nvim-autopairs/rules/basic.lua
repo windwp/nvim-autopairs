@@ -29,7 +29,7 @@ local function setup(opt)
         basic("{", "}")
             :with_pair(cond.check_is_bracket_line()),
         Rule(">", "<",
-            { 'html', 'typescript', 'typescriptreact', 'svelte', 'vue'})
+            { 'html', 'typescript', 'typescriptreact', 'svelte', 'vue', 'xml'})
             :only_cr()
     }
     return rules

@@ -1,6 +1,7 @@
 ##  nvim-autopairs
 
 A super powerful autopairs for Neovim.
+Everything you need on an autopairs is here.
 It support multipple character
 
 Requires neovim 0.5+
@@ -248,6 +249,8 @@ Before        Input         After
   require('nvim-autopairs').enable()
   require('nvim-autopairs').remove_rule('(')-- remove rule (
   require('nvim-autopairs').clear_rules() -- clear all rule
+  require('nvim-autopairs').get_rule('"') -- get rule " then modify it
+
 ```
 
 ### Endwise

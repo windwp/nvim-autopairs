@@ -93,7 +93,7 @@ M.is_in_range = function(row, col, range)
 end
 
 M.get_cursor = function(bufnr)
-    local row, col = unpack(api.nvim_win_get_cursor(0))
+    local row, col = unpack(api.nvim_win_get_cursor(bufnr or 0))
     return row - 1, col
 end
 M.text_get_line = function(bufnr, lnum)

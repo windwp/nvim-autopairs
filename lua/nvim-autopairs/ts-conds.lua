@@ -7,12 +7,13 @@ local utils = require('nvim-autopairs.utils')
 local conds = {}
 
 conds.is_endwise_node = function(nodes)
+    if nodes == nil then return function() return true end end
     if type(nodes) == 'string' then nodes = {nodes} end
-    assert(nodes ~= nil, "ts nodes should be string or table")
 
     return function (opts)
         log.debug('is_endwise_node')
         if not opts.check_endwise_ts then return true end
+        if nodes == nil then return true end
         if #nodes == 0 then return true end
 
         parsers.get_parser():parse()
