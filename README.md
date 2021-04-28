@@ -1,7 +1,6 @@
 ##  nvim-autopairs
 
 A super powerful autopairs for Neovim.
-Everything you need on an autopairs is here.
 It support multipple character
 
 Requires neovim 0.5+

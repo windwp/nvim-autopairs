@@ -75,7 +75,7 @@ M.get_rule = function(start_pair)
 end
 
 M.remove_rule = function (pair)
-    local tbl={}
+    local tbl = {}
     for _, r in pairs(M.config.rules) do
         if r.start_pair ~= pair then
             table.insert(tbl, r)
