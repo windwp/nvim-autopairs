@@ -1,7 +1,7 @@
 ##  nvim-autopairs
 
 A super powerful autopairs for Neovim.
-It support multipple character
+It support multiple character.
 
 Requires neovim 0.5+
 
@@ -242,7 +242,7 @@ Before        Input         After
 |+foobar       (            (|)+foobar
 ```
 
-### Plugin Intergation
+### Plugin Integration
 ``` lua
   require('nvim-autopairs').disable()
   require('nvim-autopairs').enable()
@@ -251,6 +251,9 @@ Before        Input         After
   require('nvim-autopairs').get_rule('"') -- get rule " then modify it
 
 ```
+### autotag html and tsx 
+
+[autotag](https://github.com/windwp/nvim-ts-autotag)
 
 ### Endwise
 
