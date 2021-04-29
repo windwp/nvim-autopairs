@@ -67,7 +67,7 @@ M.get_rule = function(start_pair)
     local tbl = {}
     for _,r in pairs(M.config.rules) do
         if r.start_pair == start_pair then
-            table.insert(tbl, start_pair)
+            table.insert(tbl, r)
         end
     end
     if #tbl == 1 then return tbl[1] end
