@@ -1,8 +1,7 @@
+local data1, data2
+local function wind()
 
-local function abc()
 
-
-if fdasf then
 
 
 
@@ -21,4 +20,4 @@ if fdasf then
 
 
 end
-return abc
+

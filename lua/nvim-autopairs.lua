@@ -37,7 +37,7 @@ M.init = function()
 end
 
 M.setup = function(opt)
-    M.config = vim.tbl_extend('force', default, opt or {})
+    M.config = vim.tbl_deep_extend('force', default, opt or {})
     M.config.rules = basic_rule.setup(M.config)
 
     if M.config.check_ts then
@@ -124,9 +124,6 @@ M.on_attach = function(bufnr)
 
     if  M.state.buf_ts[bufnr] == true then
         M.state.ts_node = M.config.ts_config[vim.bo.filetype]
-        if M.state.ts_node == nil then
-            M.state.ts_node = {'string', 'comment'}
-        end
     else
         M.state.ts_node = nil
     end
@@ -365,8 +362,8 @@ M.autopairs_cr = function(bufnr)
                 log.debug('do endwise')
                 return utils.esc(
                     rule.end_pair
-                    .. utils.repeat_key(utils.key.left, 3)
-                    .. "<cr><esc><<O"
+                    .. utils.repeat_key(utils.key.left, #rule.end_pair)
+                    .. "<cr><esc>O"
                 )
             end
             if

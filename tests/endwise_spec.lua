@@ -21,7 +21,7 @@ local data = {
         after    = [[end ]]
     },
     {
-        only = true,
+        -- only = true;
         name     = "add newline have endwise" ,
         filepath = './tests/endwise/init.lua',
         filetype = "lua",

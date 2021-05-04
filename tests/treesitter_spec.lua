@@ -67,7 +67,6 @@ local data = {
         after    = [[ [[  abcde %|% ]]
     },
     {
-        only = true,
         name = "ts_conds is_ts_node failed",
         filepath = './tests/endwise/init.lua',
         linenr   = 5,

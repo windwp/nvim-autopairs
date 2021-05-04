@@ -25,17 +25,26 @@ conds.is_endwise_node = function(nodes)
             if last == nil then
                 return true
             end
-                log.debug('last:' .. last)
+                -- log.debug('last:' .. last)
                 -- if match then we need tocheck parent node
-                local _,_, linenr_target = target:range()
-                local _,_, linenr_parent = target:parent():range()
+                --  some time treesiter is group 2 node  then we need check that
+                local begin_target,_, end_target = target:range()
+                local begin_parent,_, end_parent = target:parent():range()
                 -- log.debug(target:range())
                 -- log.debug(ts_utils.get_node_text(target))
                 -- log.debug(target:parent():range())
                 -- log.debug(ts_utils.get_node_text(target:parent()))
-                if linenr_parent - linenr_target == 1 then
+                if
+                    (
+                        begin_target ~= begin_parent
+                        and end_target == end_parent
+                    )
+                    or
+                    (end_parent - end_target == 1)
+                then
                     return true
                 end
+                -- return true
             else
         end
         return false
