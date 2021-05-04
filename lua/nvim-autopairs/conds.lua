@@ -18,6 +18,29 @@ cond.done = function()
     return function() return true end
 end
 
+
+cond.not_before_text_check = function(text)
+    local length = #text
+    return function(opts)
+        log.debug('not_before_text_check')
+        local str = utils.text_sub_char(opts.line, opts.col, - length)
+        if str == text then
+            return false
+        end
+    end
+end
+
+cond.not_after_text_check = function(text)
+    local length = #text
+    return function(opts)
+        log.debug('not_after_text_check')
+        local str = utils.text_sub_char(opts.line, opts.col + 1, length)
+        if str == text then
+            return false
+        end
+    end
+end
+
 cond.not_before_regex_check = function(regex, length)
     length = length or 1
     return function(opts)

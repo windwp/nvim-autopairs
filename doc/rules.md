@@ -15,13 +15,15 @@
 ```lua
 local cond = require('nvim-autopairs.conds')
 ```
-| function                      | Usage                             |
-|-------------------------------|-----------------------------------|
-| none()                        | always wrong                      |
-| done()                        | always correct                    |
-| not_before_regex_check(regex) | check character before with regex |
-| not_after_regex_check(regex)  | check character after with regex  |
-| not_inside_quote()            | check is inside a quote           |
+| function                             | Usage                                 |
+|--------------------------------------|---------------------------------------|
+| none()                               | always wrong                          |
+| done()                               | always correct                        |
+| not_before_text_check(text)          | check character before                |
+| not_after_text_check(text)           | check character after                 |
+| not_before_regex_check(regex,length) | check character before with lua regex |
+| not_after_regex_check(regex,length)  | check character after with lua regex  |
+| not_inside_quote()                   | check is inside a quote               |
 
 ### TreeSitter Condition
 ```lua
