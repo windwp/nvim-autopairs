@@ -46,6 +46,7 @@ end
 
 local data = {
     {
+        only=true,
         name = "add normal bracket" ,
         key    = [[{]],
         before = [[x| ]],

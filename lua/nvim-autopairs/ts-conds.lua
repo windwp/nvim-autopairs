@@ -18,6 +18,7 @@ conds.is_endwise_node = function(nodes)
 
         parsers.get_parser():parse()
         local target = ts_utils.get_node_at_cursor()
+        log.debug(target:type())
         if target ~= nil and utils.is_in_table(nodes, target:type()) then
             local text = ts_utils.get_node_text(target) or {""}
             local last = text[#text]:match(opts.rule.end_pair)
@@ -27,29 +28,41 @@ conds.is_endwise_node = function(nodes)
             end
                 -- log.debug('last:' .. last)
                 -- if match then we need tocheck parent node
-                --  some time treesiter is group 2 node  then we need check that
-                local begin_target,_, end_target = target:range()
-                local begin_parent,_, end_parent = target:parent():range()
+                -- some time treesiter is group 2 node  then we need check that
+                local begin_target, col_target, end_target = target:range()
+                local begin_parent, col_parent, end_parent = target:parent():range()
                 -- log.debug(target:range())
                 -- log.debug(ts_utils.get_node_text(target))
                 -- log.debug(target:parent():range())
                 -- log.debug(ts_utils.get_node_text(target:parent()))
+
+                -- _G.dump_node_text(target)
+                if begin_parent == 0 and col_target == 0 then return false end
+
                 if
                     (
-                        begin_target ~= begin_parent
+                        begin_target ~= begin_parent --group target and paret node
                         and end_target == end_parent
                     )
                     or
-                    (end_parent - end_target == 1)
+                    (
+                        col_parent == 0 and col_target~=0
+                        and end_parent - end_target ~= 1-- but not group
+                    )
+                    or
+                    (
+                        col_parent ~= 0
+                        and col_target ~= 0 --normal case with out error
+                        and end_parent - end_target == 1-- but not group
+                    )
                 then
                     return true
                 end
-                -- return true
-            else
-        end
+            end
         return false
     end
 end
+
 
 conds.is_ts_node = function(nodes)
     if type(nodes) == 'string' then nodes = {nodes} end

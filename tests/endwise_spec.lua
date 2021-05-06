@@ -43,6 +43,109 @@ local data = {
         },
         after    = [[ local abde='das' ]]
     },
+    {
+        name     = "add endwise inside double if" ,
+        filepath = './tests/endwise/init.lua',
+        filetype = "lua",
+        linenr   = 5,
+        key      = [[<cr>]],
+        before   ={
+            [[if data1 then |]],
+            [[if data2 == 'xdsad' then ]],
+            [[ local ok="" ]],
+            [[  ]],
+            [[  ]],
+            [[  ]],
+            [[end]]
+        },
+        after    = [[end ]]
+    },
+
+    {
+        name     = "add endwise inside both if" ,
+        filepath = './tests/endwise/init.lua',
+        filetype = "lua",
+        linenr   = 5,
+        key      = [[<cr>]],
+        before   ={
+            [[if data1 then ]],
+            [[  if data2 == 'xdsad' then| ]],
+            [[  ]],
+            [[  ]],
+            [[  ]],
+            [[end]]
+        },
+        after    = [[end ]]
+    },
+    {
+        name     = " don't add endwise inside both if" ,
+        filepath = './tests/endwise/init.lua',
+        filetype = "lua",
+        linenr   = 5,
+        key      = [[<cr>]],
+        before   ={
+            [[if data1 then ]],
+            [[  if data2 == 'xdsad' then| ]],
+            [[  ]],
+            [[  ]],
+            [[  ]],
+            [[  end]],
+            [[end]]
+        },
+        after    = [[  ]]
+    },
+    {
+        name     = "add endwise on match rule multiple" ,
+        filepath = './tests/endwise/init.lua',
+        filetype = "lua",
+        linenr   = 5,
+        key      = [[<cr>]],
+        before   ={
+            [[function test()]],
+            [[ if data1 then| ]],
+            [[ local ok="" ]],
+            [[  ]],
+            [[  ]],
+            [[end]]
+        },
+        after    = [[end ]]
+    },
+
+    {
+        name     = "don't add endwise on match rule multiple" ,
+        filepath = './tests/endwise/init.lua',
+        filetype = "lua",
+        linenr   = 5,
+        key      = [[<cr>]],
+        before   ={
+            [[function test()]],
+            [[ if data1 then| ]],
+            [[  ]],
+            [[  ]],
+            [[ end]],
+            [[end]]
+        },
+        after    = [[  ]]
+    },
+
+    {
+        name     = " add endwise on match rule multiple" ,
+        filepath = './tests/endwise/init.lua',
+        filetype = "lua",
+        linenr   = 5,
+        key      = [[<cr>]],
+        before   ={
+            [[M.add_rules = function (rules)]],
+            [[ if data1 then| ]],
+            [[    for _, rule in pairs(rules) do]],
+            [[        table.insert(M.config.rules, rule)]],
+            [[    end]],
+            [[end]],
+        },
+        after    = [[end ]]
+    },
+                    -- or
+                    -- (end_parent - end_target == 1 and col_parent ~= 0) -- normal case when group
 }
 
 local run_data = _G.Test_filter(data)

@@ -139,17 +139,17 @@ M.on_attach = function(bufnr)
                 local key = string.format('"%s"', rule.key_map)
                 if rule.key_map == '"' then key = [['"']] end
                 local mapping = string.format("v:lua.MPairs.autopairs_map(%d,%s)", bufnr, key)
-                api.nvim_buf_set_keymap(bufnr, "i", rule.key_map, mapping, {expr = true, noremap = true})
+                api.nvim_buf_set_keymap(bufnr, "i", rule.key_map, mapping, {expr = true, noremap = true,silent=true})
 
                 local key_end = rule.end_pair:sub(1,1)
                 if #key_end == 1 and key_end ~= rule.key_map and rule.move_cond ~= nil then
                     mapping = string.format([[v:lua.MPairs.autopairs_map(%d, '%s')]], bufnr,key_end )
-                    vim.api.nvim_buf_set_keymap(bufnr, 'i',key_end, mapping, {expr = true, noremap = true})
+                    vim.api.nvim_buf_set_keymap(bufnr, 'i',key_end, mapping, {expr = true, noremap = true,silent=true})
                 end
             else
                 if rule.key_map ~= "" then
                     local mapping = string.format("v:lua.MPairs.autopairs_map(%d,'%s')", bufnr, rule.key_map)
-                    api.nvim_buf_set_keymap(bufnr, "i", rule.key_map, mapping, {expr = true, noremap = true})
+                    api.nvim_buf_set_keymap(bufnr, "i", rule.key_map, mapping, {expr = true, noremap = true,silent=true})
                 elseif rule.is_endwise == false then
                     enable_insert_auto = true
                 end
@@ -257,7 +257,7 @@ M.autopairs_map = function(bufnr, char)
             -- log.debug('next_char' .. next_char)
             if
                 next_char == rule.end_pair
-                and rule.is_regex==false
+                and rule.is_regex == false
                 and rule:can_move(cond_opt)
             then
                 return utils.esc( utils.key.right)
@@ -269,6 +269,8 @@ M.autopairs_map = function(bufnr, char)
                 local end_pair = rule:get_end_pair(cond_opt)
                 if add_char == 0 then char = "" end
                 return utils.esc(char .. end_pair .. utils.repeat_key(utils.key.left,#end_pair))
+
+                -- return utils.esc('<c-r>=luaeval("_G._n_pairs_mapping")<cr>')
             end
         end
     end
