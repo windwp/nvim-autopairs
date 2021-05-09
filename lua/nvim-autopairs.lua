@@ -50,6 +50,10 @@ M.setup = function(opt)
 
     end
 
+    -- force mapping key to currentbuffer
+    utils.set_attach(vim.api.nvim_get_current_buf(), 0)
+    M.on_attach()
+
     api.nvim_exec ([[
     augroup autopairs_buf
     autocmd!
