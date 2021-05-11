@@ -50,21 +50,19 @@ M.setup = function(opt)
 
     end
 
-    -- force mapping key to currentbuffer
-    utils.set_attach(vim.api.nvim_get_current_buf(), 0)
-    M.on_attach()
+    M.force_attach()
 
     api.nvim_exec ([[
     augroup autopairs_buf
     autocmd!
     autocmd BufEnter * :lua require("nvim-autopairs").on_attach()
-    autocmd FileType * :lua require("nvim-autopairs").on_attach()
+    autocmd FileType * :lua require("nvim-autopairs").force_attach()
     augroup end
         ]],false)
 end
 
 M.add_rule = function (rule)
-    table.insert(M.config.rules, rule)
+    M.add_rules({rule})
 end
 
 M.get_rule = function(start_pair)
@@ -92,6 +90,7 @@ M.add_rules = function (rules)
     for _, rule in pairs(rules) do
         table.insert(M.config.rules, rule)
     end
+    M.force_attach()
 end
 
 M.clear_rules = function()
@@ -104,6 +103,12 @@ end
 
 M.enable = function()
     M.state.disabled = false
+end
+
+--- force remap key to buffer
+M.force_attach = function(bufnr)
+    utils.set_attach(bufnr, 0)
+    M.on_attach(bufnr)
 end
 
 M.on_attach = function(bufnr)
@@ -278,6 +283,7 @@ M.autopairs_map = function(bufnr, char)
     end
     return char
 end
+
 M.autopairs_insert = function(bufnr, char)
     if M.state.disabled then return end
     if skip_next then skip_next = false return end
