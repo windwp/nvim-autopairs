@@ -111,13 +111,22 @@ M.force_attach = function(bufnr)
     M.on_attach(bufnr)
 end
 
-M.on_attach = function(bufnr)
-    if M.state.disabled then return end
-    bufnr = bufnr or api.nvim_get_current_buf()
-    if not utils.check_disable_ft(M.config.disable_filetype, vim.bo.filetype) then
+local function is_disable()
+    if M.state.disabled then return true end
+    if utils.check_filetype(M.config.disable_filetype, vim.bo.filetype) then
+        -- should have a way to remove the mapping when vim.bo.filetype = ''
+        -- now we only remove a rule
+        -- the event FileType happen after BufEnter
         M.state.rules = {}
-        return
+        return true
     end
+    return false
+end
+
+M.on_attach = function(bufnr)
+    if is_disable() then return end
+    bufnr = bufnr or api.nvim_get_current_buf()
+
     local rules = {};
     for _, rule in pairs(M.config.rules) do
         if utils.check_filetype(rule.filetypes,vim.bo.filetype) then
@@ -170,9 +179,9 @@ M.on_attach = function(bufnr)
         -- capture all key use it to trigger regex pairs
         -- it can make an issue with paste from register
         api.nvim_exec(string.format([[
-        augroup autopairs_insert_%d
-        autocmd!
-        autocmd InsertCharPre <buffer=%d> call luaeval("require('nvim-autopairs').autopairs_insert(%d, _A)", v:char)
+            augroup autopairs_insert_%d
+                autocmd!
+                autocmd InsertCharPre <buffer=%d> call luaeval("require('nvim-autopairs').autopairs_insert(%d, _A)", v:char)
             augroup end ]],
             bufnr, bufnr, bufnr), false)
     end
@@ -184,7 +193,7 @@ M.on_attach = function(bufnr)
 end
 
 M.autopairs_bs = function(bufnr)
-    if M.state.disabled then return end
+    if is_disable() then return utils.esc(utils.key.bs) end
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
     for _, rule in pairs(M.state.rules) do
@@ -223,12 +232,8 @@ M.autopairs_bs = function(bufnr)
 end
 
 
-local skip_next = false
-
-
 M.autopairs_map = function(bufnr, char)
-    if M.state.disabled then return end
-    if skip_next then skip_next = false return end
+    if is_disable() then return char end
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
     local new_text = ""
@@ -285,8 +290,7 @@ M.autopairs_map = function(bufnr, char)
 end
 
 M.autopairs_insert = function(bufnr, char)
-    if M.state.disabled then return end
-    if skip_next then skip_next = false return end
+    if is_disable() then return char end
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
     local new_text = line:sub(1, col) .. char .. line:sub(col + 1,#line)
@@ -340,7 +344,7 @@ M.autopairs_insert = function(bufnr, char)
 end
 
 M.autopairs_cr = function(bufnr)
-    if M.state.disabled then return end
+    if is_disable() then  return utils.esc("<cr>") end
     bufnr = bufnr or api.nvim_get_current_buf()
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()

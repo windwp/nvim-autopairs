@@ -64,7 +64,7 @@ end
 
 
 M.set_attach = function(bufnr,value)
-    api.nvim_buf_set_var(bufnr, "nvim-autopairs", value)
+    api.nvim_buf_set_var(bufnr or 0, "nvim-autopairs", value)
 end
 
 M.is_in_table = function(tbl, val)

@@ -5,9 +5,9 @@ if _G.__is_log then
     }
 else
     return{
-        debug = function() end,
-        info = function() end,
-        error = function() end,
+        debug = function(_) end,
+        info = function(_) end,
+        error = function(_) end,
 
     }
 end
