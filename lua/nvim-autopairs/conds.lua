@@ -128,7 +128,7 @@ cond.move_right = function ()
                 end
                 -- ("|")  => (""|)
                 --  ""       |"      "  => ""       "|      "
-                if utils.is_in_quote(opts.text, opts.col  - 1, opts.char) then
+                if utils.is_in_quote(opts.line, opts.col, opts.char) then
                     return  true
                 end
             end

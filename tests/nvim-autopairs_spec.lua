@@ -155,6 +155,12 @@ local data = {
     },
 
     {
+        name = "move right when inside quote" ,
+        key    = [["]],
+        before = [[foo("|")]],
+        after  = [[foo(""|)]]
+    },
+    {
         name = "move right square bracket" ,
         key    = [[)]],
         before = [[("abcd|) ]],
