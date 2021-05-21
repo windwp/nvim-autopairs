@@ -259,3 +259,6 @@ Before        Input         After
 
 [endwise](./doc/endwise.md)
 
+### Custom rules
+[rules](https://github.com/windwp/nvim-autopairs/wiki/Custom-rules)
+
