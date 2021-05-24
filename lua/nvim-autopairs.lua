@@ -16,6 +16,7 @@ local default = {
     ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]],"%s+", ""),
     check_ts = false,
     enable_moveright = true,
+    enable_afterquote = true,
     ts_config = {
         lua = {'string', 'source'},
         javascript = {'string', 'template_string'}
@@ -47,7 +48,6 @@ M.setup = function(opt)
         else
             print("you need to install treesitter")
         end
-
     end
 
     M.force_attach()
@@ -127,7 +127,7 @@ M.on_attach = function(bufnr)
     if is_disable() then return end
     bufnr = bufnr or api.nvim_get_current_buf()
 
-    local rules = {};
+    local rules = {}
     for _, rule in pairs(M.config.rules) do
         if utils.check_filetype(rule.filetypes,vim.bo.filetype) then
             table.insert(rules, rule)
@@ -198,7 +198,6 @@ M.autopairs_bs = function(bufnr)
     local _, col = utils.get_cursor()
     for _, rule in pairs(M.state.rules) do
         if rule.start_pair then
-
             local prev_char, next_char = utils.text_cusor_line(
                 line,
                 col,
@@ -231,7 +230,6 @@ M.autopairs_bs = function(bufnr)
     return utils.esc(utils.key.bs)
 end
 
-
 M.autopairs_map = function(bufnr, char)
     if is_disable() then return char end
     local line = utils.text_get_current_line(bufnr)
@@ -251,7 +249,7 @@ M.autopairs_map = function(bufnr, char)
             -- log.debug("new_text:[" .. new_text .. "]")
             local prev_char, next_char = utils.text_cusor_line(
                 new_text,
-                col+ add_char,
+                col + add_char,
                 #rule.start_pair,
                 #rule.end_pair, rule.is_regex
             )
@@ -274,7 +272,7 @@ M.autopairs_map = function(bufnr, char)
                 and rule.is_regex == false
                 and rule:can_move(cond_opt)
             then
-                return utils.esc( utils.key.right)
+                return utils.esc(utils.key.right)
             end
             if
                 utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
@@ -286,7 +284,7 @@ M.autopairs_map = function(bufnr, char)
             end
         end
     end
-    return char
+    return M.autopairs_afterquote(new_text, char)
 end
 
 M.autopairs_insert = function(bufnr, char)
@@ -355,7 +353,8 @@ M.autopairs_cr = function(bufnr)
                 line,
                 col,
                 #rule.start_pair,
-                #rule.end_pair, rule.is_regex
+                #rule.end_pair,
+                rule.is_regex
             )
             -- log.debug('prev_char' .. rule.start_pair)
             -- log.debug('prev_char' .. prev_char)
@@ -390,29 +389,48 @@ M.autopairs_cr = function(bufnr)
                     rule = rule,
                     prev_char = prev_char,
                     next_char = next_char,
-                    line = line
+                    line = line,
                 })
             then
                 log.debug('do_cr')
-                return utils.esc("<cr><c-o>O")
+                return utils.esc('<cr><c-o>O')
             end
         end
     end
-    return utils.esc("<cr>")
+    return utils.esc('<cr>')
 end
 
-M.autopairs_closequote = function()
-    local line = utils.text_get_current_line(0)
-    local _, col = utils.get_cursor()
-    local prev_char, next_char = utils.text_cusor_line(
-        line,
-        col + 1, 1, 1, false)
-    if utils.is_bracket(prev_char) and utils.is_quote(next_char) then
-        -- find the next close quote on s
-        local pos = vim.fn.search('\\'..next_char,"n")
-        log.debug("search result")
-        log.debug(pos)
+--- map to auto add pairs on close quote (|"aaaaa" => (|"aaaaaa")
+M.autopairs_afterquote = function(line, key_char)
+    if M.config.enable_afterquote then
+        line = line or utils.text_get_current_line(0)
+        local _, col = utils.get_cursor()
+        local prev_char, next_char = utils.text_cusor_line(line, col + 1, 1, 1, false)
+        if utils.is_bracket(prev_char) and utils.is_quote(next_char) then
+            local is_prev_slash = false
+            for i = col + 2 + #next_char, #line, 1 do
+                local char = line:sub(i, i + #next_char -1)
+                local char_end = line:sub(i + 1, i + #next_char )
+                if not is_prev_slash and char == next_char  then
+                    for _, rule in pairs(M.state.rules) do
+                        if rule.start_pair == prev_char and char_end ~= rule.end_pair then
+                            local new_text = line:sub(0, i) .. rule.end_pair .. line:sub(i + 1,#line)
+                            M.state.expr_quote = new_text
+                            local append = "a";
+                            if col > 2 then append = "la" end
+                            return utils.esc('<esc><cmd>lua MPairs.autopairs_closequote_expr()<cr>' .. append)
+                        end
+                    end
+                end
+                is_prev_slash = char == '\\'
+            end
+        end
     end
+    return utils.esc(key_char)
+end
+
+M.autopairs_closequote_expr=function ()
+    vim.fn.setline('.', M.state.expr_quote)
 end
 
 M.check_break_line_char = function()

@@ -35,7 +35,6 @@ npairs.add_rules({
 
 })
 vim.api.nvim_set_keymap('i' , '<CR>','v:lua.npairs.check_break_line_char()', {expr = true , noremap = true})
-vim.api.nvim_set_keymap('i' , '<c-e>','<esc>:lua require("nvim-autopairs").autopairs_closequote()<cr>', { noremap = true})
 function helpers.feed(text, feed_opts)
     feed_opts = feed_opts or 'n'
     local to_feed = vim.api.nvim_replace_termcodes(text, true, false, true)
@@ -61,6 +60,13 @@ local data = {
         after  = [[{{|}} ]]
     },
     {
+        name = "test single quote ",
+        filetype = "lua",
+        key = "'",
+        before = [[data,|) ]],
+        after  = [[data,'|') ]]
+    },
+    {
         name = "add normal bracket" ,
         key    = [[(]],
         before = [[aaaa| x ]],
@@ -73,7 +79,6 @@ local data = {
         after  = [[aa"|" aa]]
     },
     {
-        -- only = true,
         name = "add python quote" ,
         filetype = "python",
         key    = [["]],
@@ -300,14 +305,6 @@ local data = {
         before = [[/*| ]],
         after  = [[/**|**/ ]]
     },
-    {
-        only=true,
-        name="auto close on endquote",
-        filetype='javascript',
-        key="<c-e>",
-        before = [[const abc=(|"visudsa" ]],
-        after  = [[const abc=(|"visudsa") ]]
-    }
 }
 
 local run_data = {}
@@ -338,7 +335,6 @@ local function Test(test_data)
             npairs.on_attach(vim.api.nvim_get_current_buf())
             vim.fn.setline(line , before)
             vim.fn.setpos('.' ,{0, line, p_before , 0})
-            -- log.debug("insert: " .. value.key)
             helpers.insert(value.key)
             vim.wait(10)
             helpers.feed("<esc>")
