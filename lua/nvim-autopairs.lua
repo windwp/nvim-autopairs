@@ -271,7 +271,7 @@ M.autopairs_map = function(bufnr, char)
             -- log.debug('next_char' .. next_char)
             if
                 next_char == rule.end_pair
-                and rule.is_regex==false
+                and rule.is_regex == false
                 and rule:can_move(cond_opt)
             then
                 return utils.esc( utils.key.right)
@@ -399,6 +399,20 @@ M.autopairs_cr = function(bufnr)
         end
     end
     return utils.esc("<cr>")
+end
+
+M.autopairs_closequote = function()
+    local line = utils.text_get_current_line(0)
+    local _, col = utils.get_cursor()
+    local prev_char, next_char = utils.text_cusor_line(
+        line,
+        col + 1, 1, 1, false)
+    if utils.is_bracket(prev_char) and utils.is_quote(next_char) then
+        -- find the next close quote on s
+        local pos = vim.fn.search('\\'..next_char,"n")
+        log.debug("search result")
+        log.debug(pos)
+    end
 end
 
 M.check_break_line_char = function()

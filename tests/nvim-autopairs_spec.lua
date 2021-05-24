@@ -9,6 +9,7 @@ local utils = require('nvim-autopairs.utils')
 _G.npairs = npairs;
 local eq=_G.eq
 
+
 npairs.add_rules({
     Rule("u%d%d%d%d$", "number", "lua")
         :use_regex(true),
@@ -34,6 +35,7 @@ npairs.add_rules({
 
 })
 vim.api.nvim_set_keymap('i' , '<CR>','v:lua.npairs.check_break_line_char()', {expr = true , noremap = true})
+vim.api.nvim_set_keymap('i' , '<c-e>','<esc>:lua require("nvim-autopairs").autopairs_closequote()<cr>', { noremap = true})
 function helpers.feed(text, feed_opts)
     feed_opts = feed_opts or 'n'
     local to_feed = vim.api.nvim_replace_termcodes(text, true, false, true)
@@ -298,6 +300,14 @@ local data = {
         before = [[/*| ]],
         after  = [[/**|**/ ]]
     },
+    {
+        only=true,
+        name="auto close on endquote",
+        filetype='javascript',
+        key="<c-e>",
+        before = [[const abc=(|"visudsa" ]],
+        after  = [[const abc=(|"visudsa") ]]
+    }
 }
 
 local run_data = {}
