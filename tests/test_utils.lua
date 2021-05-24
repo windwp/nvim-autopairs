@@ -1,4 +1,5 @@
 local utils = require('nvim-autopairs.utils')
+local _, ts_utils = pcall(require, 'nvim-treesitter.ts_utils')
 local log = require('nvim-autopairs._log')
 local api = vim.api
 
@@ -53,15 +54,15 @@ _G.Test_withfile = function(test_data, cb)
             if not vim.tbl_islist(value.before) then
                 value.before = {value.before}
             end
-            local numlnr = 0
-            for _, text in pairs(value.before) do
+            for index, text in pairs(value.before) do
                 local txt = string.gsub(text, '%|' , "")
                 table.insert(text_before, txt )
                 if string.match( text, "%|") then
-                    pos_before.colnr = string.find(text, '%|')
-                    pos_before.linenr = pos_before.linenr + numlnr
+                    if string.find(text,'%|') then
+                        pos_before.colnr = string.find(text, '%|')
+                        pos_before.linenr = value.linenr + index-1
+                    end
                 end
-                numlnr =  numlnr + 1
             end
             local after = string.gsub(value.after, '%|' , "")
             local p_after = string.find(value.after , '%|')
@@ -74,7 +75,7 @@ _G.Test_withfile = function(test_data, cb)
                     vim.bo.filetype = value.filetype
                     vim.cmd(":e")
                 end
-                vim.api.nvim_buf_set_lines(0, pos_before.linenr -1, pos_before.linenr +#text_before, false, text_before)
+                vim.api.nvim_buf_set_lines(0, value.linenr -1, value.linenr +#text_before, false, text_before)
                 vim.fn.cursor(pos_before.linenr, pos_before.colnr)
                 log.debug("insert:"..value.key)
                 helpers.insert(value.key)
@@ -85,6 +86,7 @@ _G.Test_withfile = function(test_data, cb)
                     local pos = vim.fn.getpos('.')
                     eq(pos_before.linenr + 1, pos[2], '\n\n breakline error:' .. value.name .. "\n")
                     eq(after, result , "\n\n text error: " .. value.name .. "\n")
+
                 else
                     local result = vim.fn.getline(pos_before.linenr)
                     local pos = vim.fn.getpos('.')
@@ -98,3 +100,22 @@ _G.Test_withfile = function(test_data, cb)
         end)
     end
 end
+
+_G.dump_node = function(node)
+    local text=ts_utils.get_node_text(node)
+    for _, txt in pairs(text) do
+        print(txt)
+    end
+end
+
+
+
+_G.dump_node_text = function(target)
+    for node in target:iter_children() do
+        local node_type = node:type()
+        local text = ts_utils.get_node_text(node)
+        log.debug("type:" .. node_type .. " ")
+        log.debug(text)
+    end
+end
+

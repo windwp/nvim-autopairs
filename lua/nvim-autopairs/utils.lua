@@ -111,17 +111,12 @@ M.repeat_key = function(key, num)
     end
     return text
 end
-
--- function M.text_prev_next(line, col, prev_count, next_char)
---   prev_count = prev_count or 1
---   next_char = next_char or prev_count
-
---   if line then
---     local prev = string.sub(line, math.max(col - prev_count + 1, 0), col)
---     local next = string.sub(line, col + 1, math.min(col + next_char, #line + 1))
---         return prev, next
---   end
--- end
+--- cut text from position with number character
+---@param line string  text
+---@param col number  position of text
+---@param prev_count number  number char previous
+---@param next_count number number char next
+---@param is_regex boolean if it is regex then will cut all
 M.text_cusor_line = function(line, col, prev_count, next_count, is_regex)
     if is_regex then
         prev_count = col

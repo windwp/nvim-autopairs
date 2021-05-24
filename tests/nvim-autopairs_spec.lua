@@ -9,6 +9,7 @@ local utils = require('nvim-autopairs.utils')
 _G.npairs = npairs;
 local eq=_G.eq
 
+
 npairs.add_rules({
     Rule("u%d%d%d%d$", "number", "lua")
         :use_regex(true),
@@ -59,6 +60,13 @@ local data = {
         after  = [[{{|}} ]]
     },
     {
+        name = "test single quote ",
+        filetype = "lua",
+        key = "'",
+        before = [[data,|) ]],
+        after  = [[data,'|') ]]
+    },
+    {
         name = "add normal bracket" ,
         key    = [[(]],
         before = [[aaaa| x ]],
@@ -71,7 +79,6 @@ local data = {
         after  = [[aa"|" aa]]
     },
     {
-        -- only = true,
         name = "add python quote" ,
         filetype = "python",
         key    = [["]],
@@ -328,7 +335,6 @@ local function Test(test_data)
             npairs.on_attach(vim.api.nvim_get_current_buf())
             vim.fn.setline(line , before)
             vim.fn.setpos('.' ,{0, line, p_before , 0})
-            -- log.debug("insert: " .. value.key)
             helpers.insert(value.key)
             vim.wait(10)
             helpers.feed("<esc>")
