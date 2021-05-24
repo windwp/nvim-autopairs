@@ -400,7 +400,7 @@ M.autopairs_cr = function(bufnr)
     return utils.esc('<cr>')
 end
 
---- map to auto add pairs on close quote (|"aaaaa" => (|"aaaaaa")
+--- add bracket pairs after quote (|"aaaaa" => (|"aaaaaa")
 M.autopairs_afterquote = function(line, key_char)
     if M.config.enable_afterquote then
         line = line or utils.text_get_current_line(0)
@@ -417,7 +417,7 @@ M.autopairs_afterquote = function(line, key_char)
                             local new_text = line:sub(0, i) .. rule.end_pair .. line:sub(i + 1,#line)
                             M.state.expr_quote = new_text
                             local append = "a";
-                            if col > 2 then append = "la" end
+                            if col > 0 then append = "la" end
                             return utils.esc('<esc><cmd>lua MPairs.autopairs_closequote_expr()<cr>' .. append)
                         end
                     end

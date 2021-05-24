@@ -2,6 +2,9 @@ local npairs = require('nvim-autopairs')
 
 _G.npairs = npairs
 
+npairs.setup({
+    enable_afterquote = true,
+})
 local data = {
     {
         name = 'add  bracket after quote ',
@@ -9,8 +12,8 @@ local data = {
         filetype = 'lua',
         linenr = 5,
         key = [[(]],
-        before = [[const abc=|"visudsa" ]],
-        after = [[const abc=(|"visudsa") ]],
+        before = [[const abc=|"test" ]],
+        after = [[const abc=(|"test") ]],
     },
     {
         name = 'add  bracket after quote ',
@@ -18,10 +21,19 @@ local data = {
         filetype = 'lua',
         linenr = 5,
         key = [[(]],
-        before = [[|"visudsa" ]],
-        after = [[(|"visudsa") ]],
+        before = [[|"test" ]],
+        after = [[(|"test") ]],
     },
 
+    {
+        name = 'add  bracket after quote ',
+        filepath = './tests/endwise/init.lua',
+        filetype = 'lua',
+        linenr = 5,
+        key = [[{]],
+        before = [[(|"test") ]],
+        after = [[({|"test"}) ]],
+    },
     {
         name = 'add  bracket after quote ',
         filepath = './tests/endwise/init.lua',

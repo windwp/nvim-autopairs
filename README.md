@@ -14,11 +14,11 @@ require('nvim-autopairs').setup()
 ## Default values
 
 ``` lua
-
 local disable_filetype = { "TelescopePrompt" }
 local ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]],"%s+", "")
 local enable_moveright = true
-local check_ts = false,
+local enable_afterquote = true  -- add bracket pairs after quote
+local check_ts = false
 
 ```
 
@@ -251,7 +251,7 @@ Before        Input         After
   require('nvim-autopairs').get_rule('"') -- get rule " then modify it
 
 ```
-### autotag html and tsx 
+### autotag html and tsx
 
 [autotag](https://github.com/windwp/nvim-ts-autotag)
 
