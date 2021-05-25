@@ -272,7 +272,7 @@ M.autopairs_map = function(bufnr, char)
                 and rule.is_regex == false
                 and rule:can_move(cond_opt)
             then
-                return utils.esc(utils.key.right)
+                return utils.esc(utils.key.join_right)
             end
             if
                 utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
@@ -280,7 +280,8 @@ M.autopairs_map = function(bufnr, char)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
                 if add_char == 0 then char = "" end
-                return utils.esc(char .. end_pair .. utils.repeat_key(utils.key.left,#end_pair))
+                return utils.esc(
+                    char .. end_pair .. utils.repeat_key(utils.key.join_left, #end_pair))
             end
         end
     end

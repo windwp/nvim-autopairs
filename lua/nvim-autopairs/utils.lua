@@ -3,10 +3,12 @@ local api = vim.api
 local log = require('nvim-autopairs._log')
 
 M.key = {
-    left = "<left>",
     del = "<del>",
     bs = "<bs>",
-    right = "<right>"
+    left = "<left>",
+    right = "<right>",
+    join_left = "<c-g>U<left>",
+    join_right = "<c-g>U<right>"
 }
 
 M.set_vchar = function(text)
