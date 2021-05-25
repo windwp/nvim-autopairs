@@ -403,30 +403,34 @@ end
 
 --- add bracket pairs after quote (|"aaaaa" => (|"aaaaaa")
 M.autopairs_afterquote = function(line, key_char)
-    if M.config.enable_afterquote then
+    if M.config.enable_afterquote  then
         line = line or utils.text_get_current_line(0)
         local _, col = utils.get_cursor()
         local prev_char, next_char = utils.text_cusor_line(line, col + 1, 1, 1, false)
-        if utils.is_bracket(prev_char) and utils.is_quote(next_char) then
-            local is_prev_slash = false
-            for i = col + 2 + #next_char, #line, 1 do
-                local char = line:sub(i, i + #next_char -1)
-                local char_end = line:sub(i + 1, i + #next_char )
-                if not is_prev_slash and char == next_char  then
-                    for _, rule in pairs(M.state.rules) do
-                        if rule.start_pair == prev_char and char_end ~= rule.end_pair then
-                            local new_text = line:sub(0, i) .. rule.end_pair .. line:sub(i + 1,#line)
-                            M.state.expr_quote = new_text
-                            local append = "a";
-                            if col > 0 then append = "la" end
-                            return utils.esc('<esc><cmd>lua MPairs.autopairs_closequote_expr()<cr>' .. append)
+        if
+            utils.is_bracket(prev_char)
+            and utils.is_quote(next_char)
+            and not utils.is_in_quote(line, col, next_char)
+            then
+                local is_prev_slash = false
+                for i = col + 2 + #next_char, #line, 1 do
+                    local char = line:sub(i, i + #next_char -1)
+                    local char_end = line:sub(i + 1, i + #next_char )
+                    if not is_prev_slash and char == next_char  then
+                        for _, rule in pairs(M.state.rules) do
+                            if rule.start_pair == prev_char and char_end ~= rule.end_pair then
+                                local new_text = line:sub(0, i) .. rule.end_pair .. line:sub(i + 1,#line)
+                                M.state.expr_quote = new_text
+                                local append = "a";
+                                if col > 0 then append = "la" end
+                                return utils.esc('<esc><cmd>lua MPairs.autopairs_closequote_expr()<cr>' .. append)
+                            end
                         end
                     end
+                    is_prev_slash = char == '\\'
                 end
-                is_prev_slash = char == '\\'
             end
         end
-    end
     return utils.esc(key_char)
 end
 

@@ -51,8 +51,10 @@ M.is_in_quote = function(line, pos, quote)
       char == quote and
       line:sub(cIndex -1, cIndex -1) ~= "\\"
     then
+        log.debug('match')
        result = false
     elseif result == false and char == quote then
+        log.debug('match')
         result = true
     end
   end

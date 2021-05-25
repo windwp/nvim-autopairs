@@ -62,6 +62,17 @@ local data = {
         before = [[const abc=|"visu\"dsa" ]],
         after = [[const abc=(|"visu\"dsa") ]],
     },
+
+    {
+        -- only=true,
+        name = 'test add close quote inside string',
+        filepath = './tests/endwise/init.lua',
+        filetype = 'lua',
+        linenr = '5',
+        key = [[(]],
+        before = [[const abc="visu|"dsa"" ]],
+        after =  [[const abc="visu(|"dsa"" ]],
+    },
 }
 
 local run_data = _G.Test_filter(data)
