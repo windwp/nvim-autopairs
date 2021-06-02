@@ -12,8 +12,6 @@ local function setup(opt)
     end
 
     local bracket = function(...)
-        print(opt.enable_check_bracket_line)
-        print(vim.inspect(opt))
         if opt.enable_check_bracket_line == true then
             return basic(...)
                 :with_pair(cond.check_is_bracket_line())
