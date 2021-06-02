@@ -18,6 +18,7 @@ local disable_filetype = { "TelescopePrompt" }
 local ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]],"%s+", "")
 local enable_moveright = true
 local enable_afterquote = true  -- add bracket pairs after quote
+local enable_check_bracket_line = true  --- check bracket in same line
 local check_ts = false
 
 ```
@@ -232,7 +233,6 @@ npairs.add_rules({
 ```
 
 ### Don't add pairs if it already have a close pairs in same line
-
 if **next character** is a close pairs and it doesn't have an open pairs in same line then it will not add a close pairs
 
 ``` text
@@ -242,17 +242,13 @@ Before        Input         After
 
 ```
 
+``` lua
+require('nvim-autopairs').setup({
+  enable_check_bracket_line = false
+})
+```
 
 ### Don't add pairs if the next char is alphanumeric
-
-By default, nvim-autopairs will do this
-``` text
-Before        Input         After
-------------------------------------
-|foobar        (            (|foobar
-|.foobar       (            (|).foobar
-|+foobar       (            (|)+foobar
-```
 
 You can customize how nvim-autopairs will behave if it encounters a specific
 character
@@ -267,7 +263,6 @@ Before        Input         After
 ------------------------------------
 |foobar        (            (|foobar
 |.foobar       (            (|.foobar
-|+foobar       (            (|)+foobar
 ```
 
 ### Plugin Integration
@@ -279,6 +274,7 @@ Before        Input         After
   require('nvim-autopairs').get_rule('"') -- get rule " then modify it
 
 ```
+
 ### autotag html and tsx
 
 [autotag](https://github.com/windwp/nvim-ts-autotag)
