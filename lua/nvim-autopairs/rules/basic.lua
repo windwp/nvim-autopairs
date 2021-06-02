@@ -10,6 +10,17 @@ local function setup(opt)
                 :with_pair(cond.not_after_regex_check(opt.ignored_next_char))
                 :with_pair(cond.not_add_quote_inside_quote())
     end
+
+    local bracket = function(...)
+        print(opt.enable_check_bracket_line)
+        print(vim.inspect(opt))
+        if opt.enable_check_bracket_line == true then
+            return basic(...)
+                :with_pair(cond.check_is_bracket_line())
+        end
+        return basic(...)
+    end
+
     local rules = {
         Rule("<!--", "-->", 'html'):with_cr(cond.none()),
         Rule("```", "```", { 'markdown', 'vimwiki' }),
@@ -22,12 +33,9 @@ local function setup(opt)
             :with_pair(cond.not_before_regex_check("%w")) ,
         basic("`", "`"),
         basic('"', '"'),
-        basic("(", ")")
-            :with_pair(cond.check_is_bracket_line()),
-        basic("[", "]")
-            :with_pair(cond.check_is_bracket_line()),
-        basic("{", "}")
-            :with_pair(cond.check_is_bracket_line()),
+        bracket("(", ")"),
+        bracket("[", "]"),
+        bracket("{", "}"),
         Rule(">", "<",
             { 'html', 'typescript', 'typescriptreact', 'svelte', 'vue', 'xml'})
             :only_cr()

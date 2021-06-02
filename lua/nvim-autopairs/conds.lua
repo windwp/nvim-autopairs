@@ -55,6 +55,7 @@ end
 cond.not_after_regex_check = function(regex, length)
     length = length or 1
     return function(opts)
+        if not regex then return end
         log.debug('not_after_regex_check')
         local str = utils.text_sub_char(opts.line, opts.col + 1, length)
         if str:match(regex) then

@@ -373,5 +373,18 @@ describe('autopairs ', function()
         },
     }
     Test(run_data)
+    npairs.setup({
+        enable_check_bracket_line=false
+    })
 
+    run_data = {
+        {
+            name     = "test disable check bracket line" ,
+            filetype = "latex",
+            key      = [[(]],
+            before   = [[(|))) ]],
+            after    = [[((|)))) ]],
+        },
+    }
+    Test(run_data)
 end)
