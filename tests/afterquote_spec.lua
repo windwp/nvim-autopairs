@@ -64,7 +64,6 @@ local data = {
     },
 
     {
-        -- only=true,
         name = 'test add close quote inside string',
         filepath = './tests/endwise/init.lua',
         filetype = 'lua',
@@ -72,6 +71,15 @@ local data = {
         key = [[(]],
         before = [[const abc="visu|"dsa"" ]],
         after =  [[const abc="visu(|"dsa"" ]],
+    },
+    {
+        name = 'not add bracket with quote have comma',
+        filepath = './tests/endwise/init.lua',
+        filetype = 'lua',
+        linenr = '5',
+        key = [[(]],
+        before = [[|"data", abcdef]],
+        after =  [[(|"data", abcdef]],
     },
 }
 
