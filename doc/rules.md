@@ -8,6 +8,7 @@
 | with_del(cond)            | add condition to check for delete pair event              |
 | only_cr(cond)             | disable move,del and pair event Only use break line event |
 | use_regex(bool,"<key>")   | input pair use regex and trigger by key                   |
+| use_key('<key>')          | change trigger key                                        |
 | replace_endpair(function) | change a map pair with function                           |
 | end_wise(cond)            | use it on end_wise mode                                   |
 

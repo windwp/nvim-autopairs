@@ -41,6 +41,11 @@ function Rule:use_regex(value,key_map)
     return self
 end
 
+function Rule:use_key(key_map)
+    self.key_map = key_map or ""
+    return self
+end
+
 function Rule:get_end_pair(opts)
     if self.end_pair_func then
         return self.end_pair_func(opts)
