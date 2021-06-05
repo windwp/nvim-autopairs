@@ -10,7 +10,7 @@
 | use_regex(bool,"<key>")   | input pair use regex and trigger by key                   |
 | use_key('<key>')          | change trigger key                                        |
 | replace_endpair(function) | change a map pair with function                           |
-| end_wise(cond)            | use it on end_wise mode                                   |
+| end_wise(cond)            | expand pair only on enter key                             |
 
 ### Condition
 ```lua

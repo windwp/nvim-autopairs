@@ -374,11 +374,10 @@ M.autopairs_cr = function(bufnr)
                     line = line
                 })
             then
-                log.debug('do endwise')
                 return utils.esc(
                     rule.end_pair
-                    .. utils.repeat_key(utils.key.left, #rule.end_pair)
-                    .. "<cr><esc>O"
+                    .. utils.repeat_key(utils.key.join_left, #rule.end_pair)
+                    .. "<cr><esc>==O"
                 )
             end
             if

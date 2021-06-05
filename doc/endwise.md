@@ -1,4 +1,4 @@
-#Endwise (experiment)
+# Endwise (experiment)
 
 ** warning** use endwise base on treesitter is not always correct.
 treesitter group all error node with parent node so we can't find
@@ -12,7 +12,7 @@ read docs in readme.md about rules first.
 and install TSPlayground
 
 ``` lua
-local npairs=require('nvim-autopairs')
+local npairs = require('nvim-autopairs')
 npairs.setup()
 
 -- clear all rule if you don't want to use autopairs
@@ -45,3 +45,10 @@ take a look of that file and write your function
 
 * `lua/nvim-autopairs/ts-rule.lua`
 * `lua/nvim-autopairs/ts-conds.lua`
+
+```lua
+-- if you don't want to use regex or treesitter and want expand key on enter
+-- you can use this rule
+   Rule('{', '}')
+        :end_wise(function() return true end),
+```
