@@ -417,21 +417,22 @@ M.autopairs_afterquote = function(line, key_char)
                 local char = line:sub(i, i + #next_char - 1)
                 local char_end = line:sub(i + 1, i + #next_char)
                 if not is_prev_slash and char == next_char then
-                    if char_end ~= ',' then
-                        for _, rule in pairs(M.state.rules) do
-                            if rule.start_pair == prev_char and char_end ~= rule.end_pair then
-                                local new_text = line:sub(0, i)
-                                    .. rule.end_pair
-                                    .. line:sub(i + 1, #line)
-                                M.state.expr_quote = new_text
-                                local append = 'a'
-                                if col > 0 then
-                                    append = 'la'
-                                end
-                                return utils.esc(
-                                    '<esc><cmd>lua MPairs.autopairs_closequote_expr()<cr>' .. append
-                                )
+                    if char_end == ',' then
+                        return utils.esc(key_char)
+                    end
+                    for _, rule in pairs(M.state.rules) do
+                        if rule.start_pair == prev_char and char_end ~= rule.end_pair then
+                            local new_text = line:sub(0, i)
+                                .. rule.end_pair
+                                .. line:sub(i + 1, #line)
+                            M.state.expr_quote = new_text
+                            local append = 'a'
+                            if col > 0 then
+                                append = 'la'
                             end
+                            return utils.esc(
+                                '<esc><cmd>lua MPairs.autopairs_closequote_expr()<cr>' .. append
+                            )
                         end
                     end
                 end

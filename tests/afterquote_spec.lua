@@ -81,6 +81,15 @@ local data = {
         before = [[|"data", abcdef]],
         after =  [[(|"data", abcdef]],
     },
+    {
+        name = 'not add bracket with quote have comma',
+        filepath = './tests/endwise/init.lua',
+        filetype = 'lua',
+        linenr = '5',
+        key = [[(]],
+        before = [[|"data", "abcdef"]],
+        after =  [[(|"data", "abcdef"]],
+    },
 }
 
 local run_data = _G.Test_filter(data)
