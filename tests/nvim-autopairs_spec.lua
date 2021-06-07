@@ -300,27 +300,86 @@ local data = {
     },
     {
         name="test javascript comment",
-        filetype="javascript",
+        filetype = "javascript",
         key="*",
         before = [[/*| ]],
         after  = [[/**|**/ ]]
     },
+    {
+        setup_func = function()
+            npairs.add_rules({
+                Rule("(",")")
+                    :use_key("<c-h>")
+                    :replace_endpair(function() return "<bs><del>" end, true)
+            })
+        end,
+        name     = "test map custom key" ,
+        filetype = "latex",
+        key      = [[<c-h>]],
+        before   = [[ abcde(|) ]],
+        after    = [[ abcde| ]],
+    },
+    {
+        setup_func = function()
+            npairs.add_rules {
+                Rule(' ', ' '):with_pair(function(opts)
+                    local pair = opts.line:sub(opts.col, opts.col + 1)
+                    return vim.tbl_contains({'()', '[]', '{}'}, pair)
+                end),
+                Rule('( ',' )')
+                    :with_pair(function() return false end)
+                    :with_del(function() return false end)
+                    :with_move(function() return true end)
+                    :use_regex(false,")")
+            }
+        end,
+        name     = "test multiple move right" ,
+        filetype = "latex",
+        key      = [[)]],
+        before   = [[( | ) ]],
+        after    = [[(  )| ]],
+    },
+    {
+        setup_func = function()
+            npairs.setup({
+                enable_check_bracket_line=false
+            })
+        end,
+        name     = "test disable check bracket line" ,
+        filetype = "latex",
+        key      = [[(]],
+        before   = [[(|))) ]],
+        after    = [[((|)))) ]],
+    },
+    {
+        setup_func = function()
+            npairs.add_rules({
+                Rule("<", ">",{"rust"})
+                :with_pair(cond.before_text_check("Vec"))
+            })
+        end,
+        name     = "test disable check bracket line" ,
+        filetype = "rust",
+        key      = [[<]],
+        before   = [[Vec| ]],
+        after    = [[Vec<|> ]],
+    },
 }
 
 local run_data = {}
-local isOnly = false
 for _, value in pairs(data) do
     if value.only == true then
         table.insert(run_data, value)
-        isOnly = true
         break
     end
 end
 if #run_data == 0 then run_data = data end
 
+local reset_test = function() npairs.setup() end
 local function Test(test_data)
     for _, value in pairs(test_data) do
         it("test "..value.name, function()
+            if value.setup_func then value.setup_func() end
             local before = string.gsub(value.before , '%|' , "")
             local after = string.gsub(value.after , '%|' , "")
             local p_before = string.find(value.before , '%|')
@@ -351,65 +410,12 @@ local function Test(test_data)
                 vim.fn.setline(line+ 1, '')
                 vim.fn.setline(line+ 2, '')
             end
+            if value.reset_func then value.reset_func() end
+            if not value.reset_func and value.setup_func then reset_test() end
        end)
     end
 end
 
 describe('autopairs ', function()
-    Test(run_data)
-    if isOnly then return end
-    npairs.add_rules({
-        Rule("$$", "$$",{"tex", "latex"})
-        -- don't add a pair if the next character is %
-        :with_pair(cond.not_after_regex_check("%%"))
-    })
-    run_data = {
-        {
-            name     = "test add_rules" ,
-            filetype = "latex",
-            key      = [[$]],
-            before   = [[asdas$| ]],
-            after    = [[asdas$$|$$ ]],
-        },
-    }
-    Test(run_data)
-    npairs.setup({
-        enable_check_bracket_line=false
-    })
-
-    run_data = {
-        {
-            name     = "test disable check bracket line" ,
-            filetype = "latex",
-            key      = [[(]],
-            before   = [[(|))) ]],
-            after    = [[((|)))) ]],
-        },
-    }
-
-    Test(run_data)
-
-    npairs.setup({})
-    npairs.add_rules {
-        Rule(' ', ' '):with_pair(function(opts)
-            local pair = opts.line:sub(opts.col, opts.col + 1)
-            return vim.tbl_contains({'()', '[]', '{}'}, pair)
-        end),
-    Rule('( ',' )')
-        :with_pair(function() return false end)
-        :with_del(function() return false end)
-        :with_move(function() return true end)
-        :use_regex(false,")")
-    }
-    run_data={
-        {
-            name     = "test disable check bracket line" ,
-            filetype = "latex",
-            key      = [[)]],
-            before   = [[( | ) ]],
-            after    = [[(  )| ]],
-        },
-    }
-
     Test(run_data)
 end)

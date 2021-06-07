@@ -1,6 +1,7 @@
 local log = require('nvim-autopairs._log')
 local Rule = {}
 
+local Cond = require('nvim-autopairs.conds')
 
 function Rule.new(...)
     local params = {...}
@@ -17,6 +18,7 @@ function Rule.new(...)
         end
     end
     opt = vim.tbl_extend('force', {
+        -- set to nil mean it will skip on autopairs_map
         key_map       = "",
         start_pair    = nil,
         end_pair      = nil,
@@ -53,8 +55,15 @@ function Rule:get_end_pair(opts)
     return  self.end_pair
 end
 
-function Rule:replace_endpair(value)
+function Rule:replace_endpair(value,check_pair)
     self.end_pair_func = value
+    if check_pair ~= nil then
+        if check_pair == true then
+            self:with_pair(Cond.after_text_check(self.end_pair))
+        else
+            self:with_pair(check_pair)
+        end
+    end
     return self
 end
 

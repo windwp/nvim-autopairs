@@ -19,6 +19,61 @@ cond.done = function()
 end
 
 
+cond.invert = function(func)
+    return function(...)
+        local result = func(...)
+        if result ~= nil then return not result end
+        return nil
+    end
+end
+
+cond.before_regex_check = function(regex, length)
+    length = length or 1
+    return function(opts)
+        log.debug('before_regex_check')
+        local str = utils.text_sub_char(opts.line, opts.col, - length)
+        if str:match(regex) then
+            return true
+        end
+        return false
+    end
+end
+cond.before_text_check = function(text)
+    local length = #text
+    return function(opts)
+        log.debug('before_text_check')
+        local str = utils.text_sub_char(opts.line, opts.col, - length)
+        if str == text then
+            return true
+        end
+        return false
+    end
+end
+cond.after_text_check = function(text)
+    local length = #text
+    return function(opts)
+        log.debug('after_text_check')
+        local str = utils.text_sub_char(opts.line, opts.col + 1, length)
+        if str == text then
+            return true
+        end
+        return false
+    end
+end
+
+cond.after_regex_check = function(regex, length)
+    length = length or 1
+    return function(opts)
+        if not regex then return end
+        log.debug('after_regex_check')
+        local str = utils.text_sub_char(opts.line, opts.col + 1, length)
+        if str:match(regex) then
+            return true
+        end
+        return false
+    end
+end
+
 cond.not_before_text_check = function(text)
     local length = #text
     return function(opts)

@@ -239,7 +239,10 @@ M.autopairs_map = function(bufnr, char)
     local add_char = 1
     for _, rule in pairs(M.state.rules) do
         if rule.start_pair then
-            if rule.is_regex and rule.key_map ~= "" then
+            if rule.is_regex and rule.key_map and rule.key_map ~= "" then
+                new_text = line:sub(1, col) .. line:sub(col + 1,#line)
+                add_char = 0
+            elseif rule.key_map and #rule.key_map > 1 and utils.esc(rule.key_map) == char then
                 new_text = line:sub(1, col) .. line:sub(col + 1,#line)
                 add_char = 0
             else
@@ -275,14 +278,17 @@ M.autopairs_map = function(bufnr, char)
                 local end_pair = rule:get_end_pair(cond_opt)
                 return utils.esc(utils.repeat_key(utils.key.join_right, #end_pair))
             end
+
             if
                 utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_pair(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
+                local move_text = utils.repeat_key(utils.key.join_left,#end_pair)
+                if rule.key_map and #rule.key_map >1 then move_text ="" end
+            
                 if add_char == 0 then char = "" end
-                return utils.esc(char .. end_pair
-                    .. utils.repeat_key(utils.key.join_left, #end_pair))
+                return utils.esc(char .. end_pair .. move_text)
             end
         end
     end
