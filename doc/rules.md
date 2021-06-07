@@ -13,12 +13,12 @@
 | end_wise(cond)                        | expand pair only on enter key                             |
 
 #### replace_endpair
-  param 2 of replace_endpair use to combine with with_pair function
+  paramaters 2 of replace_endpair use to combine with with_pair function
 ``` lua
   Rule("(",")")
     :use_key("<c-h>")
     :replace_endpair(function() return "<bs><del>" end, true)
-  -- it is a shot version of this
+  -- it is a short version of this
   Rule("(","")
     :use_key("<c-h>")
     :with_pair(cond.after_text_check(")")) -- check text after cursor is )
