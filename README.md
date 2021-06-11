@@ -33,7 +33,14 @@ require('nvim-autopairs').setup({
 
 
 #### Mapping `<CR>`
-
+```
+Before        Input         After
+------------------------------------
+{|}           <CR>          {
+                                |
+                            }
+------------------------------------
+```
 <details>
 <summary><b>nvim-compe</b></summary>
 
