@@ -124,7 +124,8 @@ end
 remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 ```
 </details>
-if you have a problem with indent after <cr> please check setting of treesitter indent.
+If you have a problem with indent after <cr>.Please check setting of treesitter
+indent or install plugin support indent on your filetype
 
 ### Rule
 
@@ -138,7 +139,7 @@ npairs.add_rule({
     Rule("$$","$$","tex")
 })
 
--- you can use some builtin condition
+-- you can use some built-in condition
 
 local cond = require('nvim-autopairs.conds')
 print(vim.inspect(cond))

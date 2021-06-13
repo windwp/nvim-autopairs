@@ -285,7 +285,7 @@ M.autopairs_map = function(bufnr, char)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
                 local move_text = utils.repeat_key(utils.key.join_left,#end_pair)
-                if add_char == 0 then
+                if add_char==0 then
                     move_text =""
                     char = ""
                 end
