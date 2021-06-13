@@ -124,6 +124,7 @@ end
 remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 ```
 </details>
+if you have a problem with indent after <cr> please check setting of treesitter indent.
 
 ### Rule
 
