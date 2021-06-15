@@ -69,13 +69,7 @@ remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap =
 
 ```
   
-Make sure to remove the old compe insert mode <CR> binding if you have it:
-```diff
-- vim.api.nvim_set_keymap( 'i', '<CR>', [[compe#confirm('<CR>')]], {noremap = true, expr = true, silent = true})
--- from above
-+ remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
-
-```
+Make sure to remove the old compe insert mode `<CR>` binding if you have it.
 </details>
 
 <details>
