@@ -126,7 +126,7 @@ end
 remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 ```
 </details>
-If you have a problem with indent after press `<cr>`. Please check setting of treesitter
+If you have a problem with indent after press `<cr>` . Please check setting of treesitter
 indent or install plugin support indent on your filetype
 
 ### Rule
