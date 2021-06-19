@@ -68,7 +68,7 @@ end
 remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 
 ```
-  
+
 Make sure to remove the old compe insert mode `<CR>` binding if you have it.
 </details>
 
@@ -126,7 +126,7 @@ end
 remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
 ```
 </details>
-If you have a problem with indent after press`<CR>`. Please check setting of treesitter
+If you have a problem with indent after press `<CR>`. Please check setting of treesitter
 indent or install plugin support indent on your filetype
 
 ### Rule
