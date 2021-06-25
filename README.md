@@ -223,7 +223,7 @@ local npairs = require("nvim-autopairs")
 npairs.setup({
     check_ts = true,
     ts_config = {
-        lua = {'string'},-- it will not add pair on that treesitter node
+        lua = {'string',-- it will not add pair on that treesitter node
         javascript = {'template_string'},
         java = false,-- don't check treesitter on java
     }
@@ -286,6 +286,33 @@ Before        Input         After
   require('nvim-autopairs').clear_rules() -- clear all rule
   require('nvim-autopairs').get_rule('"') -- get rule " then modify it
 
+```
+### FastWrap
+
+``` text
+Before        Input                    After
+--------------------------------------------------
+(|foobar      <M-e> then press $        (|foobar)
+(|)(foobar)   <M-e> then press q       (|(foobar))
+```
+
+```lua
+-- put this to  setup function and press <a-e> to use fast_wrap
+npairs.setup({
+    fast_wrap = {},
+})
+
+-- change default fast_wrap
+npairs.setup({
+    fast_wrap = {
+      map = '<M-e>',
+      chars = { '{', '[', '(', '"', "'" },
+      pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], '%s+', ''),
+      end_key = '$',
+      keys = 'qwertyuiopzxcvbnmasdfghjkl',
+      check_comma = true
+    },
+})
 ```
 
 ### autotag html and tsx

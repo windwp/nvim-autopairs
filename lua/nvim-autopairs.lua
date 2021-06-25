@@ -18,8 +18,6 @@ local default = {
     enable_moveright = true,
     enable_afterquote = true,
     enable_check_bracket_line = true,
-    enable_fastwrap_key = "<M-e>",
-    fastwrap_previous_char = string.gsub([[ [%'%"%)%>%]%)%}] ]],"%s+", ""),
     ts_config = {
         lua = {'string', 'source'},
         javascript = {'string', 'template_string'}
@@ -42,6 +40,9 @@ end
 
 M.setup = function(opt)
     M.config = vim.tbl_deep_extend('force', default, opt or {})
+    if M.config.fast_wrap then
+        require('nvim-autopairs.fastwrap').setup(M.config.fast_wrap)
+    end
     M.config.rules = basic_rule.setup(M.config)
 
     if M.config.check_ts then
@@ -189,10 +190,10 @@ M.on_attach = function(bufnr)
             bufnr, bufnr, bufnr), false)
     end
 
-    if M.config.enable_fastwrap_key then
-        api.nvim_buf_set_keymap(bufnr,"i",
-            M.config.enable_fastwrap_key,
-            "<cmd>lua require('nvim-autopairs').autopairs_fastwrap()<cr>",
+    if M.config.fast_wrap and M.config.fast_wrap.map then
+        api.nvim_buf_set_keymap(bufnr, "i",
+            M.config.fast_wrap.map,
+            "<esc>l<cmd>lua require('nvim-autopairs.fastwrap').show()<cr>",
             {noremap = true})
     end
 
@@ -458,60 +459,6 @@ M.autopairs_afterquote = function(line, key_char)
         end
     end
     return utils.esc(key_char)
-end
-
-M.autopairs_fastwrap = function(line)
-    line = line or utils.text_get_current_line(0)
-    local _, col = utils.get_cursor()
-    local prev_char, next_char = utils.text_cusor_line(line, col, 1, 1, false)
-    local end_pair = ''
-    if
-        utils.is_bracket(prev_char)
-        and not utils.is_in_quote(line, col, next_char)
-    then
-        for _, rule in pairs(M.state.rules) do
-            if rule.start_pair == prev_char then
-                end_pair = rule.end_pair
-            end
-        end
-        if end_pair == '' then return end
-        local is_prev_slash = false
-        local end_pair_pos = 0
-        local target_pos = 0
-        for i = col + 3, #line, 1 do
-            local char = line:sub(i, i )
-            if not is_prev_slash and char == end_pair then
-                end_pair_pos = i
-            end
-            if string.match(char, M.config.fastwrap_previous_char) then
-                if target_pos == 0 then
-                    target_pos = i + 1
-                elseif end_pair_pos > 0 and i > end_pair_pos then
-                    target_pos = i + 1
-                else
-                    target_pos = 0
-                end
-            end
-            -- if char == ' ' then
-            --     if target_pos == 0 then
-            --         target_pos = i -1
-            --     elseif end_pair_pos > 0 and i > end_pair_pos then
-            --         target_pos = i -1
-            --         break
-            --     end
-            -- end
-            is_prev_slash = char == '\\'
-        end
-        if target_pos > 0 then
-            if end_pair_pos > 0 then
-                line = line:sub(1, end_pair_pos -1) .. line:sub(end_pair_pos + 1,#line)
-            end
-            line = line:sub(1, target_pos -1) .. end_pair .. line:sub(target_pos,#line)
-        else
-            line = line .. end_pair
-        end
-        vim.fn.setline('.', line)
-    end
 end
 
 M.autopairs_closequote_expr = function ()

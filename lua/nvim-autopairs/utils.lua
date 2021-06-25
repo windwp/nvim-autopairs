@@ -40,25 +40,23 @@ M.is_equal = function (value,text, is_regex)
 end
 
 M.is_in_quote = function(line, pos, quote)
-  local cIndex = 0
-  local result = false
+    local cIndex = 0
+    local result = false
 
-  while cIndex < string.len(line) and cIndex < pos  do
-    cIndex = cIndex + 1
-    local char = line:sub(cIndex, cIndex)
-    if
-      result == true and
-      char == quote and
-      line:sub(cIndex -1, cIndex -1) ~= "\\"
-    then
-        log.debug('match')
-       result = false
-    elseif result == false and char == quote then
-        log.debug('match')
-        result = true
+    while cIndex < string.len(line) and cIndex < pos  do
+        cIndex = cIndex + 1
+        local char = line:sub(cIndex, cIndex)
+        if
+            result == true and
+            char == quote and
+            line:sub(cIndex -1, cIndex -1) ~= "\\"
+        then
+            result = false
+        elseif result == false and char == quote then
+            result = true
+        end
     end
-  end
-  return result
+    return result
 end
 
 M.is_attached = function(bufnr)
