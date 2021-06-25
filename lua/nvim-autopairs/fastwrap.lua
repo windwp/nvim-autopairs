@@ -86,7 +86,9 @@ M.show = function(line)
             vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row - 1, row + 1)
             vim.cmd('startinsert')
         end, 10)
+        return
     end
+    vim.cmd('startinsert')
 end
 
 M.move_bracket = function(line, target_pos, end_pair, char_map)
@@ -99,7 +101,7 @@ M.move_bracket = function(line, target_pos, end_pair, char_map)
         line = line:sub(1, col) .. line:sub(col + 2, #line)
         target_pos = target_pos - 1
     end
-    if config.check_comma and  char_map == ',' then
+    if config.check_comma and char_map == ',' then
         target_pos = target_pos - 1
     end
 
