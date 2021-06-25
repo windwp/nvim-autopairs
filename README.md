@@ -310,7 +310,8 @@ npairs.setup({
       pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], '%s+', ''),
       end_key = '$',
       keys = 'qwertyuiopzxcvbnmasdfghjkl',
-      check_comma = true
+      check_comma = true,
+      hightlight = 'Search'
     },
 })
 ```

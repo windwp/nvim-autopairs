@@ -10,6 +10,7 @@ local default_config = {
     end_key = '$',
     keys = 'qwertyuiopzxcvbnmasdfghjkl',
     check_comma = true,
+    highlight = 'Search',
 }
 
 local state = npairs.state
@@ -26,7 +27,6 @@ M.setup = function(cfg)
     end
 end
 
-M.setup()
 function M.getchar_handler()
     local ok, key = pcall(vim.fn.getchar)
     if not ok then
@@ -111,7 +111,7 @@ M.highlight_wrap = function(tbl_pos, row)
     local bufnr = vim.api.nvim_win_get_buf(0)
     for _, pos in ipairs(tbl_pos) do
         vim.api.nvim_buf_set_extmark(bufnr, M.ns_fast_wrap, row, pos.col - 1, {
-            virt_text = { { pos.key, 'Search' } },
+            virt_text = { { pos.key, config.highlight } },
             virt_text_pos = 'overlay',
             hl_mode = 'blend',
         })
