@@ -51,7 +51,7 @@ require("nvim-autopairs.completion.compe").setup({
 })
 ```
 
-Make sure to remove Mapping  insert mode `<CR>` binding if you have it.
+Make sure to remove mapping  insert mode `<CR>` binding if you have it.
 </details>
 
 <details>
