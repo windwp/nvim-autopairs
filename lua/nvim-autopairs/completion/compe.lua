@@ -10,7 +10,7 @@ _G.MPairs.completion_done = function()
     local line = utils.text_get_current_line(0)
     local _, col = utils.get_cursor()
     local prev_char,next_char  = utils.text_cusor_line(line, col, 1, 1, false)
-    if prev_char ~= "(" or next_char ~= "(" then
+    if prev_char ~= "(" and next_char ~= "(" then
         if method_kind == nil then
             method_kind = require('vim.lsp.protocol').CompletionItemKind[2]
             function_kind = require('vim.lsp.protocol').CompletionItemKind[3]
