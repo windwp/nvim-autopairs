@@ -9,14 +9,26 @@ local function_kind = nil
 _G.MPairs.completion_done = function()
     local line = utils.text_get_current_line(0)
     local _, col = utils.get_cursor()
-    local prev_char,next_char  = utils.text_cusor_line(line, col, 1, 1, false)
-    if prev_char ~= "(" and next_char ~= "(" then
+    local prev_char, next_char = utils.text_cusor_line(line, col, 1, 1, false)
+    if prev_char ~= '(' and next_char ~= '(' then
         if method_kind == nil then
             method_kind = require('vim.lsp.protocol').CompletionItemKind[2]
             function_kind = require('vim.lsp.protocol').CompletionItemKind[3]
         end
         local item = Completion._confirm_item
         if item.kind == method_kind or item.kind == function_kind then
+            -- check insert text have ( from snippet
+            local completion_item = item.user_data.compe.completion_item
+            if
+                (
+                    completion_item.textEdit
+                    and completion_item.textEdit.newText
+                    and completion_item.textEdit.newText:match('%(')
+                )
+                or (completion_item.insertText and completion_item.insertText:match('%('))
+            then
+                return
+            end
             vim.api.nvim_feedkeys('(', 'i', true)
         end
     end
