@@ -192,7 +192,7 @@ npairs.add_rules({
 --- check ./lua/nvim-autopairs/rules/basic.lua
 
 ```
-[Rules API](./doc/rules.md)
+[Rules API](https://github.com/windwp/nvim-autopairs/wiki/Rules-API)
 
 ### Treesitter
 You can use treesitter to check pair
@@ -302,7 +302,7 @@ npairs.setup({
 
 ### Endwise
 
-[endwise](./doc/endwise.md)
+[endwise](https://github.com/windwp/nvim-autopairs/wiki/Endwise)
 
 ### Custom rules
 [rules](https://github.com/windwp/nvim-autopairs/wiki/Custom-rules)
