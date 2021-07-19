@@ -431,7 +431,7 @@ M.autopairs_afterquote = function(line, key_char)
             and not utils.is_in_quote(line, col, next_char)
         then
             local is_prev_slash = false
-            for i = col + 2 + #next_char, #line, 1 do
+            for i = #line - 2, #line, 1 do
                 local char = line:sub(i, i + #next_char - 1)
                 local char_end = line:sub(i + 1, i + #next_char)
                 if not is_prev_slash and char == next_char then

@@ -5,6 +5,7 @@ _G.npairs = npairs
 npairs.setup({
     enable_afterquote = true,
 })
+
 local data = {
     {
         name = 'add  bracket after quote ',
@@ -88,7 +89,7 @@ local data = {
         linenr = '5',
         key = [[(]],
         before = [[|"data", "abcdef"]],
-        after =  [[(|"data", "abcdef"]],
+        after =  [[(|"data", "abcdef")]],
     },
 }
 
