@@ -14,7 +14,8 @@ set noswapfile
 set nobackup
 
 filetype indent off
-set expandtab!
+set expandtab
+set shiftwidth=4
 set nowritebackup
 set noautoindent
 set nocindent
