@@ -4,6 +4,7 @@ set rtp +=../nvim-treesitter
 set rtp +=../playground/
 
 lua _G.__is_log = true
+lua vim.fn.setenv("DEBUG_PLENARY", true)
 runtime! plugin/plenary.vim
 runtime! plugin/nvim-treesitter.vim
 runtime! plugin/playground.vim
@@ -13,6 +14,7 @@ set noswapfile
 set nobackup
 
 filetype indent off
+set expandtab!
 set nowritebackup
 set noautoindent
 set nocindent

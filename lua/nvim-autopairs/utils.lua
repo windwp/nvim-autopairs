@@ -164,7 +164,7 @@ end
 
 --- get prev_char with out key_map
 M.get_prev_char = function(opt)
-    return opt.line:sub(opt.col, opt.col + #opt.rule.start_pair -1)
+    return opt.line:sub(opt.col -1, opt.col + #opt.rule.start_pair -2)
 end
 
 return M

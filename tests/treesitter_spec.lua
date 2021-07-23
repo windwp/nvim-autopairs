@@ -20,7 +20,7 @@ npairs.add_rules({
 vim.api.nvim_set_keymap('i' , '<CR>','v:lua.npairs.check_break_line_char()', {expr = true , noremap = true})
 
 ts.setup {
-    ensure_installed = 'maintained',
+    ensure_installed = {'lua', 'javascript'},
     highlight = {enable = true},
     autopairs = {enable = true}
 }

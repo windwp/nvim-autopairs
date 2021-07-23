@@ -273,7 +273,7 @@ M.autopairs_map = function(bufnr, char)
                 text = new_text,
                 rule = rule,
                 bufnr = bufnr,
-                col = col,
+                col = col + 1,
                 char = char,
                 line = line,
                 prev_char = prev_char,
@@ -296,7 +296,7 @@ M.autopairs_map = function(bufnr, char)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
                 local move_text = utils.repeat_key(utils.key.join_left,#end_pair)
-                if add_char==0 then
+                if add_char == 0 then
                     move_text =""
                     char = ""
                 end
@@ -325,7 +325,7 @@ M.autopairs_insert = function(bufnr, char)
                 text = new_text,
                 rule = rule,
                 bufnr = bufnr,
-                col = col,
+                col = col + 1,
                 char = char,
                 line = line,
                 prev_char = prev_char,
@@ -387,6 +387,7 @@ M.autopairs_cr = function(bufnr)
                     check_endwise_ts = true,
                     bufnr = bufnr,
                     rule = rule,
+                    col = col,
                     prev_char = prev_char,
                     next_char = next_char,
                     line = line
@@ -406,6 +407,7 @@ M.autopairs_cr = function(bufnr)
                     check_endwise_ts = false,
                     bufnr = bufnr,
                     rule = rule,
+                    col = col,
                     prev_char = prev_char,
                     next_char = next_char,
                     line = line,

@@ -5,9 +5,13 @@ local ts_conds = require('nvim-autopairs.ts-conds')
 return {
     endwise = function (...)
         local params = {...}
-        return Rule(...)
+        local rule = Rule(...)
             :use_regex(true)
-            :end_wise(ts_conds.is_endwise_node(params[4]))
+            :end_wise(cond.is_end_line())
+        if params[4] then
+            rule:with_cr(ts_conds.is_endwise_node(params[4]))
+        end
+        return rule
     end
 
 }

@@ -26,12 +26,6 @@ npairs.add_rules({
                 opts.prev_char:sub(#opts.prev_char - 4,#opts.prev_char)
                 .."<esc>viwUi"
         end),
-    Rule("-","+","vim")
-        :with_move(function(opt)
-            return utils.get_prev_char(opt) == "x"end)
-        :with_move(cond.done()),
-    Rule("/**", "**/", "javascript")
-        :with_move(cond.none()),
 
 })
 vim.api.nvim_set_keymap('i' , '<CR>','v:lua.npairs.check_break_line_char()', {expr = true , noremap = true})
@@ -147,6 +141,12 @@ local data = {
         key    = [[(]],
         before = [[(   many char |))]],
         after  = [[(   many char (|))]]
+    },
+    {
+        name = "move right on quote line " ,
+        key    = [["]],
+        before = [["|"]],
+        after  = [[""|]]
     },
     {
         name = "move right end line " ,
@@ -292,13 +292,27 @@ local data = {
         after  = [[B|1234S1234S ]]
     },
     {
-        name="test move right custom char plus",
+        setup_func = function()
+            npairs.add_rules({
+                Rule("-","+","vim")
+                :with_move(function(opt)
+                    return utils.get_prev_char(opt) == "x" end)
+                    :with_move(cond.done())
+                })
+        end,
+        name = "test move right custom char plus",
         filetype="vim",
         key="+",
         before = [[x|+ ]],
         after  = [[x+| ]]
     },
     {
+        setup_func = function()
+            npairs.add_rules({
+                Rule("/**", "**/", "javascript")
+                :with_move(cond.none())
+            })
+        end,
         name="test javascript comment",
         filetype = "javascript",
         key="*",

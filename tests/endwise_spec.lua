@@ -3,7 +3,7 @@ local ts = require 'nvim-treesitter.configs'
 local log = require('nvim-autopairs._log')
 
 ts.setup {
-    ensure_installed = 'maintained',
+    ensure_installed = {'lua'},
     highlight = {enable = true},
 }
 _G.npairs = npairs;
@@ -12,23 +12,22 @@ vim.api.nvim_set_keymap('i' , '<CR>','v:lua.npairs.check_break_line_char()', {ex
 
 local data = {
     {
-        name     = "lua if add endwise" ,
+        name     = "lua function add endwise" ,
+        filepath = './tests/endwise/init.lua',
+        filetype = "lua",
+        linenr   = 5,
+        key      = [[<cr>]],
+        before   = [[function a()|  ]],
+        after    = [[    end  ]]
+    },
+    {
+        name     = "add if endwise" ,
         filepath = './tests/endwise/init.lua',
         filetype = "lua",
         linenr   = 5,
         key      = [[<cr>]],
         before   = [[if data== 'fdsafdsa' then| ]],
         after    = [[end ]]
-    },
-    {
-        -- only = true;
-        name     = "add newline have endwise" ,
-        filepath = './tests/endwise/init.lua',
-        filetype = "lua",
-        linenr   = 5,
-        key      = [[<cr>]],
-        before   = [[if data== 'fdsafdsa' then|end]],
-        after    = [[end]]
     },
     {
         name     = "don't add endwise on match rule" ,
