@@ -191,8 +191,9 @@ end
 cond.is_end_line = function()
     return function(opts)
         log.debug('is_end_line')
-        -- if the next char is blank
-        if opts.next_char ~= "" and opts.next_char:match("%s+") == nil then
+        local end_text = opts.line:sub(opts.col + 1)
+        -- end text is blank
+        if end_text ~= "" and end_text:match("^%s+$") == nil then
             return false
         end
     end

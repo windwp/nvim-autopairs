@@ -17,8 +17,17 @@ local data = {
         filetype = "lua",
         linenr   = 5,
         key      = [[<cr>]],
-        before   = [[function a()|  ]],
-        after    = [[    end  ]]
+        before   = [[function a()| ]],
+        after    = [[    end ]]
+    },
+    {
+        name     = "lua function add endwise" ,
+        filepath = './tests/endwise/init.lua',
+        filetype = "lua",
+        linenr   = 5,
+        key      = [[<cr>]],
+        before   = [[function a()|x  ab ]],
+        after    = [[]]
     },
     {
         name     = "add if endwise" ,
