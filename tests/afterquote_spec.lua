@@ -22,8 +22,17 @@ local data = {
         filetype = 'lua',
         linenr = 5,
         key = [[(]],
-        before = [[|"test" ]],
-        after = [[(|"test") ]],
+        before = [[|"test"]],
+        after = [[(|"test")]],
+    },
+    {
+        name = 'check quote without any text on end similar',
+        filepath = './tests/endwise/init.lua',
+        filetype = 'lua',
+        linenr = 5,
+        key = [[(]],
+        before = [[  const [template, setTemplate] = useState|'')]],
+        after = [[  const [template, setTemplate] = useState(|'')]],
     },
 
     {
@@ -98,6 +107,6 @@ local run_data = _G.Test_filter(data)
 local _, ts_utils = pcall(require, 'nvim-treesitter.ts_utils')
 _G.TU = ts_utils
 
-describe('[endwise tag]', function()
+describe('[afterquote tag]', function()
     _G.Test_withfile(run_data, {})
 end)

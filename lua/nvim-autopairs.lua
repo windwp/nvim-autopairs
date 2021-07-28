@@ -427,10 +427,12 @@ M.autopairs_afterquote = function(line, key_char)
         line = line or utils.text_get_current_line(0)
         local _, col = utils.get_cursor()
         local prev_char, next_char = utils.text_cusor_line(line, col + 1, 1, 1, false)
+        local check_same = line:sub(col + 3, col + 3)
         if
             utils.is_bracket(prev_char)
             and utils.is_quote(next_char)
             and not utils.is_in_quote(line, col, next_char)
+            and check_same ~= next_char
         then
             local is_prev_slash = false
             for i = #line - 2, #line, 1 do
