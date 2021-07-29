@@ -98,7 +98,7 @@ local data = {
         linenr = '5',
         key = [[(]],
         before = [[|"data", "abcdef"]],
-        after =  [[(|"data", "abcdef")]],
+        after =  [[(|"data", "abcdef"]],
     },
 }
 
