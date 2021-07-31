@@ -7,7 +7,7 @@ Requires neovim 0.5+
 
 ### Setup
 ``` lua
-require('nvim-autopairs').setup()
+require('nvim-autopairs').setup{}
 
 ```
 
