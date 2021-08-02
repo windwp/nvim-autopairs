@@ -1,4 +1,3 @@
-local remap = vim.api.nvim_set_keymap
 local npairs = require('nvim-autopairs')
 local Completion = require('compe.completion')
 local utils = require('nvim-autopairs.utils')
@@ -49,12 +48,18 @@ M.setup = function(opt)
     local map_complete = opt.map_complete
     vim.g.completion_confirm_key = ''
     if map_cr then
-        remap('i', '<CR>', 'v:lua.MPairs.completion_confirm()', { expr = true, noremap = true })
+        vim.api.nvim_set_keymap(
+            'i', '<CR>', 'v:lua.MPairs.completion_confirm()',
+            { expr = true, noremap = true }
+        )
     end
 
     if map_complete then
         vim.cmd([[
+            augroup autopairs_compe
+            autocmd!
             autocmd User CompeConfirmDone call v:lua.MPairs.completion_done()
+            augroup end
         ]])
     end
 end
