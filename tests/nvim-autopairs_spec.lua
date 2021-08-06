@@ -378,6 +378,26 @@ local data = {
         before   = [[Vec| ]],
         after    = [[Vec<|> ]],
     },
+    {
+        setup_func = function()
+            npairs.add_rule(Rule("!", "!"):with_pair(cond.exclude_filetypes({"lua"})))
+        end,
+        name="disable pairs in lua",
+        filetype="lua",
+        key="!",
+        before = [[x| ]],
+        after  = [[x!| ]]
+    },
+    {
+        setup_func = function()
+            npairs.add_rule(Rule("!", "!"):with_pair(cond.exclude_filetypes({"lua"})))
+        end,
+        name="enable pairs in html",
+        filetype="html",
+        key="!",
+        before = [[x| ]],
+        after  = [[x!|! ]]
+    },
 }
 
 local run_data = {}

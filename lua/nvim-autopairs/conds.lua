@@ -8,7 +8,6 @@ local cond = {}
 --         true when it is correct
 --         nil when it is not determine
 
-
 cond.none = function()
     return function() return false end
 end
@@ -196,6 +195,18 @@ cond.is_end_line = function()
         if end_text ~= "" and end_text:match("^%s+$") == nil then
             return false
         end
+    end
+end
+
+cond.exclude_filetypes = function(filetypes)
+    return function(opts)
+        log.debug('exclude_filetypes')
+        for _, filetype in pairs(filetypes) do
+            if vim.bo.filetype == filetype then
+                return false
+            end
+        end
+        return true
     end
 end
 
