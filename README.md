@@ -189,6 +189,12 @@ npairs.add_rules({
               .."<esc>viwU"
     end)
 })
+
+-- you can exclude filetypes
+npairs.add_rule(
+  Rule("$$","$$")
+    :with_pair(cond.exclude_filetypes({"lua"}))
+)
 --- check ./lua/nvim-autopairs/rules/basic.lua
 
 ```
