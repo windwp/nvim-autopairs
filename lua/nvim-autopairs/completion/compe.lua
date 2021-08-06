@@ -33,25 +33,36 @@ _G.MPairs.completion_done = function()
     end
 end
 
-_G.MPairs.completion_confirm = function()
-    if vim.fn.pumvisible() ~= 0 and vim.fn.complete_info()['selected'] ~= -1 then
-        return vim.fn['compe#confirm'](npairs.esc('<cr>'))
-    else
-        return npairs.autopairs_cr()
-    end
-end
-
 local M = {}
 M.setup = function(opt)
-    opt = opt or { map_cr = true, map_complete = true }
+    opt = opt or { map_cr = true, map_complete = true, auto_select = false  }
     local map_cr = opt.map_cr
     local map_complete = opt.map_complete
     vim.g.completion_confirm_key = ''
     if map_cr then
         vim.api.nvim_set_keymap(
-            'i', '<CR>', 'v:lua.MPairs.completion_confirm()',
+            'i',
+            '<CR>',
+            'v:lua.MPairs.completion_confirm()',
             { expr = true, noremap = true }
         )
+    end
+    if opt.auto_select then
+        _G.MPairs.completion_confirm = function()
+            if vim.fn.pumvisible() ~= 0 then
+                return vim.fn['compe#confirm']({ keys = '<CR>', select = true })
+            else
+                return npairs.autopairs_cr()
+            end
+        end
+    else
+        _G.MPairs.completion_confirm = function()
+            if vim.fn.pumvisible() ~= 0 and vim.fn.complete_info()['selected'] ~= -1 then
+                return vim.fn['compe#confirm'](npairs.esc('<cr>'))
+            else
+                return npairs.autopairs_cr()
+            end
+        end
     end
 
     if map_complete then
