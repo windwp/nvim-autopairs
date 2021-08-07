@@ -380,7 +380,7 @@ local data = {
     },
     {
         setup_func = function()
-            npairs.add_rule(Rule("!", "!"):with_pair(cond.exclude_filetypes({"lua"})))
+            npairs.add_rule(Rule("!", "!"):with_pair(cond.not_filetypes({"lua"})))
         end,
         name="disable pairs in lua",
         filetype="lua",
@@ -390,7 +390,7 @@ local data = {
     },
     {
         setup_func = function()
-            npairs.add_rule(Rule("!", "!"):with_pair(cond.exclude_filetypes({"lua"})))
+            npairs.add_rule(Rule("!", "!"):with_pair(cond.not_filetypes({"lua"})))
         end,
         name="enable pairs in html",
         filetype="html",
