@@ -198,15 +198,14 @@ cond.is_end_line = function()
     end
 end
 
-cond.exclude_filetypes = function(filetypes)
+cond.not_filetypes = function(filetypes)
     return function(opts)
-        log.debug('exclude_filetypes')
+        log.debug('not_filetypes')
         for _, filetype in pairs(filetypes) do
             if vim.bo.filetype == filetype then
                 return false
             end
         end
-        return true
     end
 end
 

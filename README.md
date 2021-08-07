@@ -193,7 +193,7 @@ npairs.add_rules({
 -- you can exclude filetypes
 npairs.add_rule(
   Rule("$$","$$")
-    :with_pair(cond.exclude_filetypes({"lua"}))
+    :with_pair(cond.not_filetypes({"lua"}))
 )
 --- check ./lua/nvim-autopairs/rules/basic.lua
 
