@@ -295,7 +295,8 @@ M.autopairs_map = function(bufnr, char)
                 and rule:can_pair(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
-                local move_text = utils.repeat_key(utils.key.join_left,#end_pair)
+                local end_pair_length = rule:get_end_pair_length(end_pair)
+                local move_text = utils.repeat_key(utils.key.join_left, end_pair_length)
                 if add_char == 0 then
                     move_text =""
                     char = ""
@@ -352,7 +353,7 @@ M.autopairs_insert = function(bufnr, char)
                 local end_pair = rule:get_end_pair(cond_opt)
                 utils.set_vchar(char .. end_pair)
                 vim.schedule(function()
-                    utils.feed(utils.key.left, #end_pair)
+                    utils.feed(utils.key.left, rule:get_end_pair_length(end_pair))
                 end)
                 return
             end

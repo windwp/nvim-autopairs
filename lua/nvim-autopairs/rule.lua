@@ -32,7 +32,10 @@ function Rule.new(...)
         -- only use on end_wise
         is_endwise    = false,
         -- use regex to compare
-        is_regex      = false
+        is_regex      = false,
+        -- some end_pair have key map like <left>.. then the length of string is
+        -- not correct
+        end_pair_length = nil,
     },opt)
     return setmetatable(opt, {__index = Rule})
 end
@@ -52,7 +55,17 @@ function Rule:get_end_pair(opts)
     if self.end_pair_func then
         return self.end_pair_func(opts)
     end
-    return  self.end_pair
+    return self.end_pair
+end
+
+function Rule:get_end_pair_length(opts)
+    if self.end_pair_length then
+        return self.end_pair_length
+    end
+    if type(opts) == 'string' then
+        return #opts
+    end
+    return self.get_end_pair(opts):length()
 end
 
 function Rule:replace_endpair(value,check_pair)
@@ -64,6 +77,11 @@ function Rule:replace_endpair(value,check_pair)
             self:with_pair(check_pair)
         end
     end
+    return self
+end
+
+function Rule:set_end_pair_length(length)
+    self.end_pair_length = length
     return self
 end
 

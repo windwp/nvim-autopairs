@@ -390,14 +390,20 @@ local data = {
     },
     {
         setup_func = function()
-            npairs.add_rule(Rule("!", "!"):with_pair(cond.not_filetypes({"lua"})))
+            npairs.clear_rules()
+            npairs.add_rules({
+                Rule("%(.*%)%s*%=>", " {  }", {"typescript", "typescriptreact","javascript"})
+                :use_regex(true)
+                :set_end_pair_length(2)
+            })
         end,
-        name="enable pairs in html",
-        filetype="html",
-        key="!",
-        before = [[x| ]],
-        after  = [[x!|! ]]
-    },
+        name="mapping regex with custom end_pair_length",
+        filetype="typescript",
+        key=">",
+        before = [[(o)=| ]],
+        after  = [[(o)=> { | } ]]
+
+    }
 }
 
 local run_data = {}
@@ -436,6 +442,7 @@ local function Test(test_data)
             if value.key ~= '<cr>' then
                 eq(after, result , "\n\n text error: " .. value.name .. "\n")
                 eq(p_after, pos[3] + 1, "\n\n pos error: " .. value.name .. "\n")
+
             else
                 local line2 = vim.fn.getline(line + 2)
                 eq(line + 1, pos[2], '\n\n breakline error:' .. value.name .. "\n")
