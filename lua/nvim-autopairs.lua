@@ -104,6 +104,7 @@ M.remove_rule = function(pair)
         end
         M.state.rules = state_tbl
     end
+    M.force_attach()
 end
 
 M.add_rules = function(rules)
