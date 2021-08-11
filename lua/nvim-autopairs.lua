@@ -137,6 +137,9 @@ local function is_disable()
     if M.state.disabled then
         return true
     end
+    if vim.bo.modifiable == false then
+        return true
+    end
     if utils.check_filetype(M.config.disable_filetype, vim.bo.filetype) then
         -- should have a way to remove the mapping when vim.bo.filetype = ''
         -- now we only remove a rule
