@@ -101,7 +101,7 @@ M.move_bracket = function(line, target_pos, end_pair, char_map)
         line = line:sub(1, col) .. line:sub(col + 2, #line)
         target_pos = target_pos - 1
     end
-    if config.check_comma and char_map == ',' then
+    if config.check_comma and(char_map == ',' or char_map==' ') then
         target_pos = target_pos - 1
     end
 
