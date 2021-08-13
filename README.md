@@ -52,29 +52,21 @@ require("nvim-autopairs.completion.compe").setup({
 })
 ```
 
-Make sure to remove mapping  insert mode `<CR>` binding if you have it.
+Make sure to remove mapping insert mode `<CR>` binding if you have it.
 </details>
 
 <details>
 <summary><b>nvim-cmp</b></summary>
 
 ``` lua
--- you need setup mapping on cmp and put this after cmp.setup()
-require('cmp').setup({
-  mapping = {
-      ['<CR>'] = cmp.mapping.confirm({
-        behavior = cmp.ConfirmBehavior.Replace,
-        select = true,
-      }),
-    }
-})
+-- you need setup cmp first put this after cmp.setup()
 require("nvim-autopairs.completion.cmp").setup({
   map_cr = true, --  map <CR> on insert mode
   map_complete = true, -- it will auto insert `(` after select function or method item
 })
 ```
 
-Make sure to remove mapping  insert mode `<CR>` binding if you have it.
+Make sure to remove mapping insert mode `<CR>` binding if you have it.
 </details>
 <details>
 <summary><b>completion nvim</b></summary>
