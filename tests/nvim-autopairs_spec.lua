@@ -403,6 +403,24 @@ local data = {
         before = [[(o)=| ]],
         after  = [[(o)=> { | } ]]
 
+    },
+    {
+        setup_func = function()
+            npairs.add_rules({
+                Rule('(', ')'):use_key('<c-w>'):replace_endpair(function()
+                    return '<bs><del><del><del>'
+                end, true),
+                Rule('(', ')'):use_key('<c-h>'):replace_endpair(function()
+                    return '<bs><del>'
+                end, true),
+            })
+        end,
+        name="mapping same pair with different key",
+        filetype="typescript",
+        key="(",
+        before = [[(test|) ]],
+        after  = [[(test(|)) ]]
+
     }
 }
 

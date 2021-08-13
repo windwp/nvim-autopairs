@@ -164,7 +164,19 @@ M.on_attach = function(bufnr)
     end
     -- sort by length
     table.sort(rules, function(a, b)
-        return (#a.start_pair or 0) > (#b.start_pair or 0)
+        if a.start_pair == b.start_pair then
+            if not b.key_map then
+                return a.key_map and 1
+            end
+            if not a.key_map then
+                return b.key_map and -1
+            end
+            return #a.key_map < #b.key_map
+        end
+        if #a.start_pair == #b.start_pair then
+            return string.byte(a.start_pair) > string.byte(b.start_pair)
+        end
+        return #a.start_pair > #b.start_pair
     end)
 
     M.state.rules = rules
@@ -325,9 +337,13 @@ M.autopairs_map = function(bufnr, char)
             if rule.is_regex and rule.key_map and rule.key_map ~= '' then
                 new_text = line:sub(1, col) .. line:sub(col + 1, #line)
                 add_char = 0
-            elseif rule.key_map and #rule.key_map > 1 and utils.esc(rule.key_map) == char then
-                new_text = line:sub(1, col) .. line:sub(col + 1, #line)
-                add_char = 0
+            elseif rule.key_map and #rule.key_map > 1 then
+                if utils.esc(rule.key_map) ~= char then
+                    new_text = ''
+                else
+                    new_text = line:sub(1, col) .. line:sub(col + 1, #line)
+                    add_char = 0
+                end
             else
                 new_text = line:sub(1, col) .. char .. line:sub(col + 1, #line)
                 add_char = 1
