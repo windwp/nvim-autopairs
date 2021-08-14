@@ -1,15 +1,6 @@
-local npairs = require('nvim-autopairs')
 local utils = require('nvim-autopairs.utils')
 
 local cmp = require('cmp')
-
-_G.MPairs.completion_confirm = function()
-    if vim.fn.pumvisible() ~= 0 then
-        return _G.cmp.utils.keymap.expr('<cr>')
-    else
-        return npairs.autopairs_cr()
-    end
-end
 
 local M = {}
 M.setup = function(opt)
@@ -30,7 +21,7 @@ M.setup = function(opt)
         vim.api.nvim_set_keymap(
             'i',
             '<CR>',
-            'v:lua.MPairs.completion_confirm()',
+            'v:lua.MPairs.autopairs_cr()',
             { expr = true, noremap = true }
         )
     end
