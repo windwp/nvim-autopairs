@@ -4,24 +4,18 @@ local cmp = require("cmp")
 
 local M = {}
 M.setup = function(opt)
-	-- vim.api.nvim_del_keymap('i', '<cr>')
-	opt = opt
-		or {
-			map_cr = true,
-			map_complete = true,
-			mapping_config = {
-				["<CR>"] = cmp.mapping.confirm({
-					behavior = cmp.ConfirmBehavior.Replace,
-					select = true,
-				}),
-			},
-		}
+	opt = opt or { map_cr = true, map_complete = true, auto_select = true }
 	local map_cr = opt.map_cr
 	local map_complete = opt.map_complete
-	local mapping_config = opt.mapping_config
+	local auto_select = opt.auto_select
 	vim.g.completion_confirm_key = ""
 	local cmp_setup = {
-		mapping = mapping_config,
+		mapping = {
+			["<CR>"] = cmp.mapping.confirm({
+				behavior = cmp.ConfirmBehavior.Replace,
+				select = auto_select,
+			}),
+		},
 	}
 	if map_cr then
 		vim.api.nvim_set_keymap("i", "<CR>", "v:lua.MPairs.autopairs_cr()", { expr = true, noremap = true })
