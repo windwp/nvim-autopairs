@@ -41,9 +41,10 @@ M.setup = function(opt)
                             (
                                 item.textEdit
                                 and item.textEdit.newText
-                                and item.textEdit.newText:match('%(')
+                                and item.textEdit.newText:match('[%(%[]')
                             )
-                            or (item.insertText and item.insertText:match('%('))
+
+                            or (item.insertText and item.insertText:match('[%(%[]'))
                         then
                             return
                         end
