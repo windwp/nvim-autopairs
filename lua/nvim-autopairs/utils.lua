@@ -99,11 +99,12 @@ M.get_cursor = function(bufnr)
     return row - 1, col
 end
 M.text_get_line = function(bufnr, lnum)
-    return api.nvim_buf_get_lines(bufnr, lnum, lnum + 1, false)[1]
+    return api.nvim_buf_get_lines(bufnr, lnum, lnum + 1, false)[1] or ''
 end
+
 M.text_get_current_line = function(bufnr)
-    local row = unpack(api.nvim_win_get_cursor(0))
-    return M.text_get_line(bufnr, row -1)
+    local row = unpack(api.nvim_win_get_cursor(0)) or 1
+    return M.text_get_line(bufnr, row - 1)
 end
 
 M.repeat_key = function(key, num)
