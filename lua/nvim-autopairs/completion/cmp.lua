@@ -4,8 +4,7 @@ local cmp = require('cmp')
 
 local M = {}
 M.setup = function(opt)
-    -- vim.api.nvim_del_keymap('i', '<cr>')
-    opt = opt or { map_cr = true, map_complete = true }
+    opt = opt or { map_cr = true, map_complete = true, auto_select = true }
     local map_cr = opt.map_cr
     local map_complete = opt.map_complete
     vim.g.completion_confirm_key = ''
@@ -13,7 +12,7 @@ M.setup = function(opt)
         mapping = {
             ['<CR>'] = cmp.mapping.confirm({
                 behavior = cmp.ConfirmBehavior.Replace,
-                select = true,
+                select = opt.auto_select,
             }),
         },
     }
@@ -43,7 +42,6 @@ M.setup = function(opt)
                                 and item.textEdit.newText
                                 and item.textEdit.newText:match('[%(%[]')
                             )
-
                             or (item.insertText and item.insertText:match('[%(%[]'))
                         then
                             return
