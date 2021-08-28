@@ -7,16 +7,14 @@ M.setup = function(opt)
     opt = opt or { map_cr = true, map_complete = true, auto_select = true }
     local map_cr = opt.map_cr
     local map_complete = opt.map_complete
-    vim.g.completion_confirm_key = ''
-    local cmp_setup = {
-        mapping = {
+    local cmp_setup = {}
+    if map_cr then
+        cmp_setup.mapping = {
             ['<CR>'] = cmp.mapping.confirm({
                 behavior = cmp.ConfirmBehavior.Replace,
                 select = opt.auto_select,
             }),
-        },
-    }
-    if map_cr then
+        }
         vim.api.nvim_set_keymap(
             'i',
             '<CR>',
