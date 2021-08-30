@@ -35,7 +35,7 @@ local function setup(opt)
         bracket("[", "]"),
         bracket("{", "}"),
         Rule(">", "<",
-            { 'html', 'typescript', 'typescriptreact', 'svelte', 'vue', 'xml'})
+            { 'html', 'typescript', 'typescriptreact', 'javascript' , 'javascriptreact', 'svelte', 'vue', 'xml'})
             :only_cr()
     }
     return rules
