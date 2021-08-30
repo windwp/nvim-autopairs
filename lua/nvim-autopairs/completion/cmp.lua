@@ -44,7 +44,7 @@ M.setup = function(opt)
                         then
                             return
                         end
-                        vim.api.nvim_feedkeys('(', 'i', true)
+                        vim.api.nvim_feedkeys('(', '', true)
                     end
                 end
             end,
