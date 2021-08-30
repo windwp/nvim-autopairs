@@ -12,6 +12,7 @@ M.state = {
 }
 
 local default = {
+    map_bs = true,
     disable_filetype = { 'TelescopePrompt', 'spectre_panel' },
     ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]], '%s+', ''),
     check_ts = false,
@@ -274,13 +275,15 @@ M.on_attach = function(bufnr)
         )
     end
 
-    api.nvim_buf_set_keymap(
-        bufnr,
-        'i',
-        '<bs>',
-        string.format('v:lua.MPairs.autopairs_bs(%d)', bufnr),
-        { expr = true, noremap = true }
-    )
+    if M.config.map_bs then
+        api.nvim_buf_set_keymap(
+            bufnr,
+            'i',
+            '<bs>',
+            string.format('v:lua.MPairs.autopairs_bs(%d)', bufnr),
+            { expr = true, noremap = true }
+        )
+    end
     api.nvim_buf_set_var(bufnr, 'nvim-autopairs', 1)
 end
 
