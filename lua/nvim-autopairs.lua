@@ -491,7 +491,8 @@ M.autopairs_cr = function(bufnr)
                 return utils.esc(
                     rule.end_pair
                         .. utils.repeat_key(utils.key.join_left, #rule.end_pair)
-                        .. '<cr><esc>==O'
+                        -- FIXME do i need to re indent twice #118
+                        .. '<cr><esc>====O'
                 )
             end
             if
