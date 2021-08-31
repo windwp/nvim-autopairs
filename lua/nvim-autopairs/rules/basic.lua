@@ -21,8 +21,8 @@ local function setup(opt)
 
     local rules = {
         Rule("<!--", "-->", 'html'):with_cr(cond.none()),
-        Rule("```", "```", { 'markdown', 'vimwiki', 'rmarkdown', 'pandoc' }),
-        Rule("```.*$", "```", { 'markdown', 'vimwiki', 'rmarkdown', 'pandoc' })
+        Rule("```", "```", { 'markdown', 'vimwiki', 'rmarkdown', 'rmd', 'pandoc' }),
+        Rule("```.*$", "```", { 'markdown', 'vimwiki', 'rmarkdown', 'rmd', 'pandoc' })
             :only_cr()
             :use_regex(true)
         ,
