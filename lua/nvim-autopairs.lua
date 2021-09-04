@@ -138,6 +138,10 @@ local function is_disable()
     if M.state.disabled then
         return true
     end
+    if vim.bo.filetype == '' and api.nvim_win_get_config(0).relative ~= '' then
+        -- disable for any floating window without filetpe
+        return true
+    end
     if vim.bo.modifiable == false then
         return true
     end
