@@ -16,6 +16,7 @@ local default = {
     disable_filetype = { 'TelescopePrompt', 'spectre_panel' },
     ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]], '%s+', ''),
     check_ts = false,
+    show_ts_warning = true,
     enable_moveright = true,
     enable_afterquote = true,
     enable_check_bracket_line = true,
@@ -51,7 +52,9 @@ M.setup = function(opt)
         if ok then
             M.config.rules = ts_rule.setup(M.config)
         else
+          if M.config.show_ts_warning then
             print('you need to install treesitter')
+          end
         end
     end
 
