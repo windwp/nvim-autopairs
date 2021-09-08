@@ -1,5 +1,5 @@
-local log = require('nvim-autopairs._log')
 local Rule = {}
+local log = require('nvim-autopairs._log')
 
 local Cond = require('nvim-autopairs.conds')
 
@@ -33,11 +33,21 @@ function Rule.new(...)
         is_endwise    = false,
         -- use regex to compare
         is_regex      = false,
+        is_multibyte = false,
         -- some end_pair have key map like <left>.. then the length of string is
         -- not correct
         end_pair_length = nil,
     },opt)
-    return setmetatable(opt, {__index = Rule})
+
+    local function verify(rule)
+        -- check multibyte
+        if #rule.start_pair ~= vim.fn.strdisplaywidth(rule.start_pair) then
+            rule:use_multibyte()
+        end
+        return rule
+    end
+    local r = setmetatable(opt, {__index = Rule})
+    return verify(r)
 end
 
 function Rule:use_regex(value,key_map)
@@ -48,6 +58,14 @@ end
 
 function Rule:use_key(key_map)
     self.key_map = key_map or ""
+    return self
+end
+
+function Rule:use_multibyte()
+    self.is_multibyte = true
+    self.end_pair_length = vim.fn.strdisplaywidth(self.end_pair)
+    self.key_map = string.match(self.start_pair, "[^\128-\191][\128-\191]*$")
+    self.key_end = string.match(self.end_pair, "[%z\1-\127\194-\244][\128-\191]*")
     return self
 end
 

@@ -29,14 +29,16 @@ npairs.add_rules({
 
 })
 vim.api.nvim_set_keymap('i' , '<CR>','v:lua.npairs.check_break_line_char()', {expr = true , noremap = true})
-function helpers.feed(text, feed_opts)
+function helpers.feed(text, feed_opts, is_replace)
     feed_opts = feed_opts or 'n'
-    local to_feed = vim.api.nvim_replace_termcodes(text, true, false, true)
-    vim.api.nvim_feedkeys(to_feed, feed_opts, true)
+    if  not is_replace then
+        text = vim.api.nvim_replace_termcodes(text, true, false, true)
+    end
+    vim.api.nvim_feedkeys(text, feed_opts, true)
 end
 
-function helpers.insert(text)
-    helpers.feed('i' .. text, 'x')
+function helpers.insert(text, is_replace)
+    helpers.feed('i' .. text, 'x',is_replace)
 end
 
 local data = {
@@ -397,7 +399,7 @@ local data = {
                 :set_end_pair_length(2)
             })
         end,
-        name="mapping regex with custom end_pair_length",
+        name = "mapping regex with custom end_pair_length",
         filetype="typescript",
         key=">",
         before = [[(o)=| ]],
@@ -415,12 +417,58 @@ local data = {
                 end, true),
             })
         end,
-        name="mapping same pair with different key",
+        name = "mapping same pair with different key",
         filetype="typescript",
         key="(",
         before = [[(test|) ]],
         after  = [[(test(|)) ]]
 
+    },
+    {
+        setup_func = function()
+            npairs.clear_rules()
+            npairs.add_rule(Rule("„","”"))
+        end,
+        name = "multibyte character  from custom keyboard",
+        not_replace_term_code = true,
+        key = "„",
+        before = [[a | ]],
+        after  = [[a „|” ]],
+        end_cursor = 6,
+    },
+    {
+        setup_func = function()
+            npairs.clear_rules()
+            npairs.add_rule(Rule("„","”"):with_move(cond.done()))
+        end,
+        name = "multibyte character move_right",
+        not_replace_term_code = true,
+        key = "”",
+        before = [[a „|”xx ]],
+        after  = [[a „”|xx ]],
+        end_cursor = 9,
+    },
+    {
+        setup_func = function()
+            npairs.clear_rules()
+            npairs.add_rule(Rule("„", "”"):with_move(cond.done()))
+        end,
+        name = "multibyte character delete",
+        key = "<bs>",
+        before = [[a „|” ]],
+        after  = [[a | ]],
+    },
+    {
+        setup_func = function()
+            npairs.clear_rules()
+            npairs.add_rule(Rule("a„", "”b"):with_move(cond.done()))
+        end,
+        not_replace_term_code = true,
+        name = "multibyte character and multiple ",
+        key = "„",
+        before = [[a| ]],
+        after  = [[a„|”b ]],
+        end_cursor = 5,
     }
 }
 
@@ -452,14 +500,14 @@ local function Test(test_data)
             npairs.on_attach(vim.api.nvim_get_current_buf())
             vim.fn.setline(line , before)
             vim.fn.setpos('.' ,{0, line, p_before , 0})
-            helpers.insert(value.key)
+            helpers.insert(value.key,value.not_replace_term_code )
             vim.wait(10)
             helpers.feed("<esc>")
             local result = vim.fn.getline(line)
             local pos = vim.fn.getpos('.')
             if value.key ~= '<cr>' then
                 eq(after, result , "\n\n text error: " .. value.name .. "\n")
-                eq(p_after, pos[3] + 1, "\n\n pos error: " .. value.name .. "\n")
+                eq(p_after, value.end_cursor or (pos[3] + 1), "\n\n pos error: " .. value.name .. "\n")
 
             else
                 local line2 = vim.fn.getline(line + 2)

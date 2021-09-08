@@ -215,8 +215,8 @@ M.on_attach = function(bufnr)
                     { expr = true, noremap = true }
                 )
 
-                local key_end = rule.end_pair:sub(1, 1)
-                if #key_end == 1 and key_end ~= rule.key_map and rule.move_cond ~= nil then
+                local key_end = rule.key_end or rule.end_pair:sub(1, 1)
+                if #key_end >= 1 and key_end ~= rule.key_map and rule.move_cond ~= nil then
                     mapping = string.format(
                         [[v:lua.MPairs.autopairs_map(%d, '%s')]],
                         bufnr,
@@ -318,10 +318,10 @@ M.autopairs_bs = function(bufnr)
                 })
             then
                 local input = ''
-                for _ = 1, #rule.start_pair, 1 do
+                for _ = 1, vim.fn.strdisplaywidth(rule.start_pair), 1 do
                     input = input .. utils.key.bs
                 end
-                for _ = 1, #rule.end_pair, 1 do
+                for _ = 1, vim.fn.strdisplaywidth(rule.end_pair), 1 do
                     input = input .. utils.key.right .. utils.key.bs
                 end
                 return utils.esc('<c-g>U' .. input)
@@ -344,7 +344,8 @@ M.autopairs_map = function(bufnr, char)
             if rule.is_regex and rule.key_map and rule.key_map ~= '' then
                 new_text = line:sub(1, col) .. line:sub(col + 1, #line)
                 add_char = 0
-            elseif rule.key_map and #rule.key_map > 1 then
+            elseif rule.key_map and rule.key_map:match("<.*>") then
+                -- if it is a special key liek <c-a>
                 if utils.esc(rule.key_map) ~= char then
                     new_text = ''
                 else
@@ -353,7 +354,7 @@ M.autopairs_map = function(bufnr, char)
                 end
             else
                 new_text = line:sub(1, col) .. char .. line:sub(col + 1, #line)
-                add_char = 1
+                add_char = rule.key_map and #rule.key_map or 1
             end
 
             -- log.debug("new_text:[" .. new_text .. "]")
@@ -383,7 +384,8 @@ M.autopairs_map = function(bufnr, char)
                 and rule:can_move(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
-                return utils.esc(utils.repeat_key(utils.key.join_right, #end_pair))
+                local end_pair_length = rule:get_end_pair_length(end_pair)
+                return utils.esc(utils.repeat_key(utils.key.join_right, end_pair_length))
             end
 
             if
@@ -397,7 +399,10 @@ M.autopairs_map = function(bufnr, char)
                     move_text = ''
                     char = ''
                 end
-                return utils.esc(char .. end_pair .. move_text)
+                if end_pair:match("<.*>") then
+                    end_pair = utils.esc(end_pair)
+                end
+                return char .. end_pair .. utils.esc(move_text)
             end
         end
     end
@@ -564,7 +569,7 @@ M.autopairs_afterquote = function(line, key_char)
             end
         end
     end
-    return utils.esc(key_char)
+    return key_char
 end
 
 M.autopairs_closequote_expr = function()
@@ -578,3 +583,4 @@ end
 M.esc = utils.esc
 _G.MPairs = M
 return M
+
