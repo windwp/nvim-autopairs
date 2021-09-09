@@ -10,24 +10,6 @@ _G.npairs = npairs;
 local eq=_G.eq
 
 
-npairs.add_rules({
-    Rule("u%d%d%d%d$", "number", "lua")
-        :use_regex(true),
-    Rule("x%d%d%d%d$", "number", "lua")
-        :use_regex(true)
-        :replace_endpair(function(opts)
-            log.debug(opts.prev_char)
-            return opts.prev_char:sub(#opts.prev_char - 3,#opts.prev_char)
-        end),
-    Rule("b%d%d%d%d%w$", "", "vim")
-        :use_regex(true,"<tab>")
-        :replace_endpair(function(opts)
-            return
-                opts.prev_char:sub(#opts.prev_char - 4,#opts.prev_char)
-                .."<esc>viwUi"
-        end),
-
-})
 vim.api.nvim_set_keymap('i' , '<CR>','v:lua.npairs.check_break_line_char()', {expr = true , noremap = true})
 function helpers.feed(text, feed_opts, is_replace)
     feed_opts = feed_opts or 'n'
@@ -265,21 +247,41 @@ local data = {
         after  = [[a((((|)))) ]]
     },
     {
-        name="text regex",
+        setup_func = function()
+            npairs.add_rules({
+                Rule('u%d%d%d%d$', 'number', 'lua'):use_regex(true),
+           })
+        end,
+        name = "text regex",
         filetype = "lua",
         key="4",
         before = [[u123| ]],
         after  = [[u1234|number ]]
     },
     {
-        name="text regex with custome end_pair",
+
+        setup_func = function ()
+            npairs.add_rules({
+                Rule('x%d%d%d%d$', 'number', 'lua'):use_regex(true):replace_endpair(function(opts)
+                    return opts.prev_char:sub(#opts.prev_char - 3, #opts.prev_char)
+                end),
+           })
+        end,
+        name = "text regex with custom end_pair",
         filetype = "lua",
-        key="4",
+        key = "4",
         before = [[x123| ]],
         after  = [[x1234|1234 ]]
     },
     {
-        name="text regex with custome key",
+        setup_func = function ()
+            npairs.add_rules({
+                Rule('b%d%d%d%d%w$', '', 'vim'):use_regex(true, '<tab>'):replace_endpair(function(opts)
+                    return opts.prev_char:sub(#opts.prev_char - 4, #opts.prev_char) .. '<esc>viwUi'
+                end),
+            })
+        end,
+        name="text regex with custom key",
         filetype = "vim",
         key="<tab>",
         before = [[b1234s| ]],
@@ -287,6 +289,13 @@ local data = {
 
     },
     {
+        setup_func = function ()
+            npairs.add_rules({
+                Rule('b%d%d%d%d%w$', '', 'vim'):use_regex(true, '<tab>'):replace_endpair(function(opts)
+                    return opts.prev_char:sub(#opts.prev_char - 4, #opts.prev_char) .. '<esc>viwUi'
+                end),
+           })
+        end,
         name="test move right custom char",
         filetype="vim",
         key="<tab>",

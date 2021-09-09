@@ -345,7 +345,7 @@ M.autopairs_map = function(bufnr, char)
                 new_text = line:sub(1, col) .. line:sub(col + 1, #line)
                 add_char = 0
             elseif rule.key_map and rule.key_map:match("<.*>") then
-                -- if it is a special key liek <c-a>
+                -- if it is a special key like <c-a>
                 if utils.esc(rule.key_map) ~= char then
                     new_text = ''
                 else
