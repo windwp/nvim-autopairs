@@ -59,6 +59,16 @@ M.is_in_quote = function(line, pos, quote)
     return result
 end
 
+M.is_in_quotes = function (line, pos)
+    local quotes = {'"', "'", '`' }
+    for _, value in ipairs(quotes) do
+        if M.is_in_quote(line, pos, value) then
+            return true 
+        end
+    end
+    return false
+end
+
 M.is_attached = function(bufnr)
     local _, check = pcall(api.nvim_buf_get_var, bufnr, "nvim-autopairs")
     return check == 1

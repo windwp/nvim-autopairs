@@ -144,8 +144,8 @@ end
 
 cond.not_inside_quote = function()
     return function(opts)
-        log.debug('not_add_quote_inside_quote')
-        if utils.is_in_quote(opts.text, opts.col - 1, opts.char) then
+        log.debug('not_inside_quote')
+        if utils.is_in_quotes(opts.text, opts.col - 1) then
             return false
         end
     end
