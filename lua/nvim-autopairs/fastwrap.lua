@@ -7,6 +7,7 @@ local default_config = {
     map = '<M-e>',
     chars = { '{', '[', '(', '"', "'" },
     pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], '%s+', ''),
+    offset = 0, -- Offset from pattern match
     end_key = '$',
     keys = 'qwertyuiopzxcvbnmasdfghjkl',
     check_comma = true,
@@ -58,6 +59,7 @@ M.show = function(line)
         local index = 1
         local str_length = #line
         local is_have_end = false
+        local offset = config.offset
         for i = col + 2, #line, 1 do
             local char = line:sub(i, i)
             if string.match(char, config.pattern) then
@@ -67,7 +69,7 @@ M.show = function(line)
                     key = config.end_key
                     is_have_end = true
                 end
-                table.insert(list_pos, { col = i, key = key, char = char })
+                table.insert(list_pos, { col = i + offset, key = key, char = char })
             end
         end
 
