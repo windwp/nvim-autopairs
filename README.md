@@ -48,8 +48,12 @@ Before        Input         After
 ``` lua
 require("nvim-autopairs.completion.compe").setup({
   map_cr = true, --  map <CR> on insert mode
-  map_complete = true, -- it will auto insert `(` after select function or method item
+  map_complete = true, -- it will auto insert `(` (map_char) after select function or method item
   auto_select = false,  -- auto select first item
+  map_char = { -- modifies the function or method delimiter by filetypes
+    all = '(',
+    tex = '{'
+  }
 })
 ```
 
@@ -63,8 +67,12 @@ Make sure to remove mapping insert mode `<CR>` binding if you have it.
 -- you need setup cmp first put this after cmp.setup()
 require("nvim-autopairs.completion.cmp").setup({
   map_cr = true, --  map <CR> on insert mode
-  map_complete = true, -- it will auto insert `(` after select function or method item
-  auto_select = true -- automatically select the first item
+  map_complete = true, -- it will auto insert `(` (map_char) after select function or method item
+  auto_select = true, -- automatically select the first item
+  map_char = { -- modifies the function or method delimiter by filetypes
+    all = '(',
+    tex = '{'
+  }
 })
 ```
 

@@ -5,11 +5,18 @@ local utils = require('nvim-autopairs.utils')
 local method_kind = nil
 local function_kind = nil
 
+local options = {}
+
 _G.MPairs.completion_done = function()
     local line = utils.text_get_current_line(0)
     local _, col = utils.get_cursor()
     local prev_char, next_char = utils.text_cusor_line(line, col, 1, 1, false)
-    if prev_char ~= '(' and next_char ~= '(' then
+
+    local filetype = vim.bo.filetype
+    local char = options.map_char[filetype] or options.map_char["all"] or '('
+    if char == '' then return end
+
+    if prev_char ~= char and next_char ~= char then
         if method_kind == nil then
             method_kind = require('vim.lsp.protocol').CompletionItemKind[2]
             function_kind = require('vim.lsp.protocol').CompletionItemKind[3]
@@ -28,14 +35,16 @@ _G.MPairs.completion_done = function()
             then
                 return
             end
-            vim.api.nvim_feedkeys('(', 'i', true)
+            vim.api.nvim_feedkeys(char, 'i', true)
         end
     end
 end
 
 local M = {}
 M.setup = function(opt)
-    opt = opt or { map_cr = true, map_complete = true, auto_select = false  }
+    opt = opt or { map_cr = true, map_complete = true, auto_select = false, map_char = {all = '('}}
+    if not opt.map_char then opt.map_char = {} end
+    options = opt
     local map_cr = opt.map_cr
     local map_complete = opt.map_complete
     vim.g.completion_confirm_key = ''
