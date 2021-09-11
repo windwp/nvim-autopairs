@@ -32,11 +32,8 @@ M.setup = function(opt)
     if map_complete then
         local method_kind = cmp.lsp.CompletionItemKind.Method
         local function_kind = cmp.lsp.CompletionItemKind.Function
-        local filetype = vim.fn.expand("%:e")
-        if map_char[filetype] == nil then
-            filetype = "all"
-        end
-        local char = map_char[filetype]
+        local filetype = vim.bo.filetype
+        local char = map_char[filetype] or map_char["all"]
         cmp_setup.event = {
             on_confirm_done = function(entry)
                 local line = utils.text_get_current_line(0)

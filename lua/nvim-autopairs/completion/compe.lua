@@ -12,11 +12,8 @@ _G.MPairs.completion_done = function()
     local _, col = utils.get_cursor()
     local prev_char, next_char = utils.text_cusor_line(line, col, 1, 1, false)
 
-    local filetype = vim.fn.expand("%:e")
-    if options.map_char[filetype] == nil then
-        filetype = "all"
-    end
-    local char = options.map_char[filetype]
+    local filetype = vim.bo.filetype
+    local char = options.map_char[filetype] or options.map_char["all"]
 
     if prev_char ~= char and next_char ~= char then
         if method_kind == nil then
