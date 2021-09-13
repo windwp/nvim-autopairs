@@ -5,12 +5,7 @@ local cmp = require('cmp')
 local M = {}
 M.setup = function(opt)
     opt = opt or { map_cr = true, map_complete = true, auto_select = true, map_char = {all = '('} }
-    if not opt.map_char then
-        opt.map_char = {all = '('}
-    end
-    if opt.map_char["all"] == nil then
-        opt.map_char["all"] = '('
-    end
+    if not opt.map_char then opt.map_char = {} end
     local map_cr = opt.map_cr
     local map_complete = opt.map_complete
     local map_char = opt.map_char
@@ -32,14 +27,17 @@ M.setup = function(opt)
     if map_complete then
         local method_kind = cmp.lsp.CompletionItemKind.Method
         local function_kind = cmp.lsp.CompletionItemKind.Function
-        local filetype = vim.bo.filetype
-        local char = map_char[filetype] or map_char["all"]
         cmp_setup.event = {
             on_confirm_done = function(entry)
                 local line = utils.text_get_current_line(0)
                 local _, col = utils.get_cursor()
                 local prev_char, next_char = utils.text_cusor_line(line, col, 1, 1, false)
                 local item = entry:get_completion_item()
+
+                local filetype = vim.bo.filetype
+                local char = map_char[filetype] or map_char["all"] or '('
+                if char == '' then return end
+
                 if prev_char ~= char and next_char ~= char then
                     if item.kind == method_kind or item.kind == function_kind then
                         -- check insert text have ( from snippet

@@ -13,7 +13,8 @@ _G.MPairs.completion_done = function()
     local prev_char, next_char = utils.text_cusor_line(line, col, 1, 1, false)
 
     local filetype = vim.bo.filetype
-    local char = options.map_char[filetype] or options.map_char["all"]
+    local char = options.map_char[filetype] or options.map_char["all"] or '('
+    if char == '' then return end
 
     if prev_char ~= char and next_char ~= char then
         if method_kind == nil then
@@ -42,12 +43,7 @@ end
 local M = {}
 M.setup = function(opt)
     opt = opt or { map_cr = true, map_complete = true, auto_select = false, map_char = {all = '('}}
-    if not opt.map_char then
-        opt.map_char = {all = '('}
-    end
-    if opt.map_char["all"] == nil then
-        opt.map_char["all"] = '('
-    end
+    if not opt.map_char then opt.map_char = {} end
     options = opt
     local map_cr = opt.map_cr
     local map_complete = opt.map_complete
