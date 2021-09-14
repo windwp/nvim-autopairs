@@ -8,16 +8,20 @@ M.setup = function(opt)
         map_cr = true,
         map_complete = true,
         auto_select = true,
+        insert = false,
         map_char = { all = '(', tex = '' },
     }, opt)
     local map_cr = opt.map_cr
     local map_complete = opt.map_complete
     local map_char = opt.map_char
+    local behavior = opt.insert
+        and cmp.ConfirmBehavior.Insert
+        or cmp.ConfirmBehavior.Replace
     local cmp_setup = {}
     if map_cr then
         cmp_setup.mapping = {
             ['<CR>'] = cmp.mapping.confirm({
-                behavior = cmp.ConfirmBehavior.Replace,
+                behavior = behavior,
                 select = opt.auto_select,
             }),
         }
