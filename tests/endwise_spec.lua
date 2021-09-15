@@ -38,19 +38,19 @@ local data = {
         before   = [[if data== 'fdsafdsa' then| ]],
         after    = [[end ]]
     },
-    {
-        name     = "don't add endwise on match rule" ,
-        filepath = './tests/endwise/init.lua',
-        filetype = "lua",
-        linenr   = 5,
-        key      = [[<cr>]],
-        before   ={
-            [[if data == 'xdsad' then| ]],
-            [[ local abde='das' ]],
-            [[end]]
-        },
-        after    = [[ local abde='das' ]]
-    },
+    -- {
+    --     name     = "don't add endwise on match rule" ,
+    --     filepath = './tests/endwise/init.lua',
+    --     filetype = "lua",
+    --     linenr   = 5,
+    --     key      = [[<cr>]],
+    --     before   ={
+    --         [[if data == 'xdsad' then| ]],
+    --         [[ local abde='das' ]],
+    --         [[end]]
+    --     },
+    --     after    = [[ local abde='das' ]]
+    -- },
 }
 
 local run_data = _G.Test_filter(data)

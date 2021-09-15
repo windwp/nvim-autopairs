@@ -19,6 +19,7 @@ local default = {
     enable_moveright = true,
     enable_afterquote = true,
     enable_check_bracket_line = true,
+    disabled_blockwise_mode = true,
     ts_config = {
         lua = { 'string', 'source' },
         javascript = { 'string', 'template_string' },
@@ -143,6 +144,9 @@ local function is_disable()
         return true
     end
     if vim.bo.modifiable == false then
+        return true
+    end
+    if M.config.disabled_blockwise_mode and utils.is_block_wise_mode() then
         return true
     end
     if utils.check_filetype(M.config.disable_filetype, vim.bo.filetype) then
@@ -528,7 +532,7 @@ end
 
 --- add bracket pairs after quote (|"aaaaa" => (|"aaaaaa")
 M.autopairs_afterquote = function(line, key_char)
-    if M.config.enable_afterquote then
+    if M.config.enable_afterquote and not utils.is_block_wise_mode() then
         line = line or utils.text_get_current_line(0)
         local _, col = utils.get_cursor()
         local prev_char, next_char = utils.text_cusor_line(line, col + 1, 1, 1, false)

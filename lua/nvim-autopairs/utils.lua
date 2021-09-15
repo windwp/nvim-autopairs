@@ -172,6 +172,9 @@ M.esc = function(cmd)
     return vim.api.nvim_replace_termcodes(cmd, true, false, true)
 end
 
+M.is_block_wise_mode = function ()
+  return vim.fn.visualmode() == ''
+end
 
 --- get prev_char with out key_map
 M.get_prev_char = function(opt)
