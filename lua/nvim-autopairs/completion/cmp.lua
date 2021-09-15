@@ -4,6 +4,7 @@ local cmp = require('cmp')
 
 local M = {}
 M.setup = function(opt)
+    opt = opt or {}
     opt = vim.tbl_deep_extend('force', {
         map_cr = true,
         map_complete = true,
