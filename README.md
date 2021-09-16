@@ -1,7 +1,7 @@
 ##  nvim-autopairs
 
-A super powerful autopairs for Neovim.
-It support multiple character.
+A super powerful autopair for Neovim.
+It supports multiple characters.
 
 Requires neovim 0.5+
 
@@ -270,7 +270,7 @@ npairs.add_rule(
 [Rules API](https://github.com/windwp/nvim-autopairs/wiki/Rules-API)
 
 ### Treesitter
-You can use treesitter to check pair
+You can use treesitter to check for a pair
 
 ```lua
 local npairs = require("nvim-autopairs")
@@ -278,7 +278,7 @@ local npairs = require("nvim-autopairs")
 npairs.setup({
     check_ts = true,
     ts_config = {
-        lua = {'string'},-- it will not add pair on that treesitter node
+        lua = {'string'},-- it will not add a pair on that treesitter node
         javascript = {'template_string'},
         java = false,-- don't check treesitter on java
     }
@@ -300,8 +300,8 @@ npairs.add_rules({
 })
 ```
 
-### Don't add pairs if it already have a close pairs in same line
-if **next character** is a close pairs and it doesn't have an open pairs in same line then it will not add a close pairs
+### Don't add pairs if it already has a close pair in the same line
+if **next character** is a close pair and it doesn't have an open pair in same line, then it will not add a close pair
 
 ``` text
 Before        Input         After
@@ -352,7 +352,7 @@ Before        Input                    After
 ```
 
 ```lua
--- put this to  setup function and press <a-e> to use fast_wrap
+-- put this to setup function and press <a-e> to use fast_wrap
 npairs.setup({
     fast_wrap = {},
 })
