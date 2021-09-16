@@ -19,7 +19,6 @@ local default = {
     enable_moveright = true,
     enable_afterquote = true,
     enable_check_bracket_line = true,
-    disabled_blockwise_mode = true,
     ts_config = {
         lua = { 'string', 'source' },
         javascript = { 'string', 'template_string' },
@@ -146,9 +145,7 @@ local function is_disable()
     if vim.bo.modifiable == false then
         return true
     end
-    if M.config.disabled_blockwise_mode and utils.is_block_wise_mode() then
-        return true
-    end
+
     if utils.check_filetype(M.config.disable_filetype, vim.bo.filetype) then
         -- should have a way to remove the mapping when vim.bo.filetype = ''
         -- now we only remove a rule
