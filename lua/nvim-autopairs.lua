@@ -536,7 +536,7 @@ M.autopairs_afterquote = function(line, key_char)
         if
             utils.is_bracket(prev_char)
             and utils.is_quote(next_char)
-            and not utils.is_in_quote(line, col, next_char)
+            and not utils.is_in_quotes(line, col, next_char)
         then
             local count = 0
             local index = 0

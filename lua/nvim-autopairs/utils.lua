@@ -39,34 +39,32 @@ M.is_equal = function (value,text, is_regex)
     return false
 end
 
-M.is_in_quote = function(line, pos, quote)
+---check cursor is inside a quote
+---@param line string
+---@param pos number  positin in line
+---@param quote nil|string specify a quote string
+---@return boolean
+M.is_in_quotes = function (line, pos, quote)
     local cIndex = 0
     local result = false
+    local last_char = quote or ''
 
     while cIndex < string.len(line) and cIndex < pos  do
         cIndex = cIndex + 1
         local char = line:sub(cIndex, cIndex)
         if
             result == true and
-            char == quote and
+            char == last_char and
             line:sub(cIndex -1, cIndex -1) ~= "\\"
         then
             result = false
-        elseif result == false and char == quote then
+            last_char = quote or ''
+        elseif result == false and M.is_quote(char) then
+            last_char = quote or char
             result = true
         end
     end
     return result
-end
-
-M.is_in_quotes = function (line, pos)
-    local quotes = {'"', "'", '`' }
-    for _, value in ipairs(quotes) do
-        if M.is_in_quote(line, pos, value) then
-            return true 
-        end
-    end
-    return false
 end
 
 M.is_attached = function(bufnr)

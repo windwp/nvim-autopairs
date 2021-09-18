@@ -478,6 +478,13 @@ local data = {
         before = [[a| ]],
         after  = [[a„|”b ]],
         end_cursor = 5,
+    },
+    {
+        name = [[a quote with single quote string]],
+        key = "'",
+        before = [[{{("It doesn't name %s", ''), 'ErrorMsg'| }},  ]],
+        after  = [[{{("It doesn't name %s", ''), 'ErrorMsg''|' }},  ]],
+        end_cursor = 42,
     }
 }
 
