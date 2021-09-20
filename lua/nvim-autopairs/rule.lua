@@ -41,7 +41,7 @@ function Rule.new(...)
 
     local function verify(rule)
         -- check multibyte
-        if #rule.start_pair ~= vim.fn.strdisplaywidth(rule.start_pair) then
+        if #rule.start_pair ~= vim.api.nvim_strwidth(rule.start_pair) then
             rule:use_multibyte()
         end
         return rule

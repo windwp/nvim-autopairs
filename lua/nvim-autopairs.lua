@@ -319,10 +319,10 @@ M.autopairs_bs = function(bufnr)
                 })
             then
                 local input = ''
-                for _ = 1, vim.fn.strdisplaywidth(rule.start_pair), 1 do
+                for _ = 1, vim.api.nvim_strwidth(rule.start_pair), 1 do
                     input = input .. utils.key.bs
                 end
-                for _ = 1, vim.fn.strdisplaywidth(rule.end_pair), 1 do
+                for _ = 1, vim.api.nvim_strwidth(rule.end_pair), 1 do
                     input = input .. utils.key.right .. utils.key.bs
                 end
                 return utils.esc('<c-g>U' .. input)
