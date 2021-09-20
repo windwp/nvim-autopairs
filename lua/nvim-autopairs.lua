@@ -62,6 +62,7 @@ M.setup = function(opt)
     augroup autopairs_buf
     autocmd!
     autocmd BufEnter * :lua require("nvim-autopairs").on_attach()
+    autocmd BufDelete * :lua require("nvim-autopairs").set_buf_rule(nil)
     autocmd FileType * :lua require("nvim-autopairs").force_attach()
     augroup end
         ]],
@@ -96,14 +97,15 @@ M.remove_rule = function(pair)
     M.config.rules = tbl
     if M.state.rules then
         local state_tbl = {}
-        for _, r in pairs(M.state.rules) do
+        local rules = M.get_buf_rules()
+        for _, r in pairs(rules) do
             if r.start_pair ~= pair then
                 table.insert(state_tbl, r)
             elseif r.key_map and r.key_map ~= '' then
                 vim.api.nvim_buf_del_keymap(0, 'i', r.key_map)
             end
         end
-        M.state.rules = state_tbl
+        M.set_buf_rule(state_tbl)
     end
     M.force_attach()
 end
@@ -150,13 +152,24 @@ local function is_disable()
         -- should have a way to remove the mapping when vim.bo.filetype = ''
         -- now we only remove a rule
         -- the event FileType happen after BufEnter
-        M.state.rules = {}
+        M.set_buf_rule(vim.api.nvim_get_current_buf(), nil)
         return true
     end
     return false
 end
 
+M.get_buf_rules = function (bufnr)
+    return M.state.rules[bufnr or vim.api.nvim_get_current_buf()] or {}
+end
+
+---@param rules table list or rule
+---@param bufnr number buffer number
+M.set_buf_rule = function (rules,bufnr)
+    M.state.rules[bufnr or vim.api.nvim_get_current_buf()] = rules
+end
+
 M.on_attach = function(bufnr)
+    log.debug('on_attach'..vim.bo.filetype)
     if is_disable() then
         return
     end
@@ -185,7 +198,7 @@ M.on_attach = function(bufnr)
         return #a.start_pair > #b.start_pair
     end)
 
-    M.state.rules = rules
+    M.set_buf_rule(rules, bufnr)
 
     if M.state.buf_ts[bufnr] == true then
         M.state.ts_node = M.config.ts_config[vim.bo.filetype]
@@ -197,7 +210,7 @@ M.on_attach = function(bufnr)
         return
     end
     local enable_insert_auto = false
-    for _, rule in pairs(M.state.rules) do
+    for _, rule in pairs(rules) do
         if rule.key_map ~= nil then
             if rule.is_regex == false then
                 if rule.key_map == '' then
@@ -298,7 +311,8 @@ M.autopairs_bs = function(bufnr)
     end
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
-    for _, rule in pairs(M.state.rules) do
+    local rules = M.get_buf_rules(bufnr)
+    for _, rule in pairs(rules) do
         if rule.start_pair then
             local prev_char, next_char = utils.text_cusor_line(
                 line,
@@ -340,7 +354,8 @@ M.autopairs_map = function(bufnr, char)
     local _, col = utils.get_cursor()
     local new_text = ''
     local add_char = 1
-    for _, rule in pairs(M.state.rules) do
+    local rules = M.get_buf_rules(bufnr)
+    for _, rule in pairs(rules) do
         if rule.start_pair then
             if rule.is_regex and rule.key_map and rule.key_map ~= '' then
                 new_text = line:sub(1, col) .. line:sub(col + 1, #line)
@@ -417,7 +432,8 @@ M.autopairs_insert = function(bufnr, char)
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
     local new_text = line:sub(1, col) .. char .. line:sub(col + 1, #line)
-    for _, rule in pairs(M.state.rules) do
+    local rules = M.get_buf_rules(bufnr)
+    for _, rule in pairs(rules) do
         if rule.start_pair and rule.is_regex and rule.key_map == '' then
             local prev_char, next_char = utils.text_cusor_line(
                 new_text,
@@ -472,7 +488,8 @@ M.autopairs_cr = function(bufnr)
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
     -- log.debug("on_cr")
-    for _, rule in pairs(M.state.rules) do
+    local rules = M.get_buf_rules(bufnr)
+    for _, rule in pairs(rules) do
         if rule.start_pair then
             local prev_char, next_char = utils.text_cusor_line(
                 line,
@@ -552,7 +569,8 @@ M.autopairs_afterquote = function(line, key_char)
                 is_prev_slash = char == '\\'
             end
             if count == 2 and index >= (#line - 2) then
-                for _, rule in pairs(M.state.rules) do
+                local rules = M.get_buf_rules(vim.api.nvim_get_current_buf())
+                for _, rule in pairs(rules) do
                     if rule.start_pair == prev_char and char_end ~= rule.end_pair then
                         local new_text = line:sub(0, index)
                             .. rule.end_pair
