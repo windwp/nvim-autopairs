@@ -47,7 +47,8 @@ M.show = function(line)
     local prev_char = utils.text_cusor_line(line, col, 1, 1, false)
     local end_pair = ''
     if utils.is_in_table(config.chars, prev_char) then
-        for _, rule in pairs(state.rules) do
+        local rules = npairs.get_buf_rules()
+        for _, rule in pairs(rules) do
             if rule.start_pair == prev_char then
                 end_pair = rule.end_pair
             end
