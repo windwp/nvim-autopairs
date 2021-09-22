@@ -141,7 +141,7 @@ local function is_disable()
         return true
     end
     if vim.bo.filetype == '' and api.nvim_win_get_config(0).relative ~= '' then
-        -- disable for any floating window without filetpe
+        -- disable for any floating window without filetype
         return true
     end
     if vim.bo.modifiable == false then
@@ -152,7 +152,7 @@ local function is_disable()
         -- should have a way to remove the mapping when vim.bo.filetype = ''
         -- now we only remove a rule
         -- the event FileType happen after BufEnter
-        M.set_buf_rule(vim.api.nvim_get_current_buf(), nil)
+        M.set_buf_rule({})
         return true
     end
     return false
