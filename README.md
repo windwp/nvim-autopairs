@@ -136,8 +136,7 @@ MUtils.CR = function()
     if vim.fn.complete_info({ 'selected' }).selected ~= -1 then
       return npairs.esc('<c-y>')
     else
-      -- you can change <c-g><c-g> to <c-e> if you don't use other i_CTRL-X modes
-      return npairs.esc('<c-g><c-g>') .. npairs.autopairs_cr()
+      return npairs.esc('<c-e>') .. npairs.autopairs_cr()
     end
   else
     return npairs.autopairs_cr()
