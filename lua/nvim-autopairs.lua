@@ -13,6 +13,7 @@ M.state = {
 
 local default = {
     map_bs = true,
+    map_c_w = false,
     disable_filetype = { 'TelescopePrompt', 'spectre_panel' },
     ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]], '%s+', ''),
     check_ts = false,
@@ -302,12 +303,21 @@ M.on_attach = function(bufnr)
             { expr = true, noremap = true }
         )
     end
+    if M.config.map_c_w then
+        api.nvim_buf_set_keymap(
+            bufnr,
+            'i',
+            '<c-w>',
+            string.format('v:lua.MPairs.autopairs_c_w(%d)', bufnr),
+            { expr = true, noremap = true }
+        )
+    end
     api.nvim_buf_set_var(bufnr, 'nvim-autopairs', 1)
 end
 
-M.autopairs_bs = function(bufnr)
+local autopairs_delete = function(bufnr,key)
     if is_disable() then
-        return utils.esc(utils.key.bs)
+        return utils.esc(key)
     end
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
@@ -343,7 +353,15 @@ M.autopairs_bs = function(bufnr)
             end
         end
     end
-    return utils.esc(utils.key.bs)
+    return utils.esc(key)
+end
+
+M.autopairs_c_w = function (bufnr)
+    return autopairs_delete(bufnr, "<c-g>U<c-w>")
+end
+
+M.autopairs_bs = function (bufnr)
+    return autopairs_delete(bufnr,utils.key.bs)
 end
 
 M.autopairs_map = function(bufnr, char)

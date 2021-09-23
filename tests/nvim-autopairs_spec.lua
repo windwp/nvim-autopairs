@@ -485,7 +485,18 @@ local data = {
         before = [[{{("It doesn't name %s", ''), 'ErrorMsg'| }},  ]],
         after  = [[{{("It doesn't name %s", ''), 'ErrorMsg''|' }},  ]],
         end_cursor = 42,
-    }
+    },
+    {
+        setup_func = function()
+            npairs.setup({
+                map_c_w = true
+            })
+        end,
+        name = "map <c-w>",
+        key = "<c-w>",
+        before = [[aa'|' ]],
+        after  = [[aa| ]],
+    },
 }
 
 local run_data = {}
