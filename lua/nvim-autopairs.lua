@@ -159,18 +159,19 @@ local function is_disable()
     return false
 end
 
-M.get_buf_rules = function (bufnr)
+---@return table <number, Rule>
+M.get_buf_rules = function(bufnr)
     return M.state.rules[bufnr or vim.api.nvim_get_current_buf()] or {}
 end
 
 ---@param rules table list or rule
 ---@param bufnr number buffer number
-M.set_buf_rule = function (rules,bufnr)
+M.set_buf_rule = function(rules, bufnr)
     M.state.rules[bufnr or vim.api.nvim_get_current_buf()] = rules
 end
 
 M.on_attach = function(bufnr)
-    log.debug('on_attach'..vim.bo.filetype)
+    log.debug('on_attach' .. vim.bo.filetype)
     if is_disable() then
         return
     end
@@ -315,7 +316,7 @@ M.on_attach = function(bufnr)
     api.nvim_buf_set_var(bufnr, 'nvim-autopairs', 1)
 end
 
-local autopairs_delete = function(bufnr,key)
+local autopairs_delete = function(bufnr, key)
     if is_disable() then
         return utils.esc(key)
     end
@@ -356,12 +357,12 @@ local autopairs_delete = function(bufnr,key)
     return utils.esc(key)
 end
 
-M.autopairs_c_w = function (bufnr)
-    return autopairs_delete(bufnr, "<c-g>U<c-w>")
+M.autopairs_c_w = function(bufnr)
+    return autopairs_delete(bufnr, '<c-g>U<c-w>')
 end
 
-M.autopairs_bs = function (bufnr)
-    return autopairs_delete(bufnr,utils.key.bs)
+M.autopairs_bs = function(bufnr)
+    return autopairs_delete(bufnr, utils.key.bs)
 end
 
 M.autopairs_map = function(bufnr, char)
@@ -378,7 +379,7 @@ M.autopairs_map = function(bufnr, char)
             if rule.is_regex and rule.key_map and rule.key_map ~= '' then
                 new_text = line:sub(1, col) .. line:sub(col + 1, #line)
                 add_char = 0
-            elseif rule.key_map and rule.key_map:match("<.*>") then
+            elseif rule.key_map and rule.key_map:match('<.*>') then
                 -- if it is a special key like <c-a>
                 if utils.esc(rule.key_map) ~= char then
                     new_text = ''
@@ -433,7 +434,7 @@ M.autopairs_map = function(bufnr, char)
                     move_text = ''
                     char = ''
                 end
-                if end_pair:match("<.*>") then
+                if end_pair:match('<.*>') then
                     end_pair = utils.esc(end_pair)
                 end
                 return char .. end_pair .. utils.esc(move_text)
@@ -620,4 +621,3 @@ end
 M.esc = utils.esc
 _G.MPairs = M
 return M
-

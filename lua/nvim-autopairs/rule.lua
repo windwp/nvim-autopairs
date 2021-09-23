@@ -1,8 +1,19 @@
-local Rule = {}
-local log = require('nvim-autopairs._log')
-
 local Cond = require('nvim-autopairs.conds')
 
+--- @class Rule
+--- @field start_pair string
+--- @field end_pair string
+--- @field end_pair_func function    dynamic change end_pair
+--- @field end_pair_length number    change end_pair length for key map like <left>
+--- @field key_map string|nil        equal nil mean it will skip on autopairs map
+--- @field filetypes table|string
+--- @field is_regex boolean          use regex to compare
+--- @field is_multibyte boolean
+--- @field is_endwise boolean        only use on end_wise
+local Rule = {}
+Rule.__index = Rule
+
+---@return Rule
 function Rule.new(...)
     local params = {...}
     local opt = {}
@@ -18,24 +29,18 @@ function Rule.new(...)
         end
     end
     opt = vim.tbl_extend('force', {
-        -- set to nil mean it will skip on autopairs_map
         key_map       = "",
         start_pair    = nil,
         end_pair      = nil,
-        -- function to dynamic update end pair
         end_pair_func = false,
         filetypes     = nil,
         move_cond     = nil,
         del_cond      = {},
         cr_cond       = {},
         pair_cond     = {},
-        -- only use on end_wise
         is_endwise    = false,
-        -- use regex to compare
         is_regex      = false,
-        is_multibyte = false,
-        -- some end_pair have key map like <left>.. then the length of string is
-        -- not correct
+        is_multibyte  = false,
         end_pair_length = nil,
     },opt)
 
@@ -83,7 +88,7 @@ function Rule:get_end_pair_length(opts)
     if type(opts) == 'string' then
         return #opts
     end
-    return self.get_end_pair(opts):length()
+    return #self.get_end_pair(opts)
 end
 
 function Rule:replace_endpair(value,check_pair)
