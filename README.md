@@ -33,6 +33,35 @@ require('nvim-autopairs').setup({
 })
 ```
 
+### Toggle autopairs on/off
+
+Define function in `path/to` file on RTP as:
+
+```lua
+M.toggle_autopairs = function()
+  local ok, autopairs = pcall(require, "nvim-autopairs")
+  if ok then
+    if autopairs.state.disabled then
+      autopairs.enable()
+      print("autopairs on")
+    else
+      autopairs.disable()
+      print("autopairs off")
+    end
+  else
+    print("autopairs not available")
+  end
+end
+...
+return M
+
+```
+
+Use following command in your key mapping definition to a certain key
+combination sequence.
+```lua
+'<cmd>lua require("path.to").toggle_autopairs()<CR>'
+```
 
 #### Mapping `<CR>`
 ```
