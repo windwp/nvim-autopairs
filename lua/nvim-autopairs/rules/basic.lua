@@ -31,8 +31,8 @@ local function setup(opt)
             :with_pair(cond.not_before_regex_check("%w"))
             :with_pair(cond.not_filetypes({"rust"})),
         basic("'", "'", "rust")
-            :with_pair(cond.not_before_regex_check("%w"))
-            :with_pair(cond.not_before_regex_check("[<&]")),
+            :with_pair(cond.not_before_regex_check("[%w<&]")),
+            :with_pair(cond.not_after_text_check(">")),
         basic("`", "`"),
         basic('"', '"'),
         bracket("(", ")"),
