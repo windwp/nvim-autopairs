@@ -29,8 +29,9 @@ local function setup(opt)
         Rule('"""', '"""', { 'python', 'elixir' }),
         basic("'", "'")
             :with_pair(cond.not_before_regex_check("%w"))
-            :with_pair(cond.not_filetypes({"rust"}))
-        ,
+            :with_pair(cond.not_filetypes({"rust"})),
+        basic("'", "'", "rust")
+            :with_pair(cond.not_before_regex_check("[<&]")),
         basic("`", "`"),
         basic('"', '"'),
         bracket("(", ")"),
