@@ -156,7 +156,7 @@ M.set_buf_rule = function(rules, bufnr)
 end
 
 M.on_attach = function(bufnr)
-    log.debug('on_attach' .. vim.bo.filetype)
+    -- log.debug('on_attach' .. vim.bo.filetype)
     if is_disable() then
         return
     end
@@ -164,7 +164,10 @@ M.on_attach = function(bufnr)
 
     local rules = {}
     for _, rule in pairs(M.config.rules) do
-        if utils.check_filetype(rule.filetypes, vim.bo.filetype) then
+        if
+            utils.check_filetype(rule.filetypes, vim.bo.filetype)
+            and utils.check_not_filetype(rule.not_filetypes, vim.bo.filetype)
+        then
             table.insert(rules, rule)
         end
     end

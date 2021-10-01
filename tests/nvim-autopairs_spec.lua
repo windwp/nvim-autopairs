@@ -497,6 +497,17 @@ local data = {
         before = [[aa'|' ]],
         after  = [[aa| ]],
     },
+    {
+        setup_func = function()
+            npairs.clear_rules()
+            npairs.add_rule(Rule("x", "x",{'-vim','-rust'}))
+        end,
+        filetype = 'vim',
+        name = "disable filetype vim",
+        key = [[x]],
+        before = [[a | ]],
+        after = [[a x| ]]
+    },
 }
 
 local run_data = {}

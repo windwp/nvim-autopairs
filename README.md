@@ -206,11 +206,12 @@ npairs.add_rules({
     :with_move(cond.none())
     -- don't delete if the next character is xx
     :with_del(cond.not_after_regex_check("xx"))
-    -- disable  add newline when press <cr>
+    -- disable add newline when press <cr>
     :with_cr(cond.none())
   },
+  --it is not working on .vim but it working on another filetype
+  Rule("a","a","-vim")
 )
-
 
 npairs.add_rules({
   Rule("$$","$$","tex")

@@ -24,13 +24,11 @@ local function setup(opt)
         Rule("```", "```", { 'markdown', 'vimwiki', 'rmarkdown', 'rmd', 'pandoc' }),
         Rule("```.*$", "```", { 'markdown', 'vimwiki', 'rmarkdown', 'rmd', 'pandoc' })
             :only_cr()
-            :use_regex(true)
-        ,
+            :use_regex(true),
         Rule('"""', '"""', { 'python', 'elixir' }),
-        basic("'", "'")
-            :with_pair(cond.not_before_regex_check("%w"))
-            :with_pair(cond.not_filetypes({"rust"})),
-        basic("'", "'", "rust")
+        basic("'", "'", '-rust')
+            :with_pair(cond.not_before_regex_check("%w")),
+        basic("'", "'", 'rust')
             :with_pair(cond.not_before_regex_check("[%w<&]"))
             :with_pair(cond.not_after_text_check(">")),
         basic("`", "`"),

@@ -90,7 +90,7 @@ M.check_filetype = function(tbl, filetype)
     return M.is_in_table(tbl, filetype)
 end
 
-M.check_disable_ft = function(tbl, filetype)
+M.check_not_filetype = function(tbl, filetype)
     if tbl == nil then return true end
     return not M.is_in_table(tbl, filetype)
 end

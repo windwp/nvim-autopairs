@@ -1,4 +1,5 @@
 local Cond = require('nvim-autopairs.conds')
+local log = require('nvim-autopairs._log')
 
 --- @class Rule
 --- @field start_pair string
@@ -6,7 +7,8 @@ local Cond = require('nvim-autopairs.conds')
 --- @field end_pair_func function    dynamic change end_pair
 --- @field end_pair_length number    change end_pair length for key map like <left>
 --- @field key_map string|nil        equal nil mean it will skip on autopairs map
---- @field filetypes table|string
+--- @field filetypes table
+--- @field not_filetypes table
 --- @field is_regex boolean          use regex to compare
 --- @field is_multibyte boolean
 --- @field is_endwise boolean        only use on end_wise
@@ -34,6 +36,7 @@ function Rule.new(...)
         end_pair      = nil,
         end_pair_func = false,
         filetypes     = nil,
+        not_filetypes = nil,
         move_cond     = nil,
         del_cond      = {},
         cr_cond       = {},
@@ -44,15 +47,29 @@ function Rule.new(...)
         end_pair_length = nil,
     },opt)
 
-    local function verify(rule)
+    local function constructor(rule)
         -- check multibyte
         if #rule.start_pair ~= vim.api.nvim_strwidth(rule.start_pair) then
             rule:use_multibyte()
         end
+        -- check filetypes and not_filetypes
+        -- if have something like "-vim" it will add to not_filetypes
+        if rule.filetypes then
+            local ft, not_ft = {},{}
+            for _, value in pairs(rule.filetypes) do
+                if value:sub(1, 1) == "-" then
+                    table.insert(not_ft, value:sub(2,#value))
+                else
+                    table.insert(ft, value)
+                end
+            end
+            rule.filetypes = #ft>0 and ft or nil
+            rule.not_filetypes = #not_ft>0 and not_ft or nil
+        end
         return rule
     end
     local r = setmetatable(opt, {__index = Rule})
-    return verify(r)
+    return constructor(r)
 end
 
 function Rule:use_regex(value,key_map)
