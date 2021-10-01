@@ -2,7 +2,7 @@ local log = require('nvim-autopairs._log')
 local utils = require('nvim-autopairs.utils')
 local basic_rule = require('nvim-autopairs.rules.basic')
 local api = vim.api
-
+local highlighter = nil
 local M = {}
 
 M.state = {
@@ -26,20 +26,6 @@ local default = {
     },
 }
 
-M.init = function()
-    local ok = pcall(require, 'nvim-treesitter')
-    if ok then
-        require('nvim-treesitter').define_modules({
-            autopairs = {
-                module_path = 'nvim-autopairs.internal',
-                is_supported = function()
-                    return true
-                end,
-            },
-        })
-    end
-end
-
 M.setup = function(opt)
     M.config = vim.tbl_deep_extend('force', default, opt or {})
     if M.config.fast_wrap then
@@ -50,9 +36,8 @@ M.setup = function(opt)
     if M.config.check_ts then
         local ok, ts_rule = pcall(require, 'nvim-autopairs.rules.ts_basic')
         if ok then
+            highlighter = require "vim.treesitter.highlighter"
             M.config.rules = ts_rule.setup(M.config)
-        else
-            print('you need to install treesitter')
         end
     end
 
@@ -202,10 +187,12 @@ M.on_attach = function(bufnr)
 
     M.set_buf_rule(rules, bufnr)
 
-    if M.state.buf_ts[bufnr] == true then
-        M.state.ts_node = M.config.ts_config[vim.bo.filetype]
-    else
-        M.state.ts_node = nil
+    if M.config.check_ts then
+        if highlighter and highlighter.active[bufnr] then
+            M.state.ts_node = M.config.ts_config[vim.bo.filetype]
+        else
+            M.state.ts_node = nil
+        end
     end
 
     if utils.is_attached(bufnr) then
