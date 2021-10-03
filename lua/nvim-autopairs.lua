@@ -546,7 +546,7 @@ M.autopairs_cr = function(bufnr)
                 })
             then
                 log.debug('do_cr')
-                return utils.esc('<cr><c-o>O')
+                return utils.esc(rule:get_map_cr({rule = rule, line = line, color = col, bufnr = bufnr}))
             end
         end
     end

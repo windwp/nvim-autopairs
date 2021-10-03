@@ -5,6 +5,7 @@ local log = require('nvim-autopairs._log')
 --- @field start_pair string
 --- @field end_pair string
 --- @field end_pair_func function    dynamic change end_pair
+--- @field map_cr_func function      dynamic change mapping_cr
 --- @field end_pair_length number    change end_pair length for key map like <left>
 --- @field key_map string|nil        equal nil mean it will skip on autopairs map
 --- @field filetypes table
@@ -17,15 +18,15 @@ Rule.__index = Rule
 
 ---@return Rule
 function Rule.new(...)
-    local params = {...}
+    local params = { ... }
     local opt = {}
     if type(params[1]) == 'table' then
         opt = params[1]
     else
         opt.start_pair = params[1]
         opt.end_pair = params[2]
-        if type(params[3]) == "string" then
-            opt.filetypes = {params[3]}
+        if type(params[3]) == 'string' then
+            opt.filetypes = { params[3] }
         else
             opt.filetypes = params[3]
         end
@@ -45,7 +46,7 @@ function Rule.new(...)
         is_regex      = false,
         is_multibyte  = false,
         end_pair_length = nil,
-    },opt)
+    }, opt)
 
     local function constructor(rule)
         -- check multibyte
@@ -55,31 +56,31 @@ function Rule.new(...)
         -- check filetypes and not_filetypes
         -- if have something like "-vim" it will add to not_filetypes
         if rule.filetypes then
-            local ft, not_ft = {},{}
+            local ft, not_ft = {}, {}
             for _, value in pairs(rule.filetypes) do
-                if value:sub(1, 1) == "-" then
-                    table.insert(not_ft, value:sub(2,#value))
+                if value:sub(1, 1) == '-' then
+                    table.insert(not_ft, value:sub(2, #value))
                 else
                     table.insert(ft, value)
                 end
             end
-            rule.filetypes = #ft>0 and ft or nil
-            rule.not_filetypes = #not_ft>0 and not_ft or nil
+            rule.filetypes = #ft > 0 and ft or nil
+            rule.not_filetypes = #not_ft > 0 and not_ft or nil
         end
         return rule
     end
-    local r = setmetatable(opt, {__index = Rule})
+    local r = setmetatable(opt, { __index = Rule })
     return constructor(r)
 end
 
-function Rule:use_regex(value,key_map)
+function Rule:use_regex(value, key_map)
     self.is_regex = value
-    self.key_map = key_map or ""
+    self.key_map = key_map or ''
     return self
 end
 
 function Rule:use_key(key_map)
-    self.key_map = key_map or ""
+    self.key_map = key_map or ''
     return self
 end
 
@@ -98,6 +99,19 @@ function Rule:get_end_pair(opts)
     return self.end_pair
 end
 
+function Rule:get_map_cr(opts)
+    if self.map_cr_func then
+        return self.map_cr_func(opts)
+    end
+    return '<cr><c-o>O'
+end
+
+
+function Rule:replace_map_cr(value)
+    self.map_cr_func = value
+    return self
+end
+
 function Rule:get_end_pair_length(opts)
     if self.end_pair_length then
         return self.end_pair_length
@@ -108,7 +122,7 @@ function Rule:get_end_pair_length(opts)
     return #self.get_end_pair(opts)
 end
 
-function Rule:replace_endpair(value,check_pair)
+function Rule:replace_endpair(value, check_pair)
     self.end_pair_func = value
     if check_pair ~= nil then
         if check_pair == true then
@@ -136,7 +150,6 @@ function Rule:with_del(cond)
     table.insert(self.del_cond, cond)
     return self
 end
-
 
 function Rule:with_cr(cond)
     if self.cr_cond == nil then self.cr_cond = {}end
@@ -181,7 +194,6 @@ end
 
 function Rule:can_pair(opt)
     return can_do(self.pair_cond, opt)
-
 end
 
 function Rule:can_move(opt)
@@ -192,10 +204,8 @@ function Rule:can_del(opt)
     return can_do(self.del_cond, opt)
 end
 
-
 function Rule:can_cr(opt)
     return can_do(self.cr_cond, opt)
 end
-
 
 return Rule.new
