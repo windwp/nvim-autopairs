@@ -14,8 +14,6 @@ local default_config = {
     highlight = 'Search',
 }
 
-local state = npairs.state
-
 M.ns_fast_wrap = vim.api.nvim_create_namespace('autopairs_fastwrap')
 
 local config = {}
@@ -24,7 +22,6 @@ M.setup = function(cfg)
     if config.chars == nil then
         config = vim.tbl_extend('force', default_config, cfg or {})
         npairs.config.fast_wrap = config
-        npairs.config.ignored_next_char = string.gsub([[ [%w%%%'%(%{%[%"%.] ]], '%s+', '')
     end
 end
 

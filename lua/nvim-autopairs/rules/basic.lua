@@ -4,11 +4,14 @@ local cond = require('nvim-autopairs.conds')
 local function setup(opt)
     local basic = function(...)
         local move_func = opt.enable_moveright and cond.move_right or cond.none
+        local rule = Rule(...)
+            :with_move(move_func())
+            :with_pair(cond.not_add_quote_inside_quote())
 
-        return Rule(...)
-                :with_move(move_func())
-                :with_pair(cond.not_after_regex_check(opt.ignored_next_char))
-                :with_pair(cond.not_add_quote_inside_quote())
+        if #opt.ignored_next_char > 1 then
+            rule:with_pair(cond.not_after_regex_check(opt.ignored_next_char))
+        end
+        return rule
     end
 
     local bracket = function(...)
@@ -42,4 +45,4 @@ local function setup(opt)
     }
     return rules
 end
-return {setup = setup}
+return { setup = setup }
