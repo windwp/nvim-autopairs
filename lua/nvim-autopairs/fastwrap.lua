@@ -83,7 +83,7 @@ M.show = function(line)
                     M.move_bracket(line, pos.col, end_pair, pos.char)
                 end
             end
-            vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row - 1, row + 1)
+            vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
             vim.cmd('startinsert')
         end, 10)
         return
