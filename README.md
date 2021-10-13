@@ -333,7 +333,7 @@ Before        Input         After
 ``` lua
   require('nvim-autopairs').disable()
   require('nvim-autopairs').enable()
-  require('nvim-autopairs').remove_rule('(')-- remove rule (
+  require('nvim-autopairs').remove_rule('(') -- remove rule (
   require('nvim-autopairs').clear_rules() -- clear all rule
   require('nvim-autopairs').get_rule('"') -- get rule " then modify it
 
@@ -363,6 +363,7 @@ npairs.setup({
       end_key = '$',
       keys = 'qwertyuiopzxcvbnmasdfghjkl',
       check_comma = true,
+      auto_move = false, -- automatically move bracket if there's only one match
       hightlight = 'Search'
     },
 })

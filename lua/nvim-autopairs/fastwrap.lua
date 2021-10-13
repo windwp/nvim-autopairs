@@ -11,6 +11,7 @@ local default_config = {
     end_key = '$',
     keys = 'qwertyuiopzxcvbnmasdfghjkl',
     check_comma = true,
+    auto_move = false,
     highlight = 'Search',
 }
 
@@ -35,6 +36,12 @@ function M.getchar_handler()
         return key_str
     end
     return nil
+end
+
+function M.table_length(tbl)
+  local count = 0
+  for _ in pairs(tbl) do count = count + 1 end
+  return count
 end
 
 M.show = function(line)
@@ -77,7 +84,12 @@ M.show = function(line)
 
         M.highlight_wrap(list_pos, row)
         vim.defer_fn(function()
-            local char = M.getchar_handler()
+            local char
+            if config.auto_move and M.table_length(list_pos) == 1 then
+                char = config.end_key
+            else
+                char = M.getchar_handler()
+            end
             for _, pos in pairs(list_pos) do
                 if char == pos.key then
                     M.move_bracket(line, pos.col, end_pair, pos.char)
