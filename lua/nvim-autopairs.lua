@@ -15,6 +15,7 @@ local default = {
     map_bs = true,
     map_c_w = false,
     disable_filetype = { 'TelescopePrompt', 'spectre_panel' },
+    disable_in_macro = false,
     ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]], '%s+', ''),
     check_ts = false,
     enable_moveright = true,
@@ -131,6 +132,9 @@ local function is_disable()
         return true
     end
     if vim.bo.modifiable == false then
+        return true
+    end
+    if M.config.disable_in_macro and (vim.fn.reg_recording() ~= '' or vim.fn.reg_executing() ~= '') then
         return true
     end
 
