@@ -15,6 +15,7 @@ require('nvim-autopairs').setup{}
 
 ``` lua
 local disable_filetype = { "TelescopePrompt" }
+local disable_in_macro = false  -- disable when recording or executing a macro
 local ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]],"%s+", "")
 local enable_moveright = true
 local enable_afterquote = true  -- add bracket pairs after quote
