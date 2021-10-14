@@ -338,7 +338,7 @@ local autopairs_delete = function(bufnr, key)
                     input = input .. utils.key.bs
                 end
                 for _ = 1, vim.api.nvim_strwidth(rule.end_pair), 1 do
-                    input = input .. utils.key.right .. utils.key.bs
+                    input = input .. utils.key.del
                 end
                 return utils.esc('<c-g>U' .. input)
             end
