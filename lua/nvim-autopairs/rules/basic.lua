@@ -28,7 +28,7 @@ local function setup(opt)
         Rule("```.*$", "```", { 'markdown', 'vimwiki', 'rmarkdown', 'rmd', 'pandoc' })
             :only_cr()
             :use_regex(true),
-        Rule('"""', '"""', { 'python', 'elixir' }),
+        Rule('"""', '"""', { 'python', 'elixir', 'julia' }),
         basic("'", "'", '-rust')
             :with_pair(cond.not_before_regex_check("%w")),
         basic("'", "'", 'rust')
