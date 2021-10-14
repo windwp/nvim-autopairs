@@ -363,7 +363,6 @@ npairs.setup({
       end_key = '$',
       keys = 'qwertyuiopzxcvbnmasdfghjkl',
       check_comma = true,
-      auto_move = false, -- automatically move bracket if there's only one match
       hightlight = 'Search'
     },
 })
