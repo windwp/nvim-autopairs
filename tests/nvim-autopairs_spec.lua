@@ -508,38 +508,6 @@ local data = {
         before = [[a | ]],
         after = [[a x| ]]
     },
-    {
-        setup_func = function()
-            vim.o.backspace = ''
-            npairs.setup({
-                use_del = true,
-            })
-        end,
-        reset_func = function()
-            vim.cmd([[set backspace&vim]])
-            npairs.setup()
-        end,
-        name = [[delete parentheses with <bs> when use_del = true and backspace='']],
-        key = [[aaa(<bs>]],
-        before = [[| ]],
-        after  = [[aaa| ]],
-    },
-    {
-        setup_func = function()
-            vim.o.backspace = ''
-            npairs.setup({
-                use_del = true,
-            })
-        end,
-        reset_func = function()
-            vim.cmd([[set backspace&vim]])
-            npairs.setup()
-        end,
-        name = [[delete parentheses with <c-w> when use_del = true and backspace='']],
-        key = [[aaa(<c-w>]],
-        before = [[| ]],
-        after  = [[aaa| ]],
-    },
 }
 
 local run_data = {}

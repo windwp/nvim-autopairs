@@ -20,7 +20,6 @@ local default = {
     enable_moveright = true,
     enable_afterquote = true,
     enable_check_bracket_line = true,
-    use_del = false,
     ts_config = {
         lua = { 'string', 'source' },
         javascript = { 'string', 'template_string' },
@@ -339,7 +338,7 @@ local autopairs_delete = function(bufnr, key)
                     input = input .. utils.key.bs
                 end
                 for _ = 1, vim.api.nvim_strwidth(rule.end_pair), 1 do
-                    input = input .. (M.config.use_del and utils.key.del or utils.key.right .. utils.key.bs)
+                    input = input .. utils.key.right .. utils.key.bs
                 end
                 return utils.esc('<c-g>U' .. input)
             end
