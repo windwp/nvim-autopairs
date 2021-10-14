@@ -77,7 +77,7 @@ M.show = function(line)
 
         M.highlight_wrap(list_pos, row)
         vim.defer_fn(function()
-            local char = M.getchar_handler()
+            local char = #list_pos == 1 and config.end_key or M.getchar_handler()
             for _, pos in pairs(list_pos) do
                 if char == pos.key then
                     M.move_bracket(line, pos.col, end_pair, pos.char)
