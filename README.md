@@ -44,23 +44,6 @@ Before        Input         After
                             }
 ------------------------------------
 ```
-<details>
-<summary><b>nvim-compe</b></summary>
-
-``` lua
-require("nvim-autopairs.completion.compe").setup({
-  map_cr = true, --  map <CR> on insert mode
-  map_complete = true, -- it will auto insert `(` (map_char) after select function or method item
-  auto_select = false,  -- auto select first item
-  map_char = { -- modifies the function or method delimiter by filetypes
-    all = '(',
-    tex = '{'
-  }
-})
-```
-
-Make sure to remove mapping insert mode `<CR>` binding if you have it.
-</details>
 
 <details>
 <summary><b>nvim-cmp</b></summary>
@@ -80,37 +63,6 @@ require("nvim-autopairs.completion.cmp").setup({
 ```
 
 Make sure to remove mapping insert mode `<CR>` binding if you have it.
-</details>
-<details>
-<summary><b>completion nvim</b></summary>
-
-``` lua
-local remap = vim.api.nvim_set_keymap
-local npairs = require('nvim-autopairs')
-
--- skip it, if you use another global object
-_G.MUtils= {}
-
-vim.g.completion_confirm_key = ""
-
-MUtils.completion_confirm=function()
-  if vim.fn.pumvisible() ~= 0  then
-    if vim.fn.complete_info()["selected"] ~= -1 then
-      require'completion'.confirmCompletion()
-      return npairs.esc("<c-y>")
-    else
-      vim.api.nvim_select_popupmenu_item(0 , false , false ,{})
-      require'completion'.confirmCompletion()
-      return npairs.esc("<c-n><c-y>")
-    end
-  else
-    return npairs.autopairs_cr()
-  end
-end
-
-remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
-
-```
 </details>
 <details>
 <summary><b>coq_nvim</b></summary>
@@ -178,9 +130,10 @@ remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap =
 ```
 </details>
 
+[another completion plugin](https://github.com/windwp/nvim-autopairs/wiki/Completion-plugin)
+
 If you have a problem with indent after press ` <CR> `
 Please check setting of treesitter indent or install plugin support indent on your filetype
-
 
 ### Rule
 
