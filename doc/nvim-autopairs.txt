@@ -55,23 +55,6 @@ OVERRIDE DEFAULT VALUES ~
 <
 
 
-nvim-compe ~
-
->
-    require("nvim-autopairs.completion.compe").setup({
-      map_cr = true, --  map <CR> on insert mode
-      map_complete = true, -- it will auto insert `(` (map_char) after select function or method item
-      auto_select = false,  -- auto select first item
-      map_char = { -- modifies the function or method delimiter by filetypes
-        all = '(',
-        tex = '{'
-      }
-    })
-<
-
-
-Make sure to remove mapping insert mode `<CR>` binding if you have it.
-
 nvim-cmp ~
 
 >
@@ -90,36 +73,6 @@ nvim-cmp ~
 
 
 Make sure to remove mapping insert mode `<CR>` binding if you have it.
-
-completion nvim ~
-
->
-    local remap = vim.api.nvim_set_keymap
-    local npairs = require('nvim-autopairs')
-    
-    -- skip it, if you use another global object
-    _G.MUtils= {}
-    
-    vim.g.completion_confirm_key = ""
-    
-    MUtils.completion_confirm=function()
-      if vim.fn.pumvisible() ~= 0  then
-        if vim.fn.complete_info()["selected"] ~= -1 then
-          require'completion'.confirmCompletion()
-          return npairs.esc("<c-y>")
-        else
-          vim.api.nvim_select_popupmenu_item(0 , false , false ,{})
-          require'completion'.confirmCompletion()
-          return npairs.esc("<c-n><c-y>")
-        end
-      else
-        return npairs.autopairs_cr()
-      end
-    end
-    
-    remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
-<
-
 
 coq_nvim ~
 
@@ -186,11 +139,12 @@ without completion plugin ~
 <
 
 
-Mapping `<CR>`                         If you have a problem with indent after
-                                       press `<CR>` Please check setting of
-                                       treesitter indent or install plugin
-                                       support indent on your filetype
+Mapping `<CR>`                         another completion plugin
+                                       <https://github.com/windwp/nvim-autopairs/wiki/Completion-plugin>
 
+
+If you have a problem with indent after press `<CR>` Please check setting of
+treesitter indent or install plugin support indent on your filetype
 
 RULE ~
 
@@ -386,7 +340,8 @@ FASTWRAP ~
           end_key = '$',
           keys = 'qwertyuiopzxcvbnmasdfghjkl',
           check_comma = true,
-          hightlight = 'Search'
+          hightlight = 'Search',
+          hightlight_grey='Comment'
         },
     })
 <
