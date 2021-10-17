@@ -317,7 +317,8 @@ npairs.setup({
       end_key = '$',
       keys = 'qwertyuiopzxcvbnmasdfghjkl',
       check_comma = true,
-      hightlight = 'Search'
+      hightlight = 'Search',
+      hightlight_grey='Comment'
     },
 })
 ```

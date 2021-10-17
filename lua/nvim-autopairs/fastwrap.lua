@@ -12,6 +12,7 @@ local default_config = {
     keys = 'qwertyuiopzxcvbnmasdfghjkl',
     check_comma = true,
     highlight = 'Search',
+    highlight_grey = 'Comment',
 }
 
 M.ns_fast_wrap = vim.api.nvim_create_namespace('autopairs_fastwrap')
@@ -75,7 +76,7 @@ M.show = function(line)
             table.insert(list_pos, { col = str_length + 1, key = config.end_key })
         end
 
-        M.highlight_wrap(list_pos, row)
+        M.highlight_wrap(list_pos, row, col, #line)
         vim.defer_fn(function()
             local char = #list_pos == 1 and config.end_key or M.getchar_handler()
             for _, pos in pairs(list_pos) do
@@ -101,7 +102,7 @@ M.move_bracket = function(line, target_pos, end_pair, char_map)
         line = line:sub(1, col) .. line:sub(col + 2, #line)
         target_pos = target_pos - 1
     end
-    if config.check_comma and(char_map == ',' or char_map==' ') then
+    if config.check_comma and (char_map == ',' or char_map == ' ') then
         target_pos = target_pos - 1
     end
 
@@ -109,8 +110,17 @@ M.move_bracket = function(line, target_pos, end_pair, char_map)
     vim.fn.setline('.', line)
 end
 
-M.highlight_wrap = function(tbl_pos, row)
+M.highlight_wrap = function(tbl_pos, row, col, end_col)
     local bufnr = vim.api.nvim_win_get_buf(0)
+    if config.highlight_grey then
+        vim.highlight.range(
+            bufnr,
+            M.ns_fast_wrap,
+            config.highlight_grey,
+            { row, col },
+            { row, end_col }
+        )
+    end
     for _, pos in ipairs(tbl_pos) do
         vim.api.nvim_buf_set_extmark(bufnr, M.ns_fast_wrap, row, pos.col - 1, {
             virt_text = { { pos.key, config.highlight } },
