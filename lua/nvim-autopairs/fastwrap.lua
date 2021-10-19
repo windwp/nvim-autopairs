@@ -7,10 +7,9 @@ local default_config = {
     map = '<M-e>',
     chars = { '{', '[', '(', '"', "'" },
     pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], '%s+', ''),
-    offset = 0, -- Offset from pattern match
+    offset = -1, -- Offset from pattern match
     end_key = '$',
     keys = 'qwertyuiopzxcvbnmasdfghjkl',
-    check_comma = true,
     highlight = 'Search',
     highlight_grey = 'Comment',
 }
@@ -57,24 +56,23 @@ M.show = function(line)
         local list_pos = {}
         local index = 1
         local str_length = #line
-        local is_have_end = false
         local offset = config.offset
         for i = col + 2, #line, 1 do
             local char = line:sub(i, i)
             if string.match(char, config.pattern) then
                 local key = config.keys:sub(index, index)
                 index = index + 1
-                if str_length == i then
-                    key = config.end_key
-                    is_have_end = true
-                end
-                table.insert(list_pos, { col = i + offset, key = key, char = char })
+                table.insert(
+                    list_pos,
+                    { col = i + offset, key = key, char = char, pos = i }
+                )
             end
         end
 
-        if not is_have_end then
-            table.insert(list_pos, { col = str_length + 1, key = config.end_key })
-        end
+        table.insert(
+            list_pos,
+            { col = str_length + 1, key = config.end_key, pos = str_length + 1}
+        )
 
         M.highlight_wrap(list_pos, row, col, #line)
         vim.defer_fn(function()
@@ -82,6 +80,7 @@ M.show = function(line)
             for _, pos in pairs(list_pos) do
                 if char == pos.key then
                     M.move_bracket(line, pos.col, end_pair, pos.char)
+                    break
                 end
             end
             vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
@@ -92,7 +91,7 @@ M.show = function(line)
     vim.cmd('startinsert')
 end
 
-M.move_bracket = function(line, target_pos, end_pair, char_map)
+M.move_bracket = function(line, target_pos, end_pair, _)
     line = line or utils.text_get_current_line(0)
     local _, col = utils.get_cursor()
     local _, next_char = utils.text_cusor_line(line, col, 1, 1, false)
@@ -100,9 +99,6 @@ M.move_bracket = function(line, target_pos, end_pair, char_map)
     -- ((fsadfsa)) dsafdsa
     if next_char == end_pair then
         line = line:sub(1, col) .. line:sub(col + 2, #line)
-        target_pos = target_pos - 1
-    end
-    if config.check_comma and (char_map == ',' or char_map == ' ') then
         target_pos = target_pos - 1
     end
 
@@ -122,7 +118,7 @@ M.highlight_wrap = function(tbl_pos, row, col, end_col)
         )
     end
     for _, pos in ipairs(tbl_pos) do
-        vim.api.nvim_buf_set_extmark(bufnr, M.ns_fast_wrap, row, pos.col - 1, {
+        vim.api.nvim_buf_set_extmark(bufnr, M.ns_fast_wrap, row, pos.pos - 1, {
             virt_text = { { pos.key, config.highlight } },
             virt_text_pos = 'overlay',
             hl_mode = 'blend',
