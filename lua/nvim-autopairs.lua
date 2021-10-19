@@ -431,7 +431,12 @@ M.autopairs_map = function(bufnr, char)
                 if end_pair:match('<.*>') then
                     end_pair = utils.esc(end_pair)
                 end
-                return char .. end_pair .. utils.esc(move_text)
+                local result= char .. end_pair .. utils.esc(move_text)
+                if rule.is_undo then
+                    result = utils.esc(utils.key.undo_sequence) .. result..utils.esc(utils.key.undo_sequence)
+                end
+                log.debug("key_map :" .. result)
+                return result
             end
         end
     end

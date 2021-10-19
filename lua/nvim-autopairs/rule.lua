@@ -13,6 +13,7 @@ local log = require('nvim-autopairs._log')
 --- @field is_regex boolean          use regex to compare
 --- @field is_multibyte boolean
 --- @field is_endwise boolean        only use on end_wise
+--- @field is_undo boolean           add break undo sequence
 local Rule = {}
 Rule.__index = Rule
 
@@ -84,6 +85,12 @@ function Rule:use_key(key_map)
     return self
 end
 
+function Rule:use_undo(value)
+    if value ~= nil then value = true end
+    self.is_undo = value
+    return self
+end
+
 function Rule:use_multibyte()
     self.is_multibyte = true
     self.end_pair_length = vim.fn.strdisplaywidth(self.end_pair)
@@ -103,7 +110,7 @@ function Rule:get_map_cr(opts)
     if self.map_cr_func then
         return self.map_cr_func(opts)
     end
-    return '<cr><c-o>O'
+    return '<cr><cr><c-g>u<up><c-t>'
 end
 
 
