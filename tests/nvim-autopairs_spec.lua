@@ -508,6 +508,22 @@ local data = {
         before = [[a | ]],
         after = [[a x| ]]
     },
+    {
+        filetype = 'vim',
+        name='undo on quote',
+        key = [[{123<esc>u]],
+        end_cursor=12,
+        before = [[local abc=| ]],
+        after = [[local abc={|} ]]
+    },
+    {
+        filetype = 'vim',
+        name='undo on bracket',
+        key = [['123<esc>u]],
+        end_cursor=12,
+        before = [[local abc=| ]],
+        after = [[local abc='|' ]]
+    }
 }
 
 local run_data = {}
