@@ -14,6 +14,7 @@ M.state = {
 local default = {
     map_bs = true,
     map_c_w = false,
+    map_cr = false,
     disable_filetype = { 'TelescopePrompt', 'spectre_panel' },
     disable_in_macro = false,
     ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]], '%s+', ''),
@@ -40,6 +41,10 @@ M.setup = function(opt)
             highlighter = require "vim.treesitter.highlighter"
             M.config.rules = ts_rule.setup(M.config)
         end
+    end
+
+    if M.config.map_cr then
+        M.map_cr()
     end
 
     M.force_attach()
@@ -615,6 +620,22 @@ end
 
 M.check_break_line_char = function()
     return M.autopairs_cr()
+end
+
+M.map_cr = function()
+    M.completion_confirm = function()
+        if vim.fn.pumvisible() ~= 0  then
+            return M.esc("<cr>")
+        else
+            return M.autopairs_cr()
+        end
+    end
+    vim.api.nvim_set_keymap(
+        'i',
+        '<CR>',
+        'v:lua.MPairs.completion_confirm()',
+        { expr = true, noremap = true }
+    )
 end
 
 M.esc = utils.esc
