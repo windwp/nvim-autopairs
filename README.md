@@ -1,7 +1,7 @@
 ##  nvim-autopairs
 
-A super powerful autopairs for Neovim.
-It support multiple character.
+A super powerful autopair for Neovim.
+It supports multiple characters.
 
 Requires neovim 0.5+
 
@@ -14,13 +14,15 @@ require('nvim-autopairs').setup{}
 ## Default values
 
 ``` lua
-local map_bs = true  -- map the <BS> key
 local disable_filetype = { "TelescopePrompt" }
+local disable_in_macro = false  -- disable when recording or executing a macro
 local ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]],"%s+", "")
 local enable_moveright = true
 local enable_afterquote = true  -- add bracket pairs after quote
 local enable_check_bracket_line = true  --- check bracket in same line
 local check_ts = false
+local map_bs = true  -- map the <BS> key
+local map_c_w = false -- map <c-w> to delete an pair if possible
 
 ```
 
@@ -42,23 +44,6 @@ Before        Input         After
                             }
 ------------------------------------
 ```
-<details>
-<summary><b>nvim-compe</b></summary>
-
-``` lua
-require("nvim-autopairs.completion.compe").setup({
-  map_cr = true, --  map <CR> on insert mode
-  map_complete = true, -- it will auto insert `(` (map_char) after select function or method item
-  auto_select = false,  -- auto select first item
-  map_char = { -- modifies the function or method delimiter by filetypes
-    all = '(',
-    tex = '{'
-  }
-})
-```
-
-Make sure to remove mapping insert mode `<CR>` binding if you have it.
-</details>
 
 <details>
 <summary><b>nvim-cmp</b></summary>
@@ -69,6 +54,7 @@ require("nvim-autopairs.completion.cmp").setup({
   map_cr = true, --  map <CR> on insert mode
   map_complete = true, -- it will auto insert `(` (map_char) after select function or method item
   auto_select = true, -- automatically select the first item
+  insert = false, -- use insert confirm behavior instead of replace
   map_char = { -- modifies the function or method delimiter by filetypes
     all = '(',
     tex = '{'
@@ -77,37 +63,6 @@ require("nvim-autopairs.completion.cmp").setup({
 ```
 
 Make sure to remove mapping insert mode `<CR>` binding if you have it.
-</details>
-<details>
-<summary><b>completion nvim</b></summary>
-
-``` lua
-local remap = vim.api.nvim_set_keymap
-local npairs = require('nvim-autopairs')
-
--- skip it, if you use another global object
-_G.MUtils= {}
-
-vim.g.completion_confirm_key = ""
-
-MUtils.completion_confirm=function()
-  if vim.fn.pumvisible() ~= 0  then
-    if vim.fn.complete_info()["selected"] ~= -1 then
-      require'completion'.confirmCompletion()
-      return npairs.esc("<c-y>")
-    else
-      vim.api.nvim_select_popupmenu_item(0 , false , false ,{})
-      require'completion'.confirmCompletion()
-      return npairs.esc("<c-n><c-y>")
-    end
-  else
-    return npairs.autopairs_cr()
-  end
-end
-
-remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
-
-```
 </details>
 <details>
 <summary><b>coq_nvim</b></summary>
@@ -134,8 +89,7 @@ MUtils.CR = function()
     if vim.fn.complete_info({ 'selected' }).selected ~= -1 then
       return npairs.esc('<c-y>')
     else
-      -- you can change <c-g><c-g> to <c-e> if you don't use other i_CTRL-X modes
-      return npairs.esc('<c-g><c-g>') .. npairs.autopairs_cr()
+      return npairs.esc('<c-e>') .. npairs.autopairs_cr()
     end
   else
     return npairs.autopairs_cr()
@@ -157,28 +111,15 @@ remap('i', '<bs>', 'v:lua.MUtils.BS()', { expr = true, noremap = true })
 <summary><b>without completion plugin</b></summary>
 
 ```lua
-local remap = vim.api.nvim_set_keymap
-local npairs = require('nvim-autopairs')
-
--- skip it, if you use another global object
-_G.MUtils= {}
-
-MUtils.completion_confirm=function()
-  if vim.fn.pumvisible() ~= 0  then
-      return npairs.esc("<cr>")
-  else
-    return npairs.autopairs_cr()
-  end
-end
-
-
-remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
+-- add option map_cr
+npairs.setup({ map_cr = true })
 ```
 </details>
 
+[another completion plugin](https://github.com/windwp/nvim-autopairs/wiki/Completion-plugin)
+
 If you have a problem with indent after press ` <CR> `
 Please check setting of treesitter indent or install plugin support indent on your filetype
-
 
 ### Rule
 
@@ -205,11 +146,12 @@ npairs.add_rules({
     :with_move(cond.none())
     -- don't delete if the next character is xx
     :with_del(cond.not_after_regex_check("xx"))
-    -- disable  add newline when press <cr>
+    -- disable add newline when press <cr>
     :with_cr(cond.none())
   },
+  --it is not working on .vim but it working on another filetype
+  Rule("a","a","-vim")
 )
-
 
 npairs.add_rules({
   Rule("$$","$$","tex")
@@ -268,7 +210,7 @@ npairs.add_rule(
 [Rules API](https://github.com/windwp/nvim-autopairs/wiki/Rules-API)
 
 ### Treesitter
-You can use treesitter to check pair
+You can use treesitter to check for a pair
 
 ```lua
 local npairs = require("nvim-autopairs")
@@ -276,15 +218,11 @@ local npairs = require("nvim-autopairs")
 npairs.setup({
     check_ts = true,
     ts_config = {
-        lua = {'string'},-- it will not add pair on that treesitter node
+        lua = {'string'},-- it will not add a pair on that treesitter node
         javascript = {'template_string'},
         java = false,-- don't check treesitter on java
     }
 })
-
-require('nvim-treesitter.configs').setup {
-    autopairs = {enable = true}
-}
 
 local ts_conds = require('nvim-autopairs.ts-conds')
 
@@ -298,8 +236,8 @@ npairs.add_rules({
 })
 ```
 
-### Don't add pairs if it already have a close pairs in same line
-if **next character** is a close pairs and it doesn't have an open pairs in same line then it will not add a close pairs
+### Don't add pairs if it already has a close pair in the same line
+if **next character** is a close pair and it doesn't have an open pair in same line, then it will not add a close pair
 
 ``` text
 Before        Input         After
@@ -335,7 +273,7 @@ Before        Input         After
 ``` lua
   require('nvim-autopairs').disable()
   require('nvim-autopairs').enable()
-  require('nvim-autopairs').remove_rule('(')-- remove rule (
+  require('nvim-autopairs').remove_rule('(') -- remove rule (
   require('nvim-autopairs').clear_rules() -- clear all rule
   require('nvim-autopairs').get_rule('"') -- get rule " then modify it
 
@@ -350,7 +288,7 @@ Before        Input                    After
 ```
 
 ```lua
--- put this to  setup function and press <a-e> to use fast_wrap
+-- put this to setup function and press <a-e> to use fast_wrap
 npairs.setup({
     fast_wrap = {},
 })
@@ -361,10 +299,12 @@ npairs.setup({
       map = '<M-e>',
       chars = { '{', '[', '(', '"', "'" },
       pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], '%s+', ''),
+      offset = 0, -- Offset from pattern match
       end_key = '$',
       keys = 'qwertyuiopzxcvbnmasdfghjkl',
       check_comma = true,
-      hightlight = 'Search'
+      highlight = 'Search',
+      highlight_grey='Comment'
     },
 })
 ```

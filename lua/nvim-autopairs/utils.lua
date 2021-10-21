@@ -8,7 +8,9 @@ M.key = {
     left = "<left>",
     right = "<right>",
     join_left = "<c-g>U<left>",
-    join_right = "<c-g>U<right>"
+    join_right = "<c-g>U<right>",
+    undo_sequence = "<c-g>u",
+    noundo_sequence = "<c-g>U"
 }
 
 M.set_vchar = function(text)
@@ -39,34 +41,32 @@ M.is_equal = function (value,text, is_regex)
     return false
 end
 
-M.is_in_quote = function(line, pos, quote)
+---check cursor is inside a quote
+---@param line string
+---@param pos number  positin in line
+---@param quote nil|string specify a quote string
+---@return boolean
+M.is_in_quotes = function (line, pos, quote)
     local cIndex = 0
     local result = false
+    local last_char = quote or ''
 
     while cIndex < string.len(line) and cIndex < pos  do
         cIndex = cIndex + 1
         local char = line:sub(cIndex, cIndex)
         if
             result == true and
-            char == quote and
+            char == last_char and
             line:sub(cIndex -1, cIndex -1) ~= "\\"
         then
             result = false
-        elseif result == false and char == quote then
+            last_char = quote or ''
+        elseif result == false and M.is_quote(char) then
+            last_char = quote or char
             result = true
         end
     end
     return result
-end
-
-M.is_in_quotes = function (line, pos)
-    local quotes = {'"', "'", '`' }
-    for _, value in ipairs(quotes) do
-        if M.is_in_quote(line, pos, value) then
-            return true 
-        end
-    end
-    return false
 end
 
 M.is_attached = function(bufnr)
@@ -92,7 +92,7 @@ M.check_filetype = function(tbl, filetype)
     return M.is_in_table(tbl, filetype)
 end
 
-M.check_disable_ft = function(tbl, filetype)
+M.check_not_filetype = function(tbl, filetype)
     if tbl == nil then return true end
     return not M.is_in_table(tbl, filetype)
 end
@@ -172,6 +172,9 @@ M.esc = function(cmd)
     return vim.api.nvim_replace_termcodes(cmd, true, false, true)
 end
 
+M.is_block_wise_mode = function ()
+  return vim.fn.visualmode() == ''
+end
 
 --- get prev_char with out key_map
 M.get_prev_char = function(opt)

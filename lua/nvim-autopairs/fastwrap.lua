@@ -7,13 +7,12 @@ local default_config = {
     map = '<M-e>',
     chars = { '{', '[', '(', '"', "'" },
     pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], '%s+', ''),
+    offset = -1, -- Offset from pattern match
     end_key = '$',
     keys = 'qwertyuiopzxcvbnmasdfghjkl',
-    check_comma = true,
     highlight = 'Search',
+    highlight_grey = 'Comment',
 }
-
-local state = npairs.state
 
 M.ns_fast_wrap = vim.api.nvim_create_namespace('autopairs_fastwrap')
 
@@ -23,7 +22,6 @@ M.setup = function(cfg)
     if config.chars == nil then
         config = vim.tbl_extend('force', default_config, cfg or {})
         npairs.config.fast_wrap = config
-        npairs.config.ignored_next_char = string.gsub([[ [%w%%%'%(%{%[%"%.] ]], '%s+', '')
     end
 end
 
@@ -46,7 +44,8 @@ M.show = function(line)
     local prev_char = utils.text_cusor_line(line, col, 1, 1, false)
     local end_pair = ''
     if utils.is_in_table(config.chars, prev_char) then
-        for _, rule in pairs(state.rules) do
+        local rules = npairs.get_buf_rules()
+        for _, rule in pairs(rules) do
             if rule.start_pair == prev_char then
                 end_pair = rule.end_pair
             end
@@ -57,33 +56,34 @@ M.show = function(line)
         local list_pos = {}
         local index = 1
         local str_length = #line
-        local is_have_end = false
+        local offset = config.offset
         for i = col + 2, #line, 1 do
             local char = line:sub(i, i)
             if string.match(char, config.pattern) then
                 local key = config.keys:sub(index, index)
                 index = index + 1
-                if str_length == i then
-                    key = config.end_key
-                    is_have_end = true
-                end
-                table.insert(list_pos, { col = i, key = key, char = char })
+                table.insert(
+                    list_pos,
+                    { col = i + offset, key = key, char = char, pos = i }
+                )
             end
         end
 
-        if not is_have_end then
-            table.insert(list_pos, { col = str_length + 1, key = config.end_key })
-        end
+        table.insert(
+            list_pos,
+            { col = str_length + 1, key = config.end_key, pos = str_length + 1}
+        )
 
-        M.highlight_wrap(list_pos, row)
+        M.highlight_wrap(list_pos, row, col, #line)
         vim.defer_fn(function()
-            local char = M.getchar_handler()
+            local char = #list_pos == 1 and config.end_key or M.getchar_handler()
             for _, pos in pairs(list_pos) do
                 if char == pos.key then
                     M.move_bracket(line, pos.col, end_pair, pos.char)
+                    break
                 end
             end
-            vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row - 1, row + 1)
+            vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
             vim.cmd('startinsert')
         end, 10)
         return
@@ -91,7 +91,7 @@ M.show = function(line)
     vim.cmd('startinsert')
 end
 
-M.move_bracket = function(line, target_pos, end_pair, char_map)
+M.move_bracket = function(line, target_pos, end_pair, _)
     line = line or utils.text_get_current_line(0)
     local _, col = utils.get_cursor()
     local _, next_char = utils.text_cusor_line(line, col, 1, 1, false)
@@ -101,18 +101,24 @@ M.move_bracket = function(line, target_pos, end_pair, char_map)
         line = line:sub(1, col) .. line:sub(col + 2, #line)
         target_pos = target_pos - 1
     end
-    if config.check_comma and(char_map == ',' or char_map==' ') then
-        target_pos = target_pos - 1
-    end
 
     line = line:sub(1, target_pos) .. end_pair .. line:sub(target_pos + 1, #line)
     vim.fn.setline('.', line)
 end
 
-M.highlight_wrap = function(tbl_pos, row)
+M.highlight_wrap = function(tbl_pos, row, col, end_col)
     local bufnr = vim.api.nvim_win_get_buf(0)
+    if config.highlight_grey then
+        vim.highlight.range(
+            bufnr,
+            M.ns_fast_wrap,
+            config.highlight_grey,
+            { row, col },
+            { row, end_col }
+        )
+    end
     for _, pos in ipairs(tbl_pos) do
-        vim.api.nvim_buf_set_extmark(bufnr, M.ns_fast_wrap, row, pos.col - 1, {
+        vim.api.nvim_buf_set_extmark(bufnr, M.ns_fast_wrap, row, pos.pos - 1, {
             virt_text = { { pos.key, config.highlight } },
             virt_text_pos = 'overlay',
             hl_mode = 'blend',

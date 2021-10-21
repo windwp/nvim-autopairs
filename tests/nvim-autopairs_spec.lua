@@ -478,6 +478,51 @@ local data = {
         before = [[a| ]],
         after  = [[a„|”b ]],
         end_cursor = 5,
+    },
+    {
+        name = [[a quote with single quote string]],
+        key = "'",
+        before = [[{{("It doesn't name %s", ''), 'ErrorMsg'| }},  ]],
+        after  = [[{{("It doesn't name %s", ''), 'ErrorMsg''|' }},  ]],
+        end_cursor = 42,
+    },
+    {
+        setup_func = function()
+            npairs.setup({
+                map_c_w = true
+            })
+        end,
+        name = "map <c-w>",
+        key = "<c-w>",
+        before = [[aa'|' ]],
+        after  = [[aa| ]],
+    },
+    {
+        setup_func = function()
+            npairs.clear_rules()
+            npairs.add_rule(Rule("x", "x",{'-vim','-rust'}))
+        end,
+        filetype = 'vim',
+        name = "disable filetype vim",
+        key = [[x]],
+        before = [[a | ]],
+        after = [[a x| ]]
+    },
+    {
+        filetype = 'vim',
+        name='undo on quote',
+        key = [[{123<esc>u]],
+        end_cursor=12,
+        before = [[local abc=| ]],
+        after = [[local abc={|} ]]
+    },
+    {
+        filetype = 'vim',
+        name='undo on bracket',
+        key = [['123<esc>u]],
+        end_cursor=12,
+        before = [[local abc=| ]],
+        after = [[local abc='|' ]]
     }
 }
 

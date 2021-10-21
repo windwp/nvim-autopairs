@@ -156,7 +156,7 @@ cond.not_add_quote_inside_quote = function()
         log.debug('not_add_quote_inside_quote')
         if
             utils.is_quote(opts.char)
-            and utils.is_in_quote(opts.text, opts.col - 1, opts.char)
+            and utils.is_in_quotes(opts.text, opts.col - 1)
         then
             return false
         end
@@ -178,7 +178,7 @@ cond.move_right = function()
                 end
                 -- ("|")  => (""|)
                 --  ""       |"      "  => ""       "|      "
-                if utils.is_in_quote(opts.line, opts.col -1, opts.char) then
+                if utils.is_in_quotes(opts.line, opts.col -1, opts.char) then
                     return true
                 end
             end

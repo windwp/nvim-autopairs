@@ -61,4 +61,5 @@ describe('utils test substring ', function()
         end)
     end
 end)
+
 vim.wait(100)
