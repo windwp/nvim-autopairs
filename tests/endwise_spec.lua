@@ -58,7 +58,7 @@ local data = {
         filepath = './tests/endwise/init.lua',
         filetype = 'lua',
         linenr = 5,
-        key = [[{<cr><esc>uu]],
+        key = [[{<cr><esc>u]],
         before = [[local abc = | ]],
         after = {
             [[local abc = {|} ]],
