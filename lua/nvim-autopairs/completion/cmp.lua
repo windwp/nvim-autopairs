@@ -27,6 +27,7 @@ M.setup = function(opt)
     if map_complete then
         local method_kind = cmp.lsp.CompletionItemKind.Method
         local function_kind = cmp.lsp.CompletionItemKind.Function
+        local constructor_kind = cmp.lsp.CompletionItemKind.Constructor
         cmp_setup.event = {
             on_confirm_done = function(entry)
                 local line = utils.text_get_current_line(0)
@@ -39,7 +40,8 @@ M.setup = function(opt)
                 if char == '' then return end
 
                 if prev_char ~= char and next_char ~= char then
-                    if item.kind == method_kind or item.kind == function_kind then
+                    if item.kind == method_kind or item.kind == function_kind
+                      or item.kind == constructor_kind then
                         -- check insert text have ( from snippet
                         if
                             (

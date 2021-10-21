@@ -4,6 +4,7 @@ local utils = require('nvim-autopairs.utils')
 
 local method_kind = nil
 local function_kind = nil
+local constructor_kind = nil
 
 local options = {}
 
@@ -20,9 +21,11 @@ _G.MPairs.completion_done = function()
         if method_kind == nil then
             method_kind = require('vim.lsp.protocol').CompletionItemKind[2]
             function_kind = require('vim.lsp.protocol').CompletionItemKind[3]
+            constructor_kind = require('vim.lsp.protocol').CompletionItemKind[4]
         end
         local item = Completion._confirm_item
-        if item.kind == method_kind or item.kind == function_kind then
+        if item.kind == method_kind or item.kind == function_kind
+          or item.kind == constructor_kind then
             -- check insert text have ( from snippet
             local completion_item = item.user_data.compe.completion_item
             if
