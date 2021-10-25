@@ -53,7 +53,7 @@ M.setup = function(opt)
         [[
     augroup autopairs_buf
     autocmd!
-    autocmd BufEnter * :lua require("nvim-autopairs").on_attach()
+    autocmd BufEnter,BufWinEnter * :lua require("nvim-autopairs").on_attach()
     autocmd BufDelete * :lua require("nvim-autopairs").set_buf_rule(nil)
     autocmd FileType * :lua require("nvim-autopairs").force_attach()
     augroup end
