@@ -332,8 +332,8 @@ local autopairs_delete = function(bufnr, key)
                 rule.is_regex
             )
             if
-                utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
-                and rule.end_pair == next_char
+                utils.compare(rule.start_pair, prev_char, rule.is_regex)
+                and utils.compare(rule.end_pair, next_char, rule.is_regex)
                 and rule:can_del({
                     ts_node = M.state.ts_node,
                     bufnr = bufnr,
@@ -414,7 +414,7 @@ M.autopairs_map = function(bufnr, char)
             -- log.debug('prev_char' .. prev_char)
             -- log.debug('next_char' .. next_char)
             if
-                utils.is_equal(rule.end_pair, next_char, rule.is_regex)
+                utils.compare(rule.end_pair, next_char, rule.is_regex)
                 and rule:can_move(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
@@ -423,7 +423,7 @@ M.autopairs_map = function(bufnr, char)
             end
 
             if
-                utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
+                utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_pair(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
@@ -488,7 +488,7 @@ M.autopairs_insert = function(bufnr, char)
             end
 
             if
-                utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
+                utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_pair(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
@@ -526,7 +526,7 @@ M.autopairs_cr = function(bufnr)
             -- log.debug('next_char' .. next_char)
             if
                 rule.is_endwise
-                and utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
+                and utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_cr({
                     ts_node = M.state.ts_node,
                     check_endwise_ts = true,
@@ -546,8 +546,8 @@ M.autopairs_cr = function(bufnr)
                 )
             end
             if
-                utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
-                and utils.is_equal(rule.end_pair, next_char, rule.is_regex)
+                utils.compare(rule.start_pair, prev_char, rule.is_regex)
+                and utils.compare(rule.end_pair, next_char, rule.is_regex)
                 and rule:can_cr({
                     ts_node = M.state.ts_node,
                     check_endwise_ts = false,
