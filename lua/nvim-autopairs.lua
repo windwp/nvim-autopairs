@@ -547,7 +547,7 @@ M.autopairs_cr = function(bufnr)
             end
             if
                 utils.is_equal(rule.start_pair, prev_char, rule.is_regex)
-                and rule.end_pair == next_char
+                and utils.is_equal(rule.end_pair, next_char, rule.is_regex)
                 and rule:can_cr({
                     ts_node = M.state.ts_node,
                     check_endwise_ts = false,

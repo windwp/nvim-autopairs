@@ -40,9 +40,10 @@ local function setup(opt)
         bracket("(", ")"),
         bracket("[", "]"),
         bracket("{", "}"),
-        Rule(">", "<",
+        Rule(">[%w%s]*$", "^%s*</",
             { 'html', 'typescript', 'typescriptreact', 'javascript' , 'javascriptreact', 'svelte', 'vue', 'xml'})
             :only_cr()
+            :use_regex(true)
     }
     return rules
 end

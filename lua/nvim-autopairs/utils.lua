@@ -32,7 +32,7 @@ M.is_close_bracket = function (char)
     return char == ")" or char == ']' or char == '}'
 end
 
-M.is_equal = function (value,text, is_regex)
+M.is_equal = function (value, text, is_regex)
     if is_regex and string.match(text, value) then
         return true
     elseif text == value then

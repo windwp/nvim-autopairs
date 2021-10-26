@@ -233,6 +233,20 @@ local data = {
         after  = [[</div>]]
     },
     {
+        name = "breakline on < html with text" ,
+        filetype = "html",
+        key    = [[<cr>]],
+        before = [[<div> ads |</div>]],
+        after  = [[</div>]]
+    },
+    {
+        name = "breakline on < html with space after cursor" ,
+        filetype = "html",
+        key    = [[<cr>]],
+        before = [[<div> ads | </div>]],
+        after  = [[ </div>]]
+    },
+    {
         name = "do not mapping on > html" ,
         filetype = "html",
         key    = [[>]],
