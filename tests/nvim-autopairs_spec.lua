@@ -23,8 +23,10 @@ function helpers.insert(text, is_replace)
     helpers.feed('i' .. text, 'x',is_replace)
 end
 
+-- use only = true to test 1 case
 local data = {
     {
+        -- only = true,
         name = "add normal bracket" ,
         key    = [[{]],
         before = [[x| ]],
@@ -78,7 +80,6 @@ local data = {
         after  = [[aa'| aa ]]
     },
     {
-        -- only = true,
         name = "don't add single quote with alphabet char" ,
         key    = [[']],
         before = [[a|x ]],
