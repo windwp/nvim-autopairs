@@ -53,9 +53,9 @@ M.setup = function(opt)
         [[
     augroup autopairs_buf
     autocmd!
-    autocmd BufEnter,BufWinEnter * :lua require("nvim-autopairs").on_attach()
-    autocmd BufDelete * :lua require("nvim-autopairs").set_buf_rule(nil)
-    autocmd FileType * :lua require("nvim-autopairs").force_attach()
+    autocmd BufEnter,BufWinEnter * lua require("nvim-autopairs").on_attach()
+    autocmd BufDelete * lua require("nvim-autopairs").set_buf_rule(nil,tonumber(vim.fn.expand("<abuf>")))
+    autocmd FileType * lua require("nvim-autopairs").force_attach()
     augroup end
         ]],
         false
@@ -161,7 +161,10 @@ end
 ---@param rules table list or rule
 ---@param bufnr number buffer number
 M.set_buf_rule = function(rules, bufnr)
-    M.state.rules[bufnr or vim.api.nvim_get_current_buf()] = rules
+    if bufnr == 0 or bufnr == nil then
+        bufnr = vim.api.nvim_get_current_buf()
+    end
+    M.state.rules[bufnr] = rules
 end
 
 M.on_attach = function(bufnr)
