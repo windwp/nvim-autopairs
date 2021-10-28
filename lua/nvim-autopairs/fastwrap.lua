@@ -62,6 +62,9 @@ M.show = function(line)
             if string.match(char, config.pattern) then
                 local key = config.keys:sub(index, index)
                 index = index + 1
+                if utils.is_quote(char) then
+                    offset = 0
+                end
                 table.insert(
                     list_pos,
                     { col = i + offset, key = key, char = char, pos = i }
@@ -77,13 +80,17 @@ M.show = function(line)
         M.highlight_wrap(list_pos, row, col, #line)
         vim.defer_fn(function()
             local char = #list_pos == 1 and config.end_key or M.getchar_handler()
+            vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
             for _, pos in pairs(list_pos) do
                 if char == pos.key then
-                    M.move_bracket(line, pos.col, end_pair, pos.char)
+                    M.move_bracket(line, pos.col, end_pair,false)
+                    break
+                end
+                if char == string.upper(pos.key) then
+                    M.move_bracket(line, pos.col, end_pair, true)
                     break
                 end
             end
-            vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
             vim.cmd('startinsert')
         end, 10)
         return
@@ -91,9 +98,9 @@ M.show = function(line)
     vim.cmd('startinsert')
 end
 
-M.move_bracket = function(line, target_pos, end_pair, _)
+M.move_bracket = function(line, target_pos, end_pair, change_pos)
     line = line or utils.text_get_current_line(0)
-    local _, col = utils.get_cursor()
+    local row, col = utils.get_cursor()
     local _, next_char = utils.text_cusor_line(line, col, 1, 1, false)
     -- remove an autopairs if that exist
     -- ((fsadfsa)) dsafdsa
@@ -103,7 +110,10 @@ M.move_bracket = function(line, target_pos, end_pair, _)
     end
 
     line = line:sub(1, target_pos) .. end_pair .. line:sub(target_pos + 1, #line)
-    vim.fn.setline('.', line)
+    vim.api.nvim_set_current_line(line)
+    if  change_pos then
+        vim.api.nvim_win_set_cursor(0,{row + 1, target_pos})
+    end
 end
 
 M.highlight_wrap = function(tbl_pos, row, col, end_col)
