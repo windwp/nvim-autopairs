@@ -5,7 +5,7 @@ local cmp = require('cmp')
 local M = {}
 M.setup = function()
     vim.notify(
-        '[nvim-autopairs] function nvim-autopairs.completion.cmp setup is deprecated.nvim-cmp update https://github.com/hrsh7th/nvim-cmp/pull/418'
+        '[nvim-autopairs] function nvim-autopairs.completion.cmp setup is deprecated.'
     )
     vim.notify('[nvim-autopairs]you only need to add <cr> mapping on nvim-cmp.')
 end
