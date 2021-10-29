@@ -7,7 +7,7 @@ M.setup = function()
     vim.notify(
         '[nvim-autopairs] function nvim-autopairs.completion.cmp setup is deprecated.'
     )
-    vim.notify('[nvim-autopairs]you only need to add <cr> mapping on nvim-cmp.')
+    vim.notify('[nvim-autopairs] remove this function and use require("cmp").setup to add <cr> mapping.')
 end
 
 M.on_confirm_done = function(opt)
