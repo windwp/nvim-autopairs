@@ -8,6 +8,11 @@ Table of Contents                           *nvim-autopairs-table-of-contents*
 
 NVIM-AUTOPAIRS                                 *nvim-autopairs-nvim-autopairs*
 
+>
+    end
+<
+
+
 A super powerful autopair for Neovim. It supports multiple characters.
 
 Requires neovim 0.5+
@@ -57,22 +62,20 @@ OVERRIDE DEFAULT VALUES ~
 
 nvim-cmp ~
 
+<h3>
+
+You need to add mapping `CR` on nvim-cmp setup.
+check readme.md on nvim-cmp repo.
+
+</h3>
+
 >
-    -- you need setup cmp first put this after cmp.setup()
-    require("nvim-autopairs.completion.cmp").setup({
-      map_cr = true, --  map <CR> on insert mode
-      map_complete = true, -- it will auto insert `(` (map_char) after select function or method item
-      auto_select = true, -- automatically select the first item
-      insert = false, -- use insert confirm behavior instead of replace
-      map_char = { -- modifies the function or method delimiter by filetypes
-        all = '(',
-        tex = '{'
-      }
-    })
+    -- If you want insert `(` after select function or method item
+    local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+    local cmp = require('cmp')
+    cmp.event:on( 'confirm_done', cmp_autopairs.on_confirm_done({ map_char = { tex = '' } }))
 <
 
-
-Make sure to remove mapping insert mode `<CR>` binding if you have it.
 
 coq_nvim ~
 
@@ -80,7 +83,7 @@ coq_nvim ~
     local remap = vim.api.nvim_set_keymap
     local npairs = require('nvim-autopairs')
     
-    npairs.setup({ map_bs = false })
+    npairs.setup({ map_bs = false, map_cr = false })
     
     vim.g.coq_settings = { keymap = { recommended = false } }
     
@@ -120,22 +123,8 @@ coq_nvim ~
 without completion plugin ~
 
 >
-    local remap = vim.api.nvim_set_keymap
-    local npairs = require('nvim-autopairs')
-    
-    -- skip it, if you use another global object
-    _G.MUtils= {}
-    
-    MUtils.completion_confirm=function()
-      if vim.fn.pumvisible() ~= 0  then
-          return npairs.esc("<cr>")
-      else
-        return npairs.autopairs_cr()
-      end
-    end
-    
-    
-    remap('i' , '<CR>','v:lua.MUtils.completion_confirm()', {expr = true , noremap = true})
+    -- add option map_cr
+    npairs.setup({ map_cr = true })
 <
 
 
@@ -340,8 +329,8 @@ FASTWRAP ~
           end_key = '$',
           keys = 'qwertyuiopzxcvbnmasdfghjkl',
           check_comma = true,
-          hightlight = 'Search',
-          hightlight_grey='Comment'
+          highlight = 'Search',
+          highlight_grey='Comment'
         },
     })
 <
