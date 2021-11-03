@@ -48,6 +48,10 @@ M.on_confirm_done = function(opt)
 
         if utils.is_in_table(M.lisp, vim.bo.filetype) then
             local length = #item.label
+            if utils.text_sub_char(line, col - length, 1) == "(" then
+              utils.feed("<Space>")
+              return
+            end
             utils.feed(utils.key.left, length)
             utils.feed("(")
             utils.feed(utils.key.right, length)
