@@ -12,8 +12,7 @@ end
 M.lisp = { "clojure", "clojurescript", "fennel", "janet" }
 
 local ignore_append = function(char, kinds, next_char, prev_char, item)
-    if (char == '')
-        or (prev_char == char and next_char == char)
+    if char == '' or prev_char == char or next_char == char
         or (not utils.is_in_table(kinds, item.kind))
         or (item.textEdit and item.textEdit.newText and item.textEdit.newText:match "[%(%[]")
         or (item.insertText and item.insertText:match "[%(%[]")
@@ -57,6 +56,7 @@ M.on_confirm_done = function(opt)
             utils.feed(utils.key.right, length)
             utils.feed("<Space>")
         else
+            print('feed key prev_char')
             vim.api.nvim_feedkeys(char, 'i', true)
         end
     end
