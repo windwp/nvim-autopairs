@@ -56,7 +56,6 @@ M.on_confirm_done = function(opt)
             utils.feed(utils.key.right, length)
             utils.feed("<Space>")
         else
-            print('feed key prev_char')
             vim.api.nvim_feedkeys(char, 'i', true)
         end
     end
