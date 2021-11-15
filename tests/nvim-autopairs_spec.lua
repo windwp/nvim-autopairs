@@ -5,6 +5,7 @@ local cond = require('nvim-autopairs.conds')
 
 local ts_conds = require('nvim-autopairs.ts-conds')
 local log = require('nvim-autopairs._log')
+_G.log = log
 local utils = require('nvim-autopairs.utils')
 _G.npairs = npairs;
 local eq=_G.eq
@@ -538,7 +539,21 @@ local data = {
         end_cursor=12,
         before = [[local abc=| ]],
         after = [[local abc='|' ]]
-    }
+    },
+    {
+        filetype = 'vim',
+        name='double quote on vim after char',
+        key = [["ab]],
+        before = [[echo | ]],
+        after = [[echo "ab|" ]]
+    },
+    {
+        filetype = 'vim',
+        name='double quote on vim on begin',
+        key = [["ab]],
+        before = [[   | aaa]],
+        after = [[   "ab| aaa]]
+    },
 }
 
 local run_data = {}

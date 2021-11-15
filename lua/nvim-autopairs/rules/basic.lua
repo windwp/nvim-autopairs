@@ -23,6 +23,7 @@ local function setup(opt)
         return basic(...)
     end
 
+    -- stylua: ignore
     local rules = {
         Rule("<!--", "-->", 'html'):with_cr(cond.none()),
         Rule("```", "```", { 'markdown', 'vimwiki', 'rmarkdown', 'rmd', 'pandoc' }),
@@ -36,7 +37,9 @@ local function setup(opt)
             :with_pair(cond.not_before_regex_check("[%w<&]"))
             :with_pair(cond.not_after_text_check(">")),
         basic("`", "`"),
-        basic('"', '"'),
+        basic('"', '"','vim')
+            :with_pair(cond.not_before_regex_check("^%s*$", -1)),
+        basic('"', '"','-vim'),
         bracket("(", ")"),
         bracket("[", "]"),
         bracket("{", "}"),

@@ -7,11 +7,11 @@ local cond = {}
 -- @return false when it is not correct
 --         true when it is correct
 --         nil when it is not determine
-
+-- stylua: ignore
 cond.none = function()
     return function() return false end
 end
-
+-- stylua: ignore
 cond.done = function()
     return function() return true end
 end
@@ -19,15 +19,23 @@ end
 cond.invert = function(func)
     return function(...)
         local result = func(...)
-        if result ~= nil then return not result end
+        if result ~= nil then
+            return not result
+        end
         return nil
     end
 end
 
 cond.before_regex_check = function(regex, length)
     length = length or 1
+    if not regex then
+        return cond.none()
+    end
     return function(opts)
         log.debug('before_regex_check')
+        if length < 0 then
+            length = opts.col
+        end
         local str = utils.text_sub_char(opts.line, opts.col - 1, -length)
         if str:match(regex) then
             return true
@@ -60,9 +68,14 @@ end
 
 cond.after_regex_check = function(regex, length)
     length = length or 1
+    if not regex then
+        return cond.none()
+    end
     return function(opts)
-        if not regex then return end
         log.debug('after_regex_check')
+        if length < 0 then
+            length = #opts.line
+        end
         local str = utils.text_sub_char(opts.line, opts.col, length)
         if str:match(regex) then
             return true
@@ -95,8 +108,14 @@ end
 
 cond.not_before_regex_check = function(regex, length)
     length = length or 1
+    if not regex then
+        return cond.none()
+    end
     return function(opts)
         log.debug('not_before_regex_check')
+        if length < 0 then
+            length = opts.col
+        end
         local str = utils.text_sub_char(opts.line, opts.col - 1, -length)
         if str:match(regex) then
             return false
@@ -106,11 +125,14 @@ end
 
 cond.not_after_regex_check = function(regex, length)
     length = length or 1
+    if not regex then
+        return cond.none()
+    end
     return function(opts)
-        if not regex then
-            return
-        end
         log.debug('not_after_regex_check')
+        if length < 0 then
+            length = #opts.line
+        end
         local str = utils.text_sub_char(opts.line, opts.col, length)
         if str:match(regex) then
             return false
@@ -140,7 +162,6 @@ cond.check_is_bracket_line = function()
         end
     end
 end
-
 
 cond.not_inside_quote = function()
     return function(opts)
@@ -178,7 +199,7 @@ cond.move_right = function()
                 end
                 -- ("|")  => (""|)
                 --  ""       |"      "  => ""       "|      "
-                if utils.is_in_quotes(opts.line, opts.col -1, opts.char) then
+                if utils.is_in_quotes(opts.line, opts.col - 1, opts.char) then
                     return true
                 end
             end
@@ -192,14 +213,14 @@ cond.is_end_line = function()
         log.debug('is_end_line')
         local end_text = opts.line:sub(opts.col + 1)
         -- end text is blank
-        if end_text ~= "" and end_text:match("^%s+$") == nil then
+        if end_text ~= '' and end_text:match('^%s+$') == nil then
             return false
         end
     end
 end
 
 cond.not_filetypes = function(filetypes)
-    return function(opts)
+    return function()
         log.debug('not_filetypes')
         for _, filetype in pairs(filetypes) do
             if vim.bo.filetype == filetype then
