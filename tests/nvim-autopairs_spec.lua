@@ -607,8 +607,7 @@ local function Test(test_data)
     end
 end
 
+
 describe('autopairs ', function()
-    _G.Test_withfile(run_data,{
-        before_each = reset_test,
-    })
+    Test(run_data)
 end)
