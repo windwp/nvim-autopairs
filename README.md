@@ -1,7 +1,6 @@
 ##  nvim-autopairs
 
-A super powerful autopair for Neovim.
-It supports multiple characters.
+A super powerful autopair plugin for Neovim that supports multiple characters.
 
 Requires neovim 0.5+
 
@@ -22,7 +21,7 @@ local enable_afterquote = true  -- add bracket pairs after quote
 local enable_check_bracket_line = true  --- check bracket in same line
 local check_ts = false
 local map_bs = true  -- map the <BS> key
-local map_c_w = false -- map <c-w> to delete an pair if possible
+local map_c_w = false -- map <c-w> to delete a pair if possible
 
 ```
 
@@ -49,7 +48,7 @@ Before        Input         After
 <summary><b>nvim-cmp</b></summary>
 <h3>
 You need to add mapping `CR` on nvim-cmp setup.
-check readme.md on nvim-cmp repo.
+Check readme.md on nvim-cmp repo.
 </h3>
 
 ``` lua
@@ -118,12 +117,12 @@ npairs.setup({ map_cr = true })
 
 [another completion plugin](https://github.com/windwp/nvim-autopairs/wiki/Completion-plugin)
 
-If you have a problem with indent after press ` <CR> `
-Please check setting of treesitter indent or install plugin support indent on your filetype
+If you have a problem with indent after you press ` <CR> `
+please check the settings of treesitter indent or install a plugin that has indent support for your filetype.
 
 ### Rule
 
-nvim-autopairs use rule with condition to check pair.
+nvim-autopairs uses rules with conditions to check pairs.
 
 ``` lua
 local Rule = require('nvim-autopairs.rule')
@@ -131,7 +130,7 @@ local npairs = require('nvim-autopairs')
 
 npairs.add_rule(Rule("$$","$$","tex"))
 
--- you can use some built-in condition
+-- you can use some built-in conditions
 
 local cond = require('nvim-autopairs.conds')
 print(vim.inspect(cond))
@@ -146,10 +145,10 @@ npairs.add_rules({
     :with_move(cond.none())
     -- don't delete if the next character is xx
     :with_del(cond.not_after_regex_check("xx"))
-    -- disable add newline when press <cr>
+    -- disable adding a newline when you press <cr>
     :with_cr(cond.none())
   },
-  --it is not working on .vim but it working on another filetype
+  -- disable for .vim files, but it work for another filetypes
   Rule("a","a","-vim")
 )
 
@@ -166,7 +165,7 @@ npairs.add_rules({
 )
 
 -- you can use regex
---  press u1234 => u1234number
+-- press u1234 => u1234number
 npairs.add_rules({
     Rule("u%d%d%d%d$", "number", "lua")
       :use_regex(true)
@@ -174,7 +173,7 @@ npairs.add_rules({
 
 
 
---  press x1234 => x12341234
+-- press x1234 => x12341234
 npairs.add_rules({
     Rule("x%d%d%d%d$", "number", "lua")
       :use_regex(true)
@@ -186,7 +185,7 @@ npairs.add_rules({
 
 
 -- you can do anything with regex +special key
--- example press tab will upper text
+-- example press tab to uppercase text:
 -- press b1234s<tab> => B1234S1234S
 
 npairs.add_rules({
@@ -210,7 +209,7 @@ npairs.add_rule(
 [Rules API](https://github.com/windwp/nvim-autopairs/wiki/Rules-API)
 
 ### Treesitter
-You can use treesitter to check for a pair
+You can use treesitter to check for a pair.
 
 ```lua
 local npairs = require("nvim-autopairs")
@@ -227,7 +226,7 @@ npairs.setup({
 local ts_conds = require('nvim-autopairs.ts-conds')
 
 
--- press % => %% is only inside comment or string
+-- press % => %% only while inside a comment or string
 npairs.add_rules({
   Rule("%", "%", "lua")
     :with_pair(ts_conds.is_ts_node({'string','comment'})),
@@ -274,7 +273,7 @@ Before        Input         After
   require('nvim-autopairs').disable()
   require('nvim-autopairs').enable()
   require('nvim-autopairs').remove_rule('(') -- remove rule (
-  require('nvim-autopairs').clear_rules() -- clear all rule
+  require('nvim-autopairs').clear_rules() -- clear all rules
   require('nvim-autopairs').get_rule('"') -- get rule " then modify it
 
 ```
