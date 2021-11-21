@@ -77,7 +77,7 @@ describe('[endwise tag]', function()
     _G.Test_withfile(run_data, {
         -- need to understand this ??? new line make change cursor zzz
         cursor_add = 1,
-        before = function(value)
+        before_each = function(value)
             npairs.add_rules(
                 require('nvim-autopairs.rules.endwise-' .. value.filetype)
             )

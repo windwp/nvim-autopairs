@@ -47,7 +47,6 @@ end
 
 local compare_text = function(linenr, text_after, name, cursor_add)
     cursor_add = cursor_add or 0
-    print(cursor_add)
     local new_text = vim.api.nvim_buf_get_lines(
         0,
         linenr - 1,
@@ -69,7 +68,7 @@ local compare_text = function(linenr, text_after, name, cursor_add)
             local row, col = utils.get_cursor()
             eq(row, linenr + i - 2, '\n\n cursor row error: ' .. name .. '\n')
             p_after = p_after + cursor_add
-            eq(col, p_after -2, '\n\n cursor column error : ' .. name .. '\n')
+            eq(col, p_after - 2, '\n\n cursor column error : ' .. name .. '\n')
         end
     end
     return true
@@ -102,8 +101,8 @@ _G.Test_withfile = function(test_data, cb)
             vim.bo.filetype = value.filetype
             if vim.fn.filereadable(vim.fn.expand(value.filepath)) == 1 then
                 vim.cmd(':bd!')
-                if cb.before then
-                    cb.before(value)
+                if cb.before_each then
+                    cb.before_each(value)
                 end
                 vim.cmd(':e ' .. value.filepath)
                 if value.filetype then
@@ -125,7 +124,6 @@ _G.Test_withfile = function(test_data, cb)
                 vim.wait(10)
                 helpers.feed('<esc>')
                 if value.key == '<cr>' then
-                    local row, col = utils.get_cursor()
                     compare_text(
                         value.linenr,
                         value.after,
@@ -140,8 +138,8 @@ _G.Test_withfile = function(test_data, cb)
                         cb.cursor_add
                     )
                 end
-                if cb.after then
-                    cb.after(value)
+                if cb.after_each then
+                    cb.after_each(value)
                 end
             else
                 eq(false, true, '\n\n file not exist ' .. value.filepath .. '\n')

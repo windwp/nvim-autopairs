@@ -2,7 +2,7 @@
 local npairs = require('nvim-autopairs')
 local ts = require 'nvim-treesitter.configs'
 local log = require('nvim-autopairs._log')
-local Rule=require('nvim-autopairs.rule')
+local Rule = require('nvim-autopairs.rule')
 local ts_conds=require('nvim-autopairs.ts-conds')
 
 _G.npairs = npairs;
@@ -84,7 +84,5 @@ _G.TU = ts_utils
 
 
 describe('[treesitter check]', function()
-    _G.Test_withfile(run_data,{
-        before = function() end
-    })
+    _G.Test_withfile(run_data,{})
 end)

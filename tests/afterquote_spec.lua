@@ -108,6 +108,5 @@ local _, ts_utils = pcall(require, 'nvim-treesitter.ts_utils')
 _G.TU = ts_utils
 
 describe('[afterquote tag]', function()
-    _G.Test_withfile(run_data, {
-    })
+    _G.Test_withfile(run_data, {})
 end)
