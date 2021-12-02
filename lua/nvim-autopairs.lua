@@ -17,6 +17,7 @@ local default = {
     map_cr = true,
     disable_filetype = { 'TelescopePrompt', 'spectre_panel' },
     disable_in_macro = false,
+    disable_in_visualblock = false,
     ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]], '%s+', ''),
     check_ts = false,
     enable_moveright = true,
@@ -132,14 +133,24 @@ local function is_disable()
     if M.state.disabled then
         return true
     end
+
     if vim.bo.filetype == '' and api.nvim_win_get_config(0).relative ~= '' then
         -- disable for any floating window without filetype
         return true
     end
+
     if vim.bo.modifiable == false then
         return true
     end
-    if M.config.disable_in_macro and (vim.fn.reg_recording() ~= '' or vim.fn.reg_executing() ~= '') then
+
+    if
+        M.config.disable_in_macro
+        and (vim.fn.reg_recording() ~= '' or vim.fn.reg_executing() ~= '')
+    then
+        return true
+    end
+
+    if M.config.disable_in_visualblock and utils.is_block_wise_mode() then
         return true
     end
 
