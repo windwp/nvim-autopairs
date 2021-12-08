@@ -1,5 +1,6 @@
 generatedFiles:
   - path: "doc/nvim-autopairs.txt"
+  - path: "doc/nvim-autopairs-rules.txt"
     message: "`nvim-autopairs.txt` is generated from README.md. Make changes there instead."
 ignoreAuthors:
   - 'github-actions[bot]'

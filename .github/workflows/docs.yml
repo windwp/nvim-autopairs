@@ -30,10 +30,22 @@ jobs:
         with:
           vimdoc: nvim-autopairs
           description: A super powerful autopair for Neovim.
+      - name: clone rules api docs
+        run: |
+          git clone --depth 1 https://github.com/windwp/nvim-autopairs.wiki.git ../nvim-autopairs.wiki
+          cp ../nvim-autopairs.wiki/Rules-API.md ./Rules-API.md
+      - name: panvimdoc
+        uses: kdheepak/panvimdoc@v2.7.1
+        with:
+          vimdoc: nvim-autopairs-rules
+          description: nvim-autopairs rules
+          pandoc: "Rules-API.md"
+          toc: true
       - name: Create PR
         run: |
           if ! [[ -z $(git status -s) ]]; then
             git add doc/nvim-autopairs.txt
+            git add doc/nvim-autopairs-rules.txt
             git commit -m "chore: generated vimdoc"
             git push --force https://${GITHUB_ACTOR}:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY} ${VIMDOC_BRANCH}
             gh pr create --fill --base ${GITHUB_REF#refs/heads/} --head ${VIMDOC_BRANCH} || true
