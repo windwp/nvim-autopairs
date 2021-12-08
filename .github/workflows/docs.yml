@@ -1,11 +1,6 @@
 name: panvimdoc
 
-on:
-  push:
-    paths:
-      - README.md
-    branches:
-      - master
+on: [push, pull_request]
 
 jobs:
   docs:
