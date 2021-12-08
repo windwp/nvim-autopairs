@@ -26,13 +26,13 @@ cond.invert = function(func)
     end
 end
 
-cond.before_regex_check = function(regex, length)
+cond.before_regex = function(regex, length)
     length = length or 1
     if not regex then
         return cond.none()
     end
     return function(opts)
-        log.debug('before_regex_check')
+        log.debug('before_regex')
         if length < 0 then
             length = opts.col
         end
@@ -43,10 +43,11 @@ cond.before_regex_check = function(regex, length)
         return false
     end
 end
-cond.before_text_check = function(text)
+
+cond.before_text = function(text)
     local length = #text
     return function(opts)
-        log.debug('before_text_check')
+        log.debug('before_text')
         local str = utils.text_sub_char(opts.line, opts.col - 1, -length)
         if str == text then
             return true
@@ -54,10 +55,11 @@ cond.before_text_check = function(text)
         return false
     end
 end
-cond.after_text_check = function(text)
+
+cond.after_text = function(text)
     local length = #text
     return function(opts)
-        log.debug('after_text_check')
+        log.debug('after_text')
         local str = utils.text_sub_char(opts.line, opts.col, length)
         if str == text then
             return true
@@ -66,13 +68,13 @@ cond.after_text_check = function(text)
     end
 end
 
-cond.after_regex_check = function(regex, length)
+cond.after_regex = function(regex, length)
     length = length or 1
     if not regex then
         return cond.none()
     end
     return function(opts)
-        log.debug('after_regex_check')
+        log.debug('after_regex')
         if length < 0 then
             length = #opts.line
         end
@@ -84,10 +86,10 @@ cond.after_regex_check = function(regex, length)
     end
 end
 
-cond.not_before_text_check = function(text)
+cond.not_before_text = function(text)
     local length = #text
     return function(opts)
-        log.debug('not_before_text_check')
+        log.debug('not_before_text')
         local str = utils.text_sub_char(opts.line, opts.col - 1, -length)
         if str == text then
             return false
@@ -95,10 +97,10 @@ cond.not_before_text_check = function(text)
     end
 end
 
-cond.not_after_text_check = function(text)
+cond.not_after_text = function(text)
     local length = #text
     return function(opts)
-        log.debug('not_after_text_check')
+        log.debug('not_after_text')
         local str = utils.text_sub_char(opts.line, opts.col, length)
         if str == text then
             return false
@@ -106,13 +108,13 @@ cond.not_after_text_check = function(text)
     end
 end
 
-cond.not_before_regex_check = function(regex, length)
+cond.not_before_regex = function(regex, length)
     length = length or 1
     if not regex then
         return cond.none()
     end
     return function(opts)
-        log.debug('not_before_regex_check')
+        log.debug('not_before_regex')
         if length < 0 then
             length = opts.col
         end
@@ -123,13 +125,13 @@ cond.not_before_regex_check = function(regex, length)
     end
 end
 
-cond.not_after_regex_check = function(regex, length)
+cond.not_after_regex = function(regex, length)
     length = length or 1
     if not regex then
         return cond.none()
     end
     return function(opts)
-        log.debug('not_after_regex_check')
+        log.debug('not_after_regex')
         if length < 0 then
             length = #opts.line
         end
@@ -140,9 +142,9 @@ cond.not_after_regex_check = function(regex, length)
     end
 end
 
-cond.check_is_bracket_line = function()
+cond.is_bracket_line = function()
     return function(opts)
-        log.debug('check_is_bracket_line')
+        log.debug('is_bracket_line')
         if utils.is_bracket(opts.char) and opts.next_char == opts.rule.end_pair then
             -- ((  many char |)) => add
             -- (   many char |)) => not add
@@ -229,5 +231,22 @@ cond.not_filetypes = function(filetypes)
         end
     end
 end
+
+---@deprecated
+cond.not_after_regex_check = cond.not_after_regex
+---@deprecated
+cond.after_regex_check = cond.after_regex
+---@deprecated
+cond.before_regex_check = cond.before_regex
+---@deprecated
+cond.not_before_regex_check = cond.not_before_regex
+---@deprecated
+cond.after_text_check = cond.after_text
+---@deprecated
+cond.not_after_text_check = cond.not_after_text
+---@deprecated
+cond.before_text_check = cond.before_text
+---@deprecated
+cond.not_before_text_check = cond.not_before_text
 
 return cond

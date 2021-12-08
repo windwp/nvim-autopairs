@@ -133,7 +133,7 @@ function Rule:replace_endpair(value, check_pair)
     self.end_pair_func = value
     if check_pair ~= nil then
         if check_pair == true then
-            self:with_pair(Cond.after_text_check(self.end_pair))
+            self:with_pair(Cond.after_text(self.end_pair))
         else
             self:with_pair(check_pair)
         end

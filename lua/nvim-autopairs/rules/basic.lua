@@ -9,7 +9,7 @@ local function setup(opt)
             :with_pair(cond.not_add_quote_inside_quote())
 
         if #opt.ignored_next_char > 1 then
-            rule:with_pair(cond.not_after_regex_check(opt.ignored_next_char))
+            rule:with_pair(cond.not_after_regex(opt.ignored_next_char))
         end
         rule:use_undo(true)
         return rule
@@ -18,7 +18,7 @@ local function setup(opt)
     local bracket = function(...)
         if opt.enable_check_bracket_line == true then
             return basic(...)
-                :with_pair(cond.check_is_bracket_line())
+                :with_pair(cond.is_bracket_line())
         end
         return basic(...)
     end
@@ -32,13 +32,13 @@ local function setup(opt)
             :use_regex(true),
         Rule('"""', '"""', { 'python', 'elixir', 'julia' }),
         basic("'", "'", '-rust')
-            :with_pair(cond.not_before_regex_check("%w")),
+            :with_pair(cond.not_before_regex("%w")),
         basic("'", "'", 'rust')
-            :with_pair(cond.not_before_regex_check("[%w<&]"))
-            :with_pair(cond.not_after_text_check(">")),
+            :with_pair(cond.not_before_regex("[%w<&]"))
+            :with_pair(cond.not_after_text(">")),
         basic("`", "`"),
         basic('"', '"','vim')
-            :with_pair(cond.not_before_regex_check("^%s*$", -1)),
+            :with_pair(cond.not_before_regex("^%s*$", -1)),
         basic('"', '"','-vim'),
         bracket("(", ")"),
         bracket("[", "]"),

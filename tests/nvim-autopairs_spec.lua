@@ -396,7 +396,7 @@ local data = {
         setup_func = function()
             npairs.add_rules({
                 Rule("<", ">",{"rust"})
-                :with_pair(cond.before_text_check("Vec"))
+                :with_pair(cond.before_text("Vec"))
             })
         end,
         name     = "test disable check bracket line" ,
