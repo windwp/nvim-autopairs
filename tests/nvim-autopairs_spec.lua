@@ -3,26 +3,10 @@ local npairs = require('nvim-autopairs')
 local Rule = require('nvim-autopairs.rule')
 local cond = require('nvim-autopairs.conds')
 
-local ts_conds = require('nvim-autopairs.ts-conds')
 local log = require('nvim-autopairs._log')
 _G.log = log
 local utils = require('nvim-autopairs.utils')
 _G.npairs = npairs;
-local eq=_G.eq
-
-
-vim.api.nvim_set_keymap('i' , '<CR>','v:lua.npairs.check_break_line_char()', {expr = true , noremap = true})
-function helpers.feed(text, feed_opts, is_replace)
-    feed_opts = feed_opts or 'n'
-    if  not is_replace then
-        text = vim.api.nvim_replace_termcodes(text, true, false, true)
-    end
-    vim.api.nvim_feedkeys(text, feed_opts, true)
-end
-
-function helpers.insert(text, is_replace)
-    helpers.feed('i' .. text, 'x',is_replace)
-end
 
 -- use only = true to test 1 case
 local data = {
@@ -204,49 +188,77 @@ local data = {
         filetype="javascript",
         key    = [[<cr>]],
         before = [[a{|}]],
-        after  = [[}]]
+        after  = {
+            "a{",
+            "|",
+            "}"
+        }
     },
     {
         name = "breakline on (" ,
         filetype="javascript",
         key    = [[<cr>]],
         before = [[a(|)]],
-        after  = [[)]]
+        after  = {
+            "a(",
+            "|",
+            ")"
+        }
     },
     {
         name = "breakline on ]" ,
         filetype="javascript",
         key    = [[<cr>]],
         before = [[a[|] ]],
-        after  = "] "
+        after  = {
+            "a[",
+            "|",
+            "]"
+        }
     },
     {
         name = "breakline on markdown " ,
         filetype="markdown",
         key    = [[<cr>]],
         before = [[``` lua|```]],
-        after  = [[```]]
+        after  = {
+            [[``` lua]],
+            [[|]],
+            [[```]]
+        }
     },
     {
         name = "breakline on < html" ,
         filetype = "html",
         key    = [[<cr>]],
         before = [[<div>|</div>]],
-        after  = [[</div>]]
+        after  = {
+            [[<div>]],
+            [[|]],
+            [[</div>]]
+        }
     },
     {
         name = "breakline on < html with text" ,
         filetype = "html",
         key    = [[<cr>]],
         before = [[<div> ads |</div>]],
-        after  = [[</div>]]
+        after  = {
+            [[<div> ads]],
+            [[|]],
+            [[</div>]]
+        },
     },
     {
         name = "breakline on < html with space after cursor" ,
         filetype = "html",
         key    = [[<cr>]],
         before = [[<div> ads | </div>]],
-        after  = [[ </div>]]
+        after  = {
+            [[<div> ads]],
+            [[|]],
+            [[ </div>]]
+        },
     },
     {
         name = "do not mapping on > html" ,
@@ -459,7 +471,7 @@ local data = {
         key = "„",
         before = [[a | ]],
         after  = [[a „|” ]],
-        end_cursor = 6,
+        end_cursor = 3
     },
     {
         setup_func = function()
@@ -471,7 +483,7 @@ local data = {
         key = "”",
         before = [[a „|”xx ]],
         after  = [[a „”|xx ]],
-        end_cursor = 9,
+        end_cursor = 6
     },
     {
         setup_func = function()
@@ -493,14 +505,14 @@ local data = {
         key = "„",
         before = [[a| ]],
         after  = [[a„|”b ]],
-        end_cursor = 5,
+        end_cursor = 2
     },
     {
         name = [[a quote with single quote string]],
         key = "'",
         before = [[{{("It doesn't name %s", ''), 'ErrorMsg'| }},  ]],
         after  = [[{{("It doesn't name %s", ''), 'ErrorMsg''|' }},  ]],
-        end_cursor = 42,
+        end_cursor = 41
     },
     {
         setup_func = function()
@@ -528,7 +540,7 @@ local data = {
         filetype = 'vim',
         name='undo on quote',
         key = [[{123<esc>u]],
-        end_cursor=12,
+        end_cursor = 12,
         before = [[local abc=| ]],
         after = [[local abc={|} ]]
     },
@@ -536,7 +548,7 @@ local data = {
         filetype = 'vim',
         name='undo on bracket',
         key = [['123<esc>u]],
-        end_cursor=12,
+        end_cursor = 12,
         before = [[local abc=| ]],
         after = [[local abc='|' ]]
     },
@@ -556,58 +568,16 @@ local data = {
     },
 }
 
-local run_data = {}
-for _, value in pairs(data) do
-    if value.only == true then
-        table.insert(run_data, value)
-        break
-    end
-end
-if #run_data == 0 then run_data = data end
-
-local reset_test = function() npairs.setup() end
-local function Test(test_data)
-    for _, value in pairs(test_data) do
-        it("test "..value.name, function()
-            if value.setup_func then value.setup_func() end
-            local before = string.gsub(value.before , '%|' , "")
-            local after = string.gsub(value.after , '%|' , "")
-            local p_before = string.find(value.before , '%|')
-            local p_after = string.find(value.after , '%|')
-            local line = 1
-            if value.filetype ~= nil then
-                vim.bo.filetype = value.filetype
-            else
-                vim.bo.filetype = "text"
-            end
-            utils.set_attach(vim.api.nvim_get_current_buf(),0)
-            npairs.on_attach(vim.api.nvim_get_current_buf())
-            vim.fn.setline(line , before)
-            vim.fn.setpos('.' ,{0, line, p_before , 0})
-            helpers.insert(value.key,value.not_replace_term_code )
-            vim.wait(10)
-            helpers.feed("<esc>")
-            local result = vim.fn.getline(line)
-            local pos = vim.fn.getpos('.')
-            if value.key ~= '<cr>' then
-                eq(after, result , "\n\n text error: " .. value.name .. "\n")
-                eq(p_after, value.end_cursor or (pos[3] + 1), "\n\n pos error: " .. value.name .. "\n")
-
-            else
-                local line2 = vim.fn.getline(line + 2)
-                eq(line + 1, pos[2], '\n\n breakline error:' .. value.name .. "\n")
-                eq(after, line2 , "\n\n text error: " .. value.name .. "\n")
-                vim.fn.setline(line, '')
-                vim.fn.setline(line+ 1, '')
-                vim.fn.setline(line+ 2, '')
-            end
-            if value.reset_func then value.reset_func() end
-            if not value.reset_func and value.setup_func then reset_test() end
-       end)
-    end
-end
-
+local run_data = _G.Test_filter(data)
 
 describe('autopairs ', function()
-    Test(run_data)
+    _G.Test_withfile(run_data, {
+        cursor_add = 0,
+        before_each = function(value)
+            npairs.setup()
+            if value.setup_func then
+                value.setup_func()
+            end
+        end,
+    })
 end)
