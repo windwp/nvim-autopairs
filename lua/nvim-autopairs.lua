@@ -13,6 +13,7 @@ M.state = {
 
 local default = {
     map_bs = true,
+    map_c_h = false,
     map_c_w = false,
     map_cr = true,
     disable_filetype = { 'TelescopePrompt', 'spectre_panel' },
@@ -317,6 +318,17 @@ M.on_attach = function(bufnr)
             { expr = true, noremap = true }
         )
     end
+
+    if M.config.map_c_h then
+        api.nvim_buf_set_keymap(
+            bufnr,
+            "i",
+            utils.key.c_h,
+            string.format("v:lua.MPairs.autopairs_c_h(%d)", bufnr),
+            {expr = true, noremap = true}
+        )
+    end
+
     if M.config.map_c_w then
         api.nvim_buf_set_keymap(
             bufnr,
@@ -372,6 +384,10 @@ end
 
 M.autopairs_c_w = function(bufnr)
     return autopairs_delete(bufnr, '<c-g>U<c-w>')
+end
+
+M.autopairs_c_h = function(bufnr)
+    return autopairs_delete(bufnr, utils.key.c_h)
 end
 
 M.autopairs_bs = function(bufnr)

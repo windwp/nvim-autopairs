@@ -5,6 +5,7 @@ local log = require('nvim-autopairs._log')
 M.key = {
     del = "<del>",
     bs = "<bs>",
+    c_h = "<C-h>",
     left = "<left>",
     right = "<right>",
     join_left = "<c-g>U<left>",

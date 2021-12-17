@@ -516,6 +516,15 @@ local data = {
     },
     {
         setup_func = function()
+            npairs.setup({map_c_h = true})
+        end,
+        name = "map <c-h>",
+        key = "<c-h>",
+        before = [[aa'|' ]],
+        after  = [[aa| ]],
+    },
+    {
+        setup_func = function()
             npairs.setup({
                 map_c_w = true
             })
