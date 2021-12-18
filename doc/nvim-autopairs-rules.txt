@@ -74,7 +74,7 @@ CONDITION ~
 │not_after_text(text)          │check character after                │
 │not_before_regex(regex,length)│check character before with lua regex│
 │not_after_regex(regex,length) │check character after with lua regex │
-│not_inside_quote()            │check is inside a quote              │
+│not_inside_quote()            │check is not inside a quote          │
 │not_filetypes({table})        │check filetype is not inside table   │
 
 
