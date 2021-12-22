@@ -165,6 +165,14 @@ cond.is_bracket_line = function()
     end
 end
 
+
+cond.inside_quote = function()
+    return function(opts)
+       log.debug('inside_quote')
+        return utils.is_in_quotes(opts.text, opts.col - 1)
+    end
+end
+
 cond.not_inside_quote = function()
     return function(opts)
         log.debug('not_inside_quote')

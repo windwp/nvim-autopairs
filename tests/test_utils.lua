@@ -57,7 +57,6 @@ local compare_text = function(linenr, text_after, name, cursor_add, end_cursor)
         linenr + #text_after - 1,
         true
     )
-    log.debug(new_text)
     for i = 1, #text_after, 1 do
         local t = string.gsub(text_after[i], '%|', '')
         if
@@ -74,7 +73,6 @@ local compare_text = function(linenr, text_after, name, cursor_add, end_cursor)
                 eq(row, linenr + i - 2, '\n\n cursor row error: ' .. name .. '\n')
                 eq(col + 1, end_cursor, '\n\n end cursor column error : ' .. name .. '\n')
             else
-                log.debug(p_after)
                 eq(row, linenr + i - 2, '\n\n cursor row error: ' .. name .. '\n')
                 p_after = p_after + cursor_add
                 eq(col, math.max(p_after - 2,0), '\n\n cursor column error : ' .. name .. '\n')
