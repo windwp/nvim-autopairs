@@ -37,9 +37,9 @@ local function setup(opt)
             :with_pair(cond.not_before_regex("[%w<&]"))
             :with_pair(cond.not_after_text(">")),
         basic("`", "`"),
+        basic('"', '"','-vim'),
         basic('"', '"','vim')
             :with_pair(cond.not_before_regex("^%s*$", -1)),
-        basic('"', '"','-vim'),
         bracket("(", ")"),
         bracket("[", "]"),
         bracket("{", "}"),
