@@ -7,14 +7,14 @@ local helpers = {}
 
 function helpers.feed(text, feed_opts, is_replace)
     feed_opts = feed_opts or 'n'
-    if  not is_replace then
+    if not is_replace then
         text = vim.api.nvim_replace_termcodes(text, true, false, true)
     end
     vim.api.nvim_feedkeys(text, feed_opts, true)
 end
 
 function helpers.insert(text, is_replace)
-    helpers.feed('i' .. text, 'x',is_replace)
+    helpers.feed('i' .. text, 'x', is_replace)
 end
 
 utils.insert_char = function(text)
@@ -71,11 +71,19 @@ local compare_text = function(linenr, text_after, name, cursor_add, end_cursor)
             local row, col = utils.get_cursor()
             if end_cursor then
                 eq(row, linenr + i - 2, '\n\n cursor row error: ' .. name .. '\n')
-                eq(col + 1, end_cursor, '\n\n end cursor column error : ' .. name .. '\n')
+                eq(
+                    col + 1,
+                    end_cursor,
+                    '\n\n end cursor column error : ' .. name .. '\n'
+                )
             else
                 eq(row, linenr + i - 2, '\n\n cursor row error: ' .. name .. '\n')
                 p_after = p_after + cursor_add
-                eq(col, math.max(p_after - 2,0), '\n\n cursor column error : ' .. name .. '\n')
+                eq(
+                    col,
+                    math.max(p_after - 2, 0),
+                    '\n\n cursor column error : ' .. name .. '\n'
+                )
             end
         end
     end
@@ -84,7 +92,7 @@ end
 
 _G.Test_withfile = function(test_data, cb)
     for _, value in pairs(test_data) do
-        it('test ' .. value.name, function()
+        it('test ' .. value.name, function(done)
             local text_before = {}
             value.linenr = value.linenr or 1
             local pos_before = {
@@ -137,7 +145,7 @@ _G.Test_withfile = function(test_data, cb)
             )
             log.debug('insert:' .. value.key)
 
-            helpers.insert(value.key,value.not_replace_term_code )
+            helpers.insert(value.key, value.not_replace_term_code)
             vim.wait(2)
             helpers.feed('<esc>')
             compare_text(
