@@ -56,7 +56,6 @@ conds.is_ts_node = function(nodes)
     assert(nodes ~= nil, "ts nodes should be string or table")
     return function (opts)
         log.debug('is_ts_node')
-        if not opts.ts_node then return end
         if #nodes == 0 then return  end
 
         parsers.get_parser():parse()
@@ -73,7 +72,6 @@ conds.is_not_ts_node = function(nodes)
     assert(nodes ~= nil, "ts nodes should be string or table")
     return function (opts)
         log.debug('is_not_ts_node')
-        if not opts.ts_node then return end
         if #nodes == 0 then return  end
 
         parsers.get_parser():parse()
