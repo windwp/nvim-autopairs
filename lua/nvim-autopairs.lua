@@ -345,6 +345,7 @@ local autopairs_delete = function(bufnr, key)
     if is_disable() then
         return utils.esc(key)
     end
+    bufnr = bufnr or 0
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
     local rules = M.get_buf_rules(bufnr)
