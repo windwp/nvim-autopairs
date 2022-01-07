@@ -30,7 +30,8 @@ M.on_confirm_done = function(opt)
         },
     }, opt or {})
 
-    return function(entry)
+    return function(evt)
+        local entry = evt.entry
         local line = utils.text_get_current_line(0)
         local _, col = utils.get_cursor()
         local prev_char, next_char = utils.text_cusor_line(line, col, 1, 1, false)
