@@ -162,19 +162,11 @@ local data = {
         after  = [[("abcd\""|)]]
     },
     {
-        name = "move right on close bracket",
-        filetype="javascript",
-        key    = [[)]],
-        before = [[("(dsadsa|" gs})]],
-        after  = [[("(dsadsa)|" gs})]]
-    },
-
-    {
-        name = "move right when inside single quote with special slash",
-        filetype="javascript",
-        key    = [[']],
-        before = [[nvim_set_var('test_thing|')]],
-        after  = [[nvim_set_var('test_thing'|)]]
+        filetype = 'rust',
+        name = 'move right double quote after single quote',
+        key = [["]],
+        before = [[ ('x').expect("|");]],
+        after = [[ ('x').expect(""|);]],
     },
     {
         name = "delete bracket",
@@ -587,6 +579,7 @@ describe('autopairs ', function()
             if value.setup_func then
                 value.setup_func()
             end
+
         end,
     })
 end)

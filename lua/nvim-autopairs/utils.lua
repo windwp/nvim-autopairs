@@ -45,12 +45,12 @@ end
 ---check cursor is inside a quote
 ---@param line string
 ---@param pos number  positin in line
----@param quote nil|string specify a quote string
+---@param quote_type nil|string specify a quote
 ---@return boolean
-M.is_in_quotes = function (line, pos, quote)
+M.is_in_quotes = function (line, pos, quote_type)
     local cIndex = 0
     local result = false
-    local last_char = quote or ''
+    local last_char = quote_type or ''
 
     while cIndex < string.len(line) and cIndex < pos  do
         cIndex = cIndex + 1
@@ -61,9 +61,11 @@ M.is_in_quotes = function (line, pos, quote)
             line:sub(cIndex -1, cIndex -1) ~= "\\"
         then
             result = false
-            last_char = quote or ''
-        elseif result == false and M.is_quote(char) then
-            last_char = quote or char
+            last_char = quote_type or ''
+        elseif result == false and M.is_quote(char)
+            and (not quote_type or char == quote_type)
+        then
+            last_char = quote_type or char
             result = true
         end
     end
