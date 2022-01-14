@@ -110,7 +110,7 @@ function Rule:get_map_cr(opts)
     if self.map_cr_func then
         return self.map_cr_func(opts)
     end
-    return '<c-g>u<cr><c-o>O'
+    return '<c-g>u<cr><c-c>O'
 end
 
 
