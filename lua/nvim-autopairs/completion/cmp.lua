@@ -56,7 +56,7 @@ M.on_confirm_done = function(opt)
             utils.feed("(")
             utils.feed(utils.key.right, length)
             utils.feed("<Space>")
-        else
+        elseif evt.commit_character ~= "(" then
             vim.api.nvim_feedkeys(char, 'i', true)
         end
     end
