@@ -158,6 +158,7 @@ _G.Test_withfile = function(test_data, cb)
             if cb.after_each then
                 cb.after_each(value)
             end
+            vim.cmd(':bd!')
         end)
     end
 end
