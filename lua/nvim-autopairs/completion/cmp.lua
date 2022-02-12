@@ -13,6 +13,7 @@ M.lisp = { "clojure", "clojurescript", "fennel", "janet" }
 
 local ignore_append = function(char, kinds, next_char, prev_char, item)
     if char == '' or prev_char == char or next_char == char
+        or (item.data and item.data.funcParensDisabled)
         or (not utils.is_in_table(kinds, item.kind))
         or (item.textEdit and item.textEdit.newText and item.textEdit.newText:match "[%(%[]")
         or (item.insertText and item.insertText:match "[%(%[]")
