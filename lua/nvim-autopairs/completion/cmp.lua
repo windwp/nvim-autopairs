@@ -42,7 +42,7 @@ M.on_confirm_done = function(opt)
             return
         end
 
-        if ignore_append(char, opt.kinds, next_char, prev_char, item)  then
+        if ignore_append(char, opt.kinds, next_char, prev_char, item) or evt.commit_character == char  then
             return
         end
 
@@ -56,7 +56,7 @@ M.on_confirm_done = function(opt)
             utils.feed("(")
             utils.feed(utils.key.right, length)
             utils.feed("<Space>")
-        elseif evt.commit_character ~= "(" then
+        else
             vim.api.nvim_feedkeys(char, 'i', true)
         end
     end
