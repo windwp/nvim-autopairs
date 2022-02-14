@@ -43,7 +43,7 @@ M.on_confirm_done = function(opt)
             return
         end
 
-        if ignore_append(char, opt.kinds, next_char, prev_char, item)  then
+        if ignore_append(char, opt.kinds, next_char, prev_char, item) or evt.commit_character == char  then
             return
         end
 
