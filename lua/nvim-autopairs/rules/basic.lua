@@ -19,6 +19,7 @@ local function setup(opt)
         if opt.enable_check_bracket_line == true then
             return basic(...)
                 :with_pair(cond.is_bracket_line())
+                :with_move(cond.is_bracket_line_move())
         end
         return basic(...)
     end

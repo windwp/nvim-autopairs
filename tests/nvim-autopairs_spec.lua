@@ -169,6 +169,21 @@ local data = {
         after = [[ ('x').expect(""|);]],
     },
     {
+        filetype = 'rust',
+        name = "move right, should not move when bracket not closing",
+        key = [[}]],
+        before = [[{{ |} ]],
+        after = [[{{ }|} ]]
+    },
+
+    {
+        filetype = 'rust',
+        name = "move right, should move when bracket closing",
+        key = [[}]],
+        before = [[{ }|} ]],
+        after = [[{ }}| ]]
+    },
+    {
         name = "delete bracket",
         filetype="javascript",
         key    = [[<bs>]],

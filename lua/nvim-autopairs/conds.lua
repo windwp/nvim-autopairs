@@ -142,22 +142,31 @@ cond.not_after_regex = function(regex, length)
     end
 end
 
+local function count_bracket_char(line, prev_char, next_char)
+    local count_prev_char = 0
+    local count_next_char = 0
+    for i = 1, #line, 1 do
+        local c = line:sub(i, i)
+        if c == prev_char then
+            count_prev_char = count_prev_char + 1
+        elseif c == next_char then
+            count_next_char = count_next_char + 1
+        end
+    end
+    return count_prev_char, count_next_char
+end
+
 cond.is_bracket_line = function()
     return function(opts)
         log.debug('is_bracket_line')
         if utils.is_bracket(opts.char) and opts.next_char == opts.rule.end_pair then
             -- ((  many char |)) => add
             -- (   many char |)) => not add
-            local count_prev_char = 0
-            local count_next_char = 0
-            for i = 1, #opts.line, 1 do
-                local c = opts.line:sub(i, i)
-                if c == opts.char then
-                    count_prev_char = count_prev_char + 1
-                elseif c == opts.rule.end_pair then
-                    count_next_char = count_next_char + 1
-                end
-            end
+            local count_prev_char, count_next_char = count_bracket_char(
+                opts.line,
+                opts.char,
+                opts.next_char
+            )
             if count_prev_char ~= count_next_char then
                 return false
             end
@@ -165,10 +174,24 @@ cond.is_bracket_line = function()
     end
 end
 
-cond.inside_quote = function()
+cond.is_bracket_line_move = function()
     return function(opts)
-        log.debug('inside_quote')
-        return utils.is_in_quotes(opts.text, opts.col - 1)
+        log.debug('is_bracket_line_move')
+        if
+            utils.is_close_bracket(opts.char)
+            and opts.char == opts.rule.end_pair
+        then
+            -- ((  many char |)) => move
+            -- ((   many char |) => not move
+            local count_prev_char, count_next_char = count_bracket_char(
+                opts.line,
+                opts.rule.start_pair,
+                opts.char
+            )
+            if count_prev_char ~= 0 and count_prev_char > count_next_char then
+                return false
+            end
+        end
     end
 end
 
@@ -198,18 +221,18 @@ cond.move_right = function()
         log.debug('move_right')
         if opts.next_char == opts.char then
             if utils.is_close_bracket(opts.char) then
-                return true
+                return
             end
             -- move right when have quote on end line or in quote
             -- situtaion  |"  => "|
             if utils.is_quote(opts.char) then
                 if opts.col == string.len(opts.line) then
-                    return true
+                    return
                 end
                 -- ("|")  => (""|)
                 --  ""       |"      "  => ""       "|      "
                 if utils.is_in_quotes(opts.line, opts.col - 1, opts.char) then
-                    return true
+                    return
                 end
             end
         end
