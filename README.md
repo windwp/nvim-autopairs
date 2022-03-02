@@ -299,7 +299,7 @@ npairs.setup({
       map = '<M-e>',
       chars = { '{', '[', '(', '"', "'" },
       pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], '%s+', ''),
-      offset = 0, -- Offset from pattern match
+      offset = -1, -- Offset from pattern match
       end_key = '$',
       keys = 'qwertyuiopzxcvbnmasdfghjkl',
       check_comma = true,
