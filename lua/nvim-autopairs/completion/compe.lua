@@ -32,6 +32,7 @@ _G.MPairs.completion_done = function()
                     and completion_item.textEdit.newText:match('[%(%[]')
                 )
                 or (completion_item.insertText and completion_item.insertText:match('[%(%[]'))
+                or (completion_item.insertTextFormat and completion_item.insertTextFormat == require('vim.lsp.protocol').InsertTextFormat[2])
             then
                 return
             end
