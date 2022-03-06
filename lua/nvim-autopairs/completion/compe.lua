@@ -29,9 +29,9 @@ _G.MPairs.completion_done = function()
                 (
                     completion_item.textEdit
                     and completion_item.textEdit.newText
-                    and completion_item.textEdit.newText:match('[%(%[]')
+                    and completion_item.textEdit.newText:match('[%(%[%$]')
                 )
-                or (completion_item.insertText and completion_item.insertText:match('[%(%[]'))
+                or (completion_item.insertText and completion_item.insertText:match('[%(%[%$]'))
             then
                 return
             end
