@@ -17,7 +17,6 @@ local ignore_append = function(char, kinds, next_char, prev_char, item)
         or (not utils.is_in_table(kinds, item.kind))
         or (item.textEdit and item.textEdit.newText and item.textEdit.newText:match "[%(%[]")
         or (item.insertText and item.insertText:match "[%(%[]")
-        or (item.insertTextFormat and item.insertTextFormat == cmp.lsp.InsertTextFormat.Snippet)
     then
         return true
     end
