@@ -181,7 +181,6 @@ cond.is_bracket_line_move = function()
             utils.is_close_bracket(opts.char)
             and opts.char == opts.rule.end_pair
         then
-            -- ((  many char |)) => move
             -- ((   many char |) => not move
             local count_prev_char, count_next_char = count_bracket_char(
                 opts.line,
@@ -200,6 +199,15 @@ cond.not_inside_quote = function()
         log.debug('not_inside_quote')
         if utils.is_in_quotes(opts.text, opts.col - 1) then
             return false
+        end
+    end
+end
+
+cond.is_inside_quote = function()
+    return function(opts)
+        log.debug('is_inside_quote')
+        if utils.is_in_quotes(opts.text, opts.col - 1) then
+            return true
         end
     end
 end
@@ -247,6 +255,20 @@ cond.is_end_line = function()
         -- end text is blank
         if end_text ~= '' and end_text:match('^%s+$') == nil then
             return false
+        end
+    end
+end
+
+--- Check the next char is quote and cursor is inside quote
+cond.is_bracket_in_quote = function()
+    return function(opts)
+        log.debug("is_bracket_in_quote")
+        if
+            utils.is_bracket(opts.char)
+            and utils.is_quote(opts.next_char)
+            and utils.is_in_quotes(opts.line, opts.col - 1, opts.next_char)
+        then
+            return true
         end
     end
 end

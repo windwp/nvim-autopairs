@@ -24,6 +24,7 @@ local default = {
     enable_moveright = true,
     enable_afterquote = true,
     enable_check_bracket_line = true,
+    enable_bracket_in_quote = true,
     ts_config = {
         lua = { 'string', 'source' },
         javascript = { 'string', 'template_string' },

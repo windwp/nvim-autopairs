@@ -164,11 +164,20 @@ function Rule:with_cr(cond)
     return self
 end
 
-function Rule:with_pair(cond)
+---add condition to rule
+---@param cond any
+---@param pos number = 1. It have higher priority to another condition
+---@return Rule
+function Rule:with_pair(cond, pos)
     if self.pair_cond == nil then self.pair_cond = {}end
-    table.insert(self.pair_cond, cond)
+    if pos then
+        table.insert(self.pair_cond, pos, cond)
+    else
+        table.insert(self.pair_cond, cond)
+    end
     return self
 end
+
 
 function Rule:only_cr(cond)
     self.key_map = nil

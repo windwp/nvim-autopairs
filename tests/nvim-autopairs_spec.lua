@@ -113,6 +113,20 @@ local data = {
         after  = [[(   many char (|))]]
     },
     {
+        filetype = 'vim',
+        name='add bracket inside quote when nextchar is ignore',
+        key = [[{]],
+        before = [["|"]],
+        after = [["{|}"]]
+    },
+    {
+        filetype = '',
+        name='add bracket inside quote when next char is ignore',
+        key = [[{]],
+        before = [[" |"]],
+        after = [[" {|}"]]
+    },
+    {
         name = "move right on quote line " ,
         key    = [["]],
         before = [["|"]],
