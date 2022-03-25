@@ -63,19 +63,26 @@ CONDITION ~
 <
 
 
-│           function           │                Usage                │
-│none()                        │always wrong                         │
-│done()                        │always correct                       │
-│before_text(text)             │check character before               │
-│after_text(text)              │check character after                │
-│before_regex(regex,length)    │check character before with lua regex│
-│after_regex(regex,length)     │check character after with lua regex │
-│not_before_text(text)         │check character before               │
-│not_after_text(text)          │check character after                │
-│not_before_regex(regex,length)│check character before with lua regex│
-│not_after_regex(regex,length) │check character after with lua regex │
-│not_inside_quote()            │check is not inside a quote          │
-│not_filetypes({table})        │check filetype is not inside table   │
+│        function         │                     Usage                     │
+│none()                   │always wrong                                   │
+│done()                   │always correct                                 │
+│before_text(text)        │check character before                         │
+│after_text(text)         │check character after                          │
+│before_regex(regex,length│check character before with lua regex          │
+│)                        │                                               │
+│after_regex(regex,length)│check character after with lua regex           │
+│                         │                                               │
+│not_before_text(text)    │check character before                         │
+│not_after_text(text)     │check character after                          │
+│not_before_regex(regex,le│check character before with lua regex          │
+│ngth)                    │                                               │
+│not_after_regex(regex,len│check character after with lua regex           │
+│gth)                     │                                               │
+│not_inside_quote()       │check is not inside a quote                    │
+│is_inside_quote()        │check is inside a quote                        │
+│not_filetypes({table})   │check filetype is not inside table             │
+│is_bracket_in_quote()    │check the next char is quote and cursor is insi│
+│                         │de quote                                       │
 
 
 
