@@ -57,13 +57,22 @@ M.show = function(line)
         local index = 1
         local str_length = #line
         local offset = config.offset
+        local is_end_key = true
         for i = col + 2, #line, 1 do
             local char = line:sub(i, i)
-            if string.match(char, config.pattern) then
+            local char2 = line:sub(i - 1, i)
+            if
+                string.match(char, config.pattern)
+                or (char == ' ' and string.match(char2, '%w'))
+            then
                 local key = config.keys:sub(index, index)
                 index = index + 1
                 if utils.is_quote(char) then
                     offset = 0
+                end
+                if i == str_length then
+                    is_end_key = false
+                    key = config.end_key
                 end
                 table.insert(
                     list_pos,
@@ -72,10 +81,12 @@ M.show = function(line)
             end
         end
 
-        table.insert(
-            list_pos,
-            { col = str_length + 1, key = config.end_key, pos = str_length + 1}
-        )
+        if is_end_key then
+            table.insert(
+                list_pos,
+                { col = str_length + 1, key = config.end_key, pos = str_length + 1 }
+            )
+        end
 
         M.highlight_wrap(list_pos, row, col, #line)
         vim.defer_fn(function()
