@@ -73,6 +73,7 @@ M.show = function(line)
                 if i == str_length then
                     is_end_key = false
                     key = config.end_key
+                    offset = 0
                 end
                 table.insert(
                     list_pos,
@@ -110,11 +111,11 @@ M.show = function(line)
 end
 
 M.move_bracket = function(line, target_pos, end_pair, change_pos)
+    log.debug(target_pos)
     line = line or utils.text_get_current_line(0)
     local row, col = utils.get_cursor()
     local _, next_char = utils.text_cusor_line(line, col, 1, 1, false)
     -- remove an autopairs if that exist
-    -- ((fsadfsa)) dsafdsa
     if next_char == end_pair then
         line = line:sub(1, col) .. line:sub(col + 2, #line)
         target_pos = target_pos - 1
