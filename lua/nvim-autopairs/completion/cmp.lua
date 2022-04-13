@@ -4,11 +4,6 @@ local cmp = require('cmp')
 
 local M = {}
 
-M.setup = function()
-    vim.notify('[nvim-autopairs] function nvim-autopairs.completion.cmp setup is deprecated.')
-    vim.notify('[nvim-autopairs] remove this function and use require("cmp").setup to add <cr> mapping.')
-end
-
 M.lisp = { "clojure", "clojurescript", "fennel", "janet" }
 
 local ignore_append = function(char, kinds, next_char, prev_char, item)
