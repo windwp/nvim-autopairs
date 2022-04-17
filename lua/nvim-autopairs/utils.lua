@@ -112,6 +112,7 @@ M.get_cursor = function(bufnr)
     return row - 1, col
 end
 M.text_get_line = function(bufnr, lnum)
+    if not api.nvim_buf_is_loaded(bufnr) then return end
     return api.nvim_buf_get_lines(bufnr, lnum, lnum + 1, false)[1] or ''
 end
 
