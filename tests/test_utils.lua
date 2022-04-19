@@ -1,7 +1,7 @@
 local utils = require('nvim-autopairs.utils')
-local _, ts_utils = pcall(require, 'nvim-treesitter.ts_utils')
 local log = require('nvim-autopairs._log')
 local api = vim.api
+local ts_query = vim.treesitter.query
 
 local helpers = {}
 
@@ -164,7 +164,7 @@ _G.Test_withfile = function(test_data, cb)
 end
 
 _G.dump_node = function(node)
-    local text = ts_utils.get_node_text(node)
+    local text = ts_query.get_node_text(node)
     for _, txt in pairs(text) do
         print(txt)
     end
@@ -173,7 +173,7 @@ end
 _G.dump_node_text = function(target)
     for node in target:iter_children() do
         local node_type = node:type()
-        local text = ts_utils.get_node_text(node)
+        local text = ts_query.get_node_text(node)
         log.debug('type:' .. node_type .. ' ')
         log.debug(text)
     end
