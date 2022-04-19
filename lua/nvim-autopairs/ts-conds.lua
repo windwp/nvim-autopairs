@@ -3,6 +3,7 @@ local _, ts_utils = pcall(require, 'nvim-treesitter.ts_utils')
 local log = require('nvim-autopairs._log')
 local parsers = require'nvim-treesitter.parsers'
 local utils = require('nvim-autopairs.utils')
+local ts_query = vim.treesitter.query
 
 local conds = {}
 
@@ -19,7 +20,7 @@ conds.is_endwise_node = function(nodes)
         parsers.get_parser():parse()
         local target = ts_utils.get_node_at_cursor()
         if target ~= nil and utils.is_in_table(nodes, target:type()) then
-            local text = ts_utils.get_node_text(target) or {""}
+            local text = ts_query.get_node_text(target) or {""}
             local last = text[#text]:match(opts.rule.end_pair)
             -- check last character is match with end_pair
             if last == nil then
@@ -31,9 +32,9 @@ conds.is_endwise_node = function(nodes)
                 local begin_target,_, end_target = target:range()
                 local begin_parent,_, end_parent = target:parent():range()
                 -- log.debug(target:range())
-                -- log.debug(ts_utils.get_node_text(target))
+                -- log.debug(ts_query.get_node_text(target))
                 -- log.debug(target:parent():range())
-                -- log.debug(ts_utils.get_node_text(target:parent()))
+                -- log.debug(ts_query.get_node_text(target:parent()))
                 if
                     (
                         begin_target ~= begin_parent
