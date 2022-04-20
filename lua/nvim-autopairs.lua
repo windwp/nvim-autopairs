@@ -553,26 +553,32 @@ M.autopairs_cr = function(bufnr)
                 #rule.end_pair,
                 rule.is_regex
             )
+
+            local cond_opt = {
+                ts_node = M.state.ts_node,
+                check_endwise_ts = true,
+                rule = rule,
+                bufnr = bufnr,
+                col = col + 1,
+                line = line,
+                prev_char = prev_char,
+                next_char = next_char,
+            }
+
+            local end_pair = rule:get_end_pair(cond_opt)
+            local end_pair_length = rule:get_end_pair_length(end_pair)
+
             -- log.debug('prev_char' .. rule.start_pair)
             -- log.debug('prev_char' .. prev_char)
             -- log.debug('next_char' .. next_char)
             if
                 rule.is_endwise
                 and utils.compare(rule.start_pair, prev_char, rule.is_regex)
-                and rule:can_cr({
-                    ts_node = M.state.ts_node,
-                    check_endwise_ts = true,
-                    bufnr = bufnr,
-                    rule = rule,
-                    col = col,
-                    prev_char = prev_char,
-                    next_char = next_char,
-                    line = line,
-                })
+                and rule:can_cr(cond_opt)
             then
                 return utils.esc(
-                    rule.end_pair
-                        .. utils.repeat_key(utils.key.join_left, #rule.end_pair)
+                    end_pair
+                        .. utils.repeat_key(utils.key.join_left, end_pair_length)
                         -- FIXME do i need to re indent twice #118
                         .. '<cr><esc>====O'
                 )

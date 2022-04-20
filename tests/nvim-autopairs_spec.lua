@@ -596,6 +596,42 @@ local data = {
         before = [[   | aaa]],
         after = [[   "ab| aaa]]
     },
+    {
+        setup_func = function()
+            npairs.clear_rules()
+            npairs.add_rule(Rule("{", "}"):end_wise())
+        end,
+        filetype = 'javascript',
+        name = 'custom endwise rule',
+        key = [[<cr>]],
+        before = [[function () {| ]],
+        after = {
+            [[function () {]],
+            [[|]],
+            [[}]],
+        },
+    },
+    {
+        setup_func = function()
+            npairs.clear_rules()
+            npairs.add_rule(
+                Rule("{", "")
+                    :replace_endpair(function ()
+                        return "}"
+                    end)
+                    :end_wise()
+            )
+        end,
+        filetype = 'javascript',
+        name = 'custom endwise rule with custom end_pair',
+        key = [[<cr>]],
+        before = [[function () {| ]],
+        after = {
+            [[function () {]],
+            [[|]],
+            [[}]],
+        },
+    },
 }
 
 local run_data = _G.Test_filter(data)
