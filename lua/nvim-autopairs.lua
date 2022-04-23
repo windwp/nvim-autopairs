@@ -559,7 +559,7 @@ M.autopairs_cr = function(bufnr)
                 check_endwise_ts = true,
                 rule = rule,
                 bufnr = bufnr,
-                col = col + 1,
+                col = col,
                 line = line,
                 prev_char = prev_char,
                 next_char = next_char,
@@ -583,19 +583,13 @@ M.autopairs_cr = function(bufnr)
                         .. '<cr><esc>====O'
                 )
             end
+
+            cond_opt.check_endwise_ts = false
+
             if
                 utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and utils.compare(rule.end_pair, next_char, rule.is_regex)
-                and rule:can_cr({
-                    ts_node = M.state.ts_node,
-                    check_endwise_ts = false,
-                    bufnr = bufnr,
-                    rule = rule,
-                    col = col,
-                    prev_char = prev_char,
-                    next_char = next_char,
-                    line = line,
-                })
+                and rule:can_cr(cond_opt)
             then
                 log.debug('do_cr')
                 return utils.esc(rule:get_map_cr({rule = rule, line = line, color = col, bufnr = bufnr}))
