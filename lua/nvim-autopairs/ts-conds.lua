@@ -52,6 +52,57 @@ conds.is_endwise_node = function(nodes)
     end
 end
 
+conds.is_in_range = function(callback, position)
+    assert(
+        type(callback) == 'function' and type(position) == 'function',
+        'callback and position should be a function'
+    )
+    return function(opts)
+        log.debug('is_in_range')
+        if not parsers.has_parser() then
+            return
+        end
+        local cursor = position()
+        assert(
+            type(cursor) == 'table' and #cursor == 2,
+            'position should be return a table like {line, col}'
+        )
+        local line = cursor[1]
+        local col = cursor[2]
+
+        local bufnr = 0
+        local root_lang_tree = parsers.get_parser(bufnr)
+        local lang_tree = root_lang_tree:language_for_range({ line, col, line, col })
+
+        local result
+
+        for _, tree in ipairs(lang_tree:trees()) do
+            local root = tree:root()
+            if root and ts_utils.is_in_node_range(root, line, col) then
+                local node = root:named_descendant_for_range(line, col, line, col)
+                local anonymous_node = root:descendant_for_range(
+                    line,
+                    col,
+                    line,
+                    col
+                )
+
+                result = {
+                    node = node,
+                    lang = lang_tree:lang(),
+                    type = node:type(),
+                    cursor = vim.api.nvim_win_get_cursor(0),
+                    line = vim.api.nvim_buf_get_lines(bufnr, line, line + 1, true)[1],
+                    range = { node:range() },
+                    anonymous = anonymous_node:type(),
+                }
+            end
+        end
+
+        return callback(result)
+    end
+end
+
 conds.is_ts_node = function(nodes)
     if type(nodes) == 'string' then nodes = {nodes} end
     assert(nodes ~= nil, "ts nodes should be string or table")
