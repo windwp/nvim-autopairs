@@ -49,6 +49,7 @@ function Rule.new(...)
         end_pair_length = nil,
     }, opt)
 
+    ---@param rule Rule
     local function constructor(rule)
         -- check multibyte
         if #rule.start_pair ~= vim.api.nvim_strwidth(rule.start_pair) then

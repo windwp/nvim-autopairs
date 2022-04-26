@@ -62,7 +62,7 @@ M.is_in_quotes = function (line, pos, quote_type)
         then
             result = false
             last_char = quote_type or ''
-        elseif result == false and M.is_quote(char)
+        elseif result == false and M.is_quote(char) 
             and (not quote_type or char == quote_type)
         then
             last_char = quote_type or char

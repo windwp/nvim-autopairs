@@ -598,6 +598,19 @@ local data = {
     },
     {
         setup_func = function()
+            npairs.add_rule(
+                Rule('struct%s[a-zA-Z]+%s?{$', '};' )
+                    :use_regex(true, "{")
+            )
+        end,
+        filetype = 'javascript',
+        name = 'custom endwise rule',
+        key = [[{]],
+        before = [[struct abc | ]],
+        after = [[struct abc {|};]],
+    },
+    {
+        setup_func = function()
             npairs.clear_rules()
             npairs.add_rule(Rule("{", "}"):end_wise())
         end,

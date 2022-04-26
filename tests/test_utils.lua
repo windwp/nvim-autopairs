@@ -143,11 +143,15 @@ _G.Test_withfile = function(test_data, cb)
                 0,
                 { pos_before.linenr, pos_before.colnr - 1 }
             )
-            log.debug('insert:' .. value.key)
-
-            helpers.insert(value.key, value.not_replace_term_code)
-            vim.wait(2)
-            helpers.feed('<esc>')
+            if type(value.key) == "function" then
+                log.debug("call key")
+                value.key()
+            else
+                log.debug('insert:' .. value.key)
+                helpers.insert(value.key, value.not_replace_term_code)
+                vim.wait(2)
+                helpers.feed('<esc>')
+            end
             compare_text(
                 value.linenr,
                 value.after,

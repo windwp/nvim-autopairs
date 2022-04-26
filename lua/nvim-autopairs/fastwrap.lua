@@ -66,9 +66,16 @@ M.show = function(line)
             then
                 local key = config.keys:sub(index, index)
                 index = index + 1
-                if utils.is_quote(char) then
+                if
+                    utils.is_quote(char)
+                    or (
+                        utils.is_close_bracket(char)
+                        and utils.is_in_quotes(line, col, prev_char)
+                    )
+                then
                     offset = 0
                 end
+
                 if i == str_length then
                     is_end_key = false
                     key = config.end_key
@@ -94,7 +101,7 @@ M.show = function(line)
             vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
             for _, pos in pairs(list_pos) do
                 if char == pos.key then
-                    M.move_bracket(line, pos.col, end_pair,false)
+                    M.move_bracket(line, pos.col, end_pair, false)
                     break
                 end
                 if char == string.upper(pos.key) then
@@ -122,8 +129,8 @@ M.move_bracket = function(line, target_pos, end_pair, change_pos)
 
     line = line:sub(1, target_pos) .. end_pair .. line:sub(target_pos + 1, #line)
     vim.api.nvim_set_current_line(line)
-    if  change_pos then
-        vim.api.nvim_win_set_cursor(0,{row + 1, target_pos})
+    if change_pos then
+        vim.api.nvim_win_set_cursor(0, { row + 1, target_pos })
     end
 end
 

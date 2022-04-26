@@ -407,17 +407,9 @@ M.autopairs_map = function(bufnr, char)
     local rules = M.get_buf_rules(bufnr)
     for _, rule in pairs(rules) do
         if rule.start_pair then
-            if rule.is_regex and rule.key_map and rule.key_map ~= '' then
+            if rule.key_map and rule.key_map:match('<.*>') then
                 new_text = line:sub(1, col) .. line:sub(col + 1, #line)
                 add_char = 0
-            elseif rule.key_map and rule.key_map:match('<.*>') then
-                -- if it is a special key like <c-a>
-                if utils.esc(rule.key_map) ~= char then
-                    new_text = ''
-                else
-                    new_text = line:sub(1, col) .. line:sub(col + 1, #line)
-                    add_char = 0
-                end
             else
                 new_text = line:sub(1, col) .. char .. line:sub(col + 1, #line)
                 add_char = rule.key_map and #rule.key_map or 1
