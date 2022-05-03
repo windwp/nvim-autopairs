@@ -24,6 +24,7 @@ set indentexpr=
 
 lua << EOF
 require("plenary/busted")
+require("nvim-treesitter").setup()
 vim.cmd[[luafile ./tests/test_utils.lua]]
 require("nvim-autopairs").setup()
 EOF
