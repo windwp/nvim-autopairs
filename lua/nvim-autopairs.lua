@@ -19,7 +19,7 @@ local default = {
     disable_filetype = { 'TelescopePrompt', 'spectre_panel' },
     disable_in_macro = false,
     disable_in_visualblock = false,
-    ignored_next_char = string.gsub([[ [%w%%%'%[%"%.] ]], '%s+', ''),
+    ignored_next_char = [=[[%w%%%'%[%"%.]]=],
     check_ts = false,
     enable_moveright = true,
     enable_afterquote = true,

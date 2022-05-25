@@ -6,7 +6,7 @@ local M = {}
 local default_config = {
     map = '<M-e>',
     chars = { '{', '[', '(', '"', "'" },
-    pattern = string.gsub([[ [%'%"%)%>%]%)%}%,] ]], '%s+', ''),
+    pattern = [=[[%'%"%)%>%]%)%}%,]]=],
     end_key = '$',
     keys = 'qwertyuiopzxcvbnmasdfghjkl',
     highlight = 'Search',
