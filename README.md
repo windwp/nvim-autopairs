@@ -4,9 +4,39 @@ A super powerful autopair plugin for Neovim that supports multiple characters.
 
 Requires neovim 0.5+
 
-### Setup
-``` lua
-require('nvim-autopairs').setup{}
+## Installation
+
+Install the plugin with your preferred package manager:
+
+### [vim-plug](https://github.com/junegunn/vim-plug)
+
+```vim
+" Vim Script
+Plug 'windwp/nvim-autopairs'
+
+lua << EOF
+require("nvim-autopairs").setup {
+    -- your configuration comes here
+	 -- or leave it empty to use the default settings
+	 -- refer to the configuration sections below
+}
+EOF
+```
+
+### [packer](https://github.com/wbthomason/packer.nvim)
+
+```lua
+-- Lua
+use {
+	"windwp/nvim-autopairs",
+		config = function()
+			require("nvim-autopairs").setup {
+				-- your configuration comes here
+				-- or leave it empty to use the default settings
+				-- refer to the configuration sections below
+					}
+	end
+}
 ```
 
 ## Default values
