@@ -12,7 +12,10 @@ Install the plugin with your preferred package manager:
 
 ```vim
 " Vim Script
+call plug#begin()
+" other plugins
 Plug 'windwp/nvim-autopairs'
+call plug#end()
 
 lua << EOF
 require("nvim-autopairs").setup {
