@@ -55,7 +55,7 @@ M.filetypes = {
     -- Alias to all filetypes
     ["*"] = {
         ["("] = {
-            kind = { cmp.lsp.CompletionItemKind.Function, cmp.lsp.CompletionItemKind.Method, cmp.lsp.CompletionItemKind.Variable },
+            kind = { cmp.lsp.CompletionItemKind.Function, cmp.lsp.CompletionItemKind.Method },
             handler = M.handler
         }
     }
@@ -72,23 +72,27 @@ M.on_confirm_done = function(opt)
         local filetype = vim.api.nvim_buf_get_option(bufnr, 'filetype')
         local item = entry:get_completion_item()
 
+        if not opt.filetypes["*"] and not opt.filetypes[filetype] then
+          return
+        end
+
         local filetype_opt = opt.filetypes[filetype] or opt.filetypes["*"]
 
         local rules = vim.tbl_filter(function(rule)
-            local char_opt = filetype_opt[rule.key_map]
+            local char_options = filetype_opt[rule.key_map]
 
-            if not char_opt or not char_opt.kind then
+            if not char_options or not char_options.kind then
                 return false
             end
 
-            local valid_rule = not vim.tbl_isempty(char_opt) and vim.tbl_contains(char_opt.kind, item.kind)
+            local is_valid_rule = not vim.tbl_isempty(char_options) and vim.tbl_contains(char_options.kind, item.kind)
 
             if rule.filetypes then
-                return vim.tbl_contains(rule.filetypes, filetype) and valid_rule
+                return vim.tbl_contains(rule.filetypes, filetype) and is_valid_rule
             elseif rule.not_filetypes then
-                return not vim.tbl_contains(rule.not_filetypes, filetype) and valid_rule
+                return not vim.tbl_contains(rule.not_filetypes, filetype) and is_valid_rule
             else
-                return valid_rule
+                return is_valid_rule
             end
         end, autopairs.get_buf_rules(bufnr))
 
