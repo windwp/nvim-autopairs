@@ -18,11 +18,7 @@ Plug 'windwp/nvim-autopairs'
 call plug#end()
 
 lua << EOF
-require("nvim-autopairs").setup {
-    -- your configuration comes here
-	 -- or leave it empty to use the default settings
-	 -- refer to the configuration sections below
-}
+require("nvim-autopairs").setup {}
 EOF
 ```
 
@@ -33,11 +29,7 @@ EOF
 use {
 	"windwp/nvim-autopairs",
 		config = function()
-			require("nvim-autopairs").setup {
-				-- your configuration comes here
-				-- or leave it empty to use the default settings
-				-- refer to the configuration sections below
-					}
+			require("nvim-autopairs").setup {}
 	end
 }
 ```
