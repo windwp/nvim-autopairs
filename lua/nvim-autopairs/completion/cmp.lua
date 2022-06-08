@@ -1,70 +1,50 @@
 local autopairs = require('nvim-autopairs')
-local utils = require('nvim-autopairs.utils')
+local handlers = require('nvim-autopairs.completion.handlers')
 local cmp = require('cmp')
 
+local Kind = cmp.lsp.CompletionItemKind
+
 local M = {}
-
----@param char string
----@param item table
----@param rules table
----@param bufnr number
-M.handler = function(char, item, rules, bufnr)
-    local line = utils.text_get_current_line(bufnr)
-    local _, col = utils.get_cursor()
-    local char_before, char_after = utils.text_cusor_line(line, col, 1, 1, false)
-
-    if char == '' or char_before == char or char_after == char
-        or (item.data and item.data.funcParensDisabled)
-        or (item.textEdit and item.textEdit.newText and item.textEdit.newText:match "[%(%[%$]")
-        or (item.insertText and item.insertText:match "[%(%[%$]")
-    then
-        return
-    end
-
-    local new_text = ''
-    local add_char = 1
-
-    for _, rule in pairs(rules) do
-        if rule.start_pair then
-            local prev_char, next_char = utils.text_cusor_line(
-                new_text,
-                col + add_char,
-                #rule.start_pair,
-                #rule.end_pair,
-                rule.is_regex
-            )
-            local cond_opt = {
-                ts_node = autopairs.state.ts_node,
-                text = new_text,
-                rule = rule,
-                bufnr = bufnr,
-                col = col + 1,
-                char = char,
-                line = line,
-                prev_char = prev_char,
-                next_char = next_char,
-            }
-            if rule.key_map and rule:can_pair(cond_opt) then
-                vim.api.nvim_feedkeys(rule.key_map, "i", true)
-            end
-        end
-    end
-end
 
 M.filetypes = {
     -- Alias to all filetypes
     ["*"] = {
         ["("] = {
-            kind = { cmp.lsp.CompletionItemKind.Function, cmp.lsp.CompletionItemKind.Method },
-            handler = M.handler
+            kind = { Kind.Function, Kind.Method },
+            handler = handlers["*"]
         }
-    }
+    },
+    clojure = {
+        ["("] = {
+            kind = { Kind.Function, Kind.Method },
+            handler = handlers.lisp
+        }
+    },
+    clojurescript = {
+        ["("] = {
+            kind = { Kind.Function, Kind.Method },
+            handler = handlers.lisp
+        }
+    },
+    fennel = {
+        ["("] = {
+            kind = { Kind.Function, Kind.Method },
+            handler = handlers.lisp
+        }
+    },
+    janet = {
+        ["("] = {
+            kind = { Kind.Function, Kind.Method },
+            handler = handlers.lisp
+        }
+    },
+    tex = false
 }
 
-M.on_confirm_done = function(opt)
-    opt = vim.tbl_deep_extend('force', {
+M.on_confirm_done = function(opts)
+    opts = vim.tbl_deep_extend('force', {
         filetypes = M.filetypes
-    }, opt or {})
+    }, opts or {})
 
     return function(evt)
         local entry = evt.entry
@@ -72,32 +52,26 @@ M.on_confirm_done = function(opt)
         local filetype = vim.api.nvim_buf_get_option(bufnr, 'filetype')
         local item = entry:get_completion_item()
 
-        if not opt.filetypes["*"] and not opt.filetypes[filetype] then
+        -- Without options and fallback
+        if not opts.filetypes[filetype] and not opts.filetypes["*"] then
           return
         end
 
-        local filetype_opt = opt.filetypes[filetype] or opt.filetypes["*"]
+        -- If filetype option is false
+        if opts.filetypes[filetype] == false then
+          return
+        end
+
+        local completion_options = opts.filetypes[filetype] or opts.filetypes["*"]
 
         local rules = vim.tbl_filter(function(rule)
-            local char_options = filetype_opt[rule.key_map]
-
-            if not char_options or not char_options.kind then
-                return false
-            end
-
-            local is_valid_rule = not vim.tbl_isempty(char_options) and vim.tbl_contains(char_options.kind, item.kind)
-
-            if rule.filetypes then
-                return vim.tbl_contains(rule.filetypes, filetype) and is_valid_rule
-            elseif rule.not_filetypes then
-                return not vim.tbl_contains(rule.not_filetypes, filetype) and is_valid_rule
-            else
-                return is_valid_rule
-            end
+            return completion_options[rule.key_map]
         end, autopairs.get_buf_rules(bufnr))
 
-        for key, value in pairs(filetype_opt) do
-            value.handler(key, item, rules, bufnr)
+        for char, value in pairs(completion_options) do
+            if vim.tbl_contains(value.kind, item.kind) then
+                value.handler(char, item, rules, bufnr)
+            end
         end
     end
 end

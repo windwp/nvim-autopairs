@@ -67,6 +67,8 @@ cmp.event:on(
 You can customize the kind of completion to add `(` or any character.
 
 ```lua
+local handlers = require('nvim-autopairs.completion.handlers')
+
 cmp.event:on(
   'confirm_done',
   cmp_autopairs.on_confirm_done({
@@ -78,27 +80,32 @@ cmp.event:on(
             cmp.lsp.CompletionItemKind.Function,
             cmp.lsp.CompletionItemKind.Method,
           },
-          handler = cmp_autopairs.handler
+          handler = handlers["*"]
         }
       },
       lua = {
         ["("] = {
-          kind = { cmp.lsp.CompletionItemKind.Function },
+          kind = {
+            cmp.lsp.CompletionItemKind.Function,
+            cmp.lsp.CompletionItemKind.Method
+          },
           ---@param char string
-          ---@param item entry completion item
+          ---@param item item completion
           ---@param rules Array<Rule>
           ---@param bufnr buffer number
           handler = function(char, item, rules, bufnr)
-            -- You handler function
+            -- You handler function. Inpect with print(vim.inspect{char, item, rules, bufnr})
           end
         }
       },
-      -- Disable for python filetype
-      python = false
+      -- Disable for tex
+      tex = false
     }
   })
 )
 ```
+
+Don't use `nil` to disable a filetype. If a filetype is `nil` then `*` is used as fallback.
 
 </details>
 <details>
