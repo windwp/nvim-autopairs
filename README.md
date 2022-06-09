@@ -11,11 +11,7 @@ Install the plugin with your preferred package manager:
 ### [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
-" Vim Script
-call plug#begin()
-" other plugins
 Plug 'windwp/nvim-autopairs'
-call plug#end()
 
 lua << EOF
 require("nvim-autopairs").setup {}
@@ -25,12 +21,9 @@ EOF
 ### [packer](https://github.com/wbthomason/packer.nvim)
 
 ```lua
--- Lua
 use {
 	"windwp/nvim-autopairs",
-		config = function()
-			require("nvim-autopairs").setup {}
-	end
+    config = function() require("nvim-autopairs").setup {} end
 }
 ```
 
