@@ -20,6 +20,7 @@ local default = {
     disable_in_macro = false,
     disable_in_visualblock = false,
     ignored_next_char = [=[[%w%%%'%[%"%.]]=],
+    break_undo = true,
     check_ts = false,
     enable_moveright = true,
     enable_afterquote = true,

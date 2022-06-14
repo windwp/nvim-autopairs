@@ -87,7 +87,6 @@ function Rule:use_key(key_map)
 end
 
 function Rule:use_undo(value)
-    if value ~= nil then value = true end
     self.is_undo = value
     return self
 end
