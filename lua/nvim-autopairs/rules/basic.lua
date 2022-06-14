@@ -11,7 +11,7 @@ local function setup(opt)
         if #opt.ignored_next_char > 1 then
             rule:with_pair(cond.not_after_regex(opt.ignored_next_char))
         end
-        rule:use_undo(true)
+        rule:use_undo(opt.break_undo)
         return rule
     end
 
