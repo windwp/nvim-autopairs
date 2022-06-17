@@ -57,20 +57,16 @@ M.on_confirm_done = function(opts)
           return
         end
 
-        -- If filetype option is false
         if opts.filetypes[filetype] == false then
           return
         end
 
+        -- If filetype is nil then use *
         local completion_options = opts.filetypes[filetype] or opts.filetypes["*"]
-
-        local rules = vim.tbl_filter(function(rule)
-            return completion_options[rule.key_map]
-        end, autopairs.get_buf_rules(bufnr))
 
         for char, value in pairs(completion_options) do
             if vim.tbl_contains(value.kind, item.kind) then
-                value.handler(char, item, rules, bufnr)
+                value.handler(char, item, bufnr)
             end
         end
     end

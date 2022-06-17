@@ -91,10 +91,9 @@ cmp.event:on(
           },
           ---@param char string
           ---@param item item completion
-          ---@param rules Array<Rule>
           ---@param bufnr buffer number
-          handler = function(char, item, rules, bufnr)
-            -- Your handler function. Inpect with print(vim.inspect{char, item, rules, bufnr})
+          handler = function(char, item, bufnr)
+            -- Your handler function. Inpect with print(vim.inspect{char, item, bufnr})
           end
         }
       },
