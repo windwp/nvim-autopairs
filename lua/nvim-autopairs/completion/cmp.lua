@@ -1,60 +1,75 @@
-local utils = require('nvim-autopairs.utils')
-
+local autopairs = require('nvim-autopairs')
+local handlers = require('nvim-autopairs.completion.handlers')
 local cmp = require('cmp')
+
+local Kind = cmp.lsp.CompletionItemKind
 
 local M = {}
 
-M.lisp = { "clojure", "clojurescript", "fennel", "janet" }
+M.filetypes = {
+    -- Alias to all filetypes
+    ["*"] = {
+        ["("] = {
+            kind = { Kind.Function, Kind.Method },
+            handler = handlers["*"]
+        }
+    },
+    clojure = {
+        ["("] = {
+            kind = { Kind.Function, Kind.Method },
+            handler = handlers.lisp
+        }
+    },
+    clojurescript = {
+        ["("] = {
+            kind = { Kind.Function, Kind.Method },
+            handler = handlers.lisp
+        }
+    },
+    fennel = {
+        ["("] = {
+            kind = { Kind.Function, Kind.Method },
+            handler = handlers.lisp
+        }
+    },
+    janet = {
+        ["("] = {
+            kind = { Kind.Function, Kind.Method },
+            handler = handlers.lisp
+        }
+    },
+    tex = false
+}
 
-local ignore_append = function(char, kinds, next_char, prev_char, item)
-    if char == '' or prev_char == char or next_char == char
-        or (item.data and item.data.funcParensDisabled)
-        or (not utils.is_in_table(kinds, item.kind))
-        or (item.textEdit and item.textEdit.newText and item.textEdit.newText:match "[%(%[%$]")
-        or (item.insertText and item.insertText:match "[%(%[%$]")
-    then
-        return true
-    end
-end
-
-M.on_confirm_done = function(opt)
-    opt = vim.tbl_deep_extend('force', {
-        map_char = { tex = '' },
-        kinds = {
-            cmp.lsp.CompletionItemKind.Method,
-            cmp.lsp.CompletionItemKind.Function,
-        },
-    }, opt or {})
+M.on_confirm_done = function(opts)
+    opts = vim.tbl_deep_extend('force', {
+        filetypes = M.filetypes
+    }, opts or {})
 
     return function(evt)
         local entry = evt.entry
-        local line = utils.text_get_current_line(0)
-        local _, col = utils.get_cursor()
-        local prev_char, next_char = utils.text_cusor_line(line, col, 1, 1, false)
+        local bufnr = vim.api.nvim_get_current_buf()
+        local filetype = vim.api.nvim_buf_get_option(bufnr, 'filetype')
         local item = entry:get_completion_item()
 
-        local char = opt.map_char[vim.bo.filetype] or '('
-        if char == '' then
-            return
+        -- Without options and fallback
+        if not opts.filetypes[filetype] and not opts.filetypes["*"] then
+          return
         end
 
-        if ignore_append(char, opt.kinds, next_char, prev_char, item) or evt.commit_character == char  then
-            return
+        if opts.filetypes[filetype] == false then
+          return
         end
 
-        if utils.is_in_table(M.lisp, vim.bo.filetype) then
-            local length = #item.label
-            if utils.text_sub_char(line, col - length, 1) == "(" then
-              utils.feed("<Space>")
-              return
+        -- If filetype is nil then use *
+        local completion_options = opts.filetypes[filetype] or opts.filetypes["*"]
+
+        for char, value in pairs(completion_options) do
+            if vim.tbl_contains(value.kind, item.kind) then
+                value.handler(char, item, bufnr)
             end
-            utils.feed(utils.key.left, length)
-            utils.feed("(")
-            utils.feed(utils.key.right, length)
-            utils.feed("<Space>")
-        else
-            vim.api.nvim_feedkeys(char, 'i', true)
         end
     end
 end
+
 return M

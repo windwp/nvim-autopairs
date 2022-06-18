@@ -77,13 +77,54 @@ Check readme.md on nvim-cmp repo.
 -- If you want insert `(` after select function or method item
 local cmp_autopairs = require('nvim-autopairs.completion.cmp')
 local cmp = require('cmp')
-cmp.event:on( 'confirm_done', cmp_autopairs.on_confirm_done({  map_char = { tex = '' } }))
-
-
--- add a lisp filetype (wrap my-function), FYI: Hardcoded = { "clojure", "clojurescript", "fennel", "janet" }
-cmp_autopairs.lisp[#cmp_autopairs.lisp+1] = "racket"
-
+cmp.event:on(
+  'confirm_done',
+  cmp_autopairs.on_confirm_done()
+)
 ```
+
+You can customize the kind of completion to add `(` or any character.
+
+```lua
+local handlers = require('nvim-autopairs.completion.handlers')
+
+cmp.event:on(
+  'confirm_done',
+  cmp_autopairs.on_confirm_done({
+    filetypes = {
+      -- "*" is a alias to all filetypes
+      ["*"] = {
+        ["("] = {
+          kind = {
+            cmp.lsp.CompletionItemKind.Function,
+            cmp.lsp.CompletionItemKind.Method,
+          },
+          handler = handlers["*"]
+        }
+      },
+      lua = {
+        ["("] = {
+          kind = {
+            cmp.lsp.CompletionItemKind.Function,
+            cmp.lsp.CompletionItemKind.Method
+          },
+          ---@param char string
+          ---@param item item completion
+          ---@param bufnr buffer number
+          handler = function(char, item, bufnr)
+            -- Your handler function. Inpect with print(vim.inspect{char, item, bufnr})
+          end
+        }
+      },
+      -- Disable for tex
+      tex = false
+    }
+  })
+)
+```
+
+Don't use `nil` to disable a filetype. If a filetype is `nil` then `*` is used as fallback.
+
 </details>
 <details>
 <summary><b>coq_nvim</b></summary>
