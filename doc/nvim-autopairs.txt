@@ -4,6 +4,7 @@
 Table of Contents                           *nvim-autopairs-table-of-contents*
 
   - nvim-autopairs                             |nvim-autopairs-nvim-autopairs|
+  - Installation                                 |nvim-autopairs-installation|
   - Default values                             |nvim-autopairs-default-values|
 
 NVIM-AUTOPAIRS                                 *nvim-autopairs-nvim-autopairs*
@@ -12,10 +13,28 @@ A super powerful autopair plugin for Neovim that supports multiple characters.
 
 Requires neovim 0.5+
 
-SETUP ~
+INSTALLATION                                     *nvim-autopairs-installation*
+
+Install the plugin with your preferred package manager:
+
+VIM-PLUG <HTTPS://GITHUB.COM/JUNEGUNN/VIM-PLUG> ~
 
 >
-    require('nvim-autopairs').setup{}
+    Plug 'windwp/nvim-autopairs'
+    
+    lua << EOF
+    require("nvim-autopairs").setup {}
+    EOF
+<
+
+
+PACKER <HTTPS://GITHUB.COM/WBTHOMASON/PACKER.NVIM> ~
+
+>
+    use {
+        "windwp/nvim-autopairs",
+        config = function() require("nvim-autopairs").setup {} end
+    }
 <
 
 
@@ -73,13 +92,58 @@ Check readme.md on nvim-cmp repo.
     -- If you want insert `(` after select function or method item
     local cmp_autopairs = require('nvim-autopairs.completion.cmp')
     local cmp = require('cmp')
-    cmp.event:on( 'confirm_done', cmp_autopairs.on_confirm_done({  map_char = { tex = '' } }))
-    
-    
-    -- add a lisp filetype (wrap my-function), FYI: Hardcoded = { "clojure", "clojurescript", "fennel", "janet" }
-    cmp_autopairs.lisp[#cmp_autopairs.lisp+1] = "racket"
+    cmp.event:on(
+      'confirm_done',
+      cmp_autopairs.on_confirm_done()
+    )
 <
 
+
+Mapping `<CR>`                         You can customize the kind of completion
+                                       to add `(` or any character.
+
+
+>
+    local handlers = require('nvim-autopairs.completion.handlers')
+    
+    cmp.event:on(
+      'confirm_done',
+      cmp_autopairs.on_confirm_done({
+        filetypes = {
+          -- "*" is a alias to all filetypes
+          ["*"] = {
+            ["("] = {
+              kind = {
+                cmp.lsp.CompletionItemKind.Function,
+                cmp.lsp.CompletionItemKind.Method,
+              },
+              handler = handlers["*"]
+            }
+          },
+          lua = {
+            ["("] = {
+              kind = {
+                cmp.lsp.CompletionItemKind.Function,
+                cmp.lsp.CompletionItemKind.Method
+              },
+              ---@param char string
+              ---@param item item completion
+              ---@param bufnr buffer number
+              handler = function(char, item, bufnr)
+                -- Your handler function. Inpect with print(vim.inspect{char, item, bufnr})
+              end
+            }
+          },
+          -- Disable for tex
+          tex = false
+        }
+      })
+    )
+<
+
+
+Don’t use `nil` to disable a filetype. If a filetype is `nil` then `*` is
+used as fallback.
 
 coq_nvim ~
 
@@ -132,9 +196,8 @@ without completion plugin ~
 <
 
 
-Mapping `<CR>`                         another completion plugin
-                                       <https://github.com/windwp/nvim-autopairs/wiki/Completion-plugin>
-
+another completion plugin
+<https://github.com/windwp/nvim-autopairs/wiki/Completion-plugin>
 
 If you have a problem with indent after you press `<CR>` please check the
 settings of treesitter indent or install a plugin that has indent support for
@@ -235,6 +298,7 @@ You can use treesitter to check for a pair.
 
 >
     local npairs = require("nvim-autopairs")
+    local Rule = require('nvim-autopairs.rule')
     
     npairs.setup({
         check_ts = true,
