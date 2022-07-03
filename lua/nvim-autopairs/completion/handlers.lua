@@ -6,7 +6,7 @@ local M = {}
 ---@param char string
 ---@param item table
 ---@param bufnr number
-M["*"] = function(char, item, bufnr)
+M["*"] = function(char, item, bufnr, commit_character)
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
     local char_before, char_after = utils.text_cusor_line(line, col, 1, 1, false)
@@ -15,6 +15,7 @@ M["*"] = function(char, item, bufnr)
         or (item.data and item.data.funcParensDisabled)
         or (item.textEdit and item.textEdit.newText and item.textEdit.newText:match "[%(%[%$]")
         or (item.insertText and item.insertText:match "[%(%[%$]")
+        or char == commit_character
     then
         return
     end
