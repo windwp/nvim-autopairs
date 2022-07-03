@@ -48,6 +48,7 @@ M.on_confirm_done = function(opts)
 
     return function(evt)
         local entry = evt.entry
+        local commit_character = evt.commit_character
         local bufnr = vim.api.nvim_get_current_buf()
         local filetype = vim.api.nvim_buf_get_option(bufnr, 'filetype')
         local item = entry:get_completion_item()
@@ -66,7 +67,7 @@ M.on_confirm_done = function(opts)
 
         for char, value in pairs(completion_options) do
             if vim.tbl_contains(value.kind, item.kind) then
-                value.handler(char, item, bufnr)
+                value.handler(char, item, bufnr, commit_character)
             end
         end
     end
