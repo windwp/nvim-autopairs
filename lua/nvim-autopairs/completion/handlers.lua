@@ -24,7 +24,7 @@ M["*"] = function(char, item, bufnr, commit_character)
 end
 
 ---Handler with "clojure", "clojurescript", "fennel", "janet
-M.lisp = function (char, item, bufnr)
+M.lisp = function (char, item, bufnr, commit_character)
   local line = utils.text_get_current_line(bufnr)
   local _, col = utils.get_cursor()
   local char_before, char_after = utils.text_cusor_line(line, col, 1, 1, false)
@@ -33,7 +33,9 @@ M.lisp = function (char, item, bufnr)
   if char == '' or char_before == char or char_after == char
     or (item.data and item.data.funcParensDisabled)
     or (item.textEdit and item.textEdit.newText and item.textEdit.newText:match "[%(%[%$]")
-    or (item.insertText and item.insertText:match "[%(%[%$]") then
+    or (item.insertText and item.insertText:match "[%(%[%$]")
+    or char == commit_character
+  then
     return
   end
 
