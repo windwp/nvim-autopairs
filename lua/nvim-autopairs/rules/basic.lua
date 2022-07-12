@@ -37,7 +37,7 @@ local function setup(opt)
             :only_cr()
             :use_regex(true),
         Rule('"""', '"""', { 'python', 'elixir', 'julia', 'kotlin' }),
-        Rule("'''", "'''", { 'python' })
+        Rule("'''", "'''", { 'python' }),
         basic("'", "'", '-rust')
             :with_pair(cond.not_before_regex("%w")),
         basic("'", "'", 'rust')
