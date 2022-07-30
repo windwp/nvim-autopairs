@@ -101,7 +101,7 @@ M.remove_rule = function(pair)
                 vim.api.nvim_buf_del_keymap(0, 'i', r.key_map)
             end
         end
-        M.set_buf_rule(state_tbl)
+        M.set_buf_rule(state_tbl, 0)
     end
     M.force_attach()
 end
@@ -146,8 +146,7 @@ local function is_disable()
         return true
     end
 
-    if
-        M.config.disable_in_macro
+    if M.config.disable_in_macro
         and (vim.fn.reg_recording() ~= '' or vim.fn.reg_executing() ~= '')
     then
         return true
@@ -161,7 +160,7 @@ local function is_disable()
         -- should have a way to remove the mapping when vim.bo.filetype = ''
         -- now we only remove a rule
         -- the event FileType happen after BufEnter
-        M.set_buf_rule({})
+        M.set_buf_rule({}, 0)
         return true
     end
     return false
@@ -190,8 +189,7 @@ M.on_attach = function(bufnr)
 
     local rules = {}
     for _, rule in pairs(M.config.rules) do
-        if
-            utils.check_filetype(rule.filetypes, vim.bo.filetype)
+        if utils.check_filetype(rule.filetypes, vim.bo.filetype)
             and utils.check_not_filetype(rule.not_filetypes, vim.bo.filetype)
         then
             table.insert(rules, rule)
@@ -327,7 +325,7 @@ M.on_attach = function(bufnr)
             "i",
             utils.key.c_h,
             string.format("v:lua.MPairs.autopairs_c_h(%d)", bufnr),
-            {expr = true, noremap = true}
+            { expr = true, noremap = true }
         )
     end
 
@@ -360,8 +358,7 @@ local autopairs_delete = function(bufnr, key)
                 #rule.end_pair,
                 rule.is_regex
             )
-            if
-                utils.compare(rule.start_pair, prev_char, rule.is_regex)
+            if utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and utils.compare(rule.end_pair, next_char, rule.is_regex)
                 and rule:can_del({
                     ts_node = M.state.ts_node,
@@ -438,8 +435,7 @@ M.autopairs_map = function(bufnr, char)
             -- log.debug("start_pair" .. rule.start_pair)
             -- log.debug('prev_char' .. prev_char)
             -- log.debug('next_char' .. next_char)
-            if
-                utils.compare(rule.end_pair, next_char, rule.is_regex)
+            if utils.compare(rule.end_pair, next_char, rule.is_regex)
                 and rule:can_move(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
@@ -447,8 +443,7 @@ M.autopairs_map = function(bufnr, char)
                 return utils.esc(utils.repeat_key(utils.key.join_right, end_pair_length))
             end
 
-            if
-                utils.compare(rule.start_pair, prev_char, rule.is_regex)
+            if utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_pair(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
@@ -461,9 +456,9 @@ M.autopairs_map = function(bufnr, char)
                 if end_pair:match('<.*>') then
                     end_pair = utils.esc(end_pair)
                 end
-                local result= char .. end_pair .. utils.esc(move_text)
+                local result = char .. end_pair .. utils.esc(move_text)
                 if rule.is_undo then
-                    result = utils.esc(utils.key.undo_sequence) .. result..utils.esc(utils.key.undo_sequence)
+                    result = utils.esc(utils.key.undo_sequence) .. result .. utils.esc(utils.key.undo_sequence)
                 end
                 log.debug("key_map :" .. result)
                 return result
@@ -512,8 +507,7 @@ M.autopairs_insert = function(bufnr, char)
                 return false
             end
 
-            if
-                utils.compare(rule.start_pair, prev_char, rule.is_regex)
+            if utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_pair(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
@@ -564,28 +558,26 @@ M.autopairs_cr = function(bufnr)
             -- log.debug('prev_char' .. rule.start_pair)
             -- log.debug('prev_char' .. prev_char)
             -- log.debug('next_char' .. next_char)
-            if
-                rule.is_endwise
+            if rule.is_endwise
                 and utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_cr(cond_opt)
             then
                 return utils.esc(
                     end_pair
-                        .. utils.repeat_key(utils.key.join_left, end_pair_length)
-                        -- FIXME do i need to re indent twice #118
-                        .. '<cr><esc>====O'
+                    .. utils.repeat_key(utils.key.join_left, end_pair_length)
+                    -- FIXME do i need to re indent twice #118
+                    .. '<cr><esc>====O'
                 )
             end
 
             cond_opt.check_endwise_ts = false
 
-            if
-                utils.compare(rule.start_pair, prev_char, rule.is_regex)
+            if utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and utils.compare(rule.end_pair, next_char, rule.is_regex)
                 and rule:can_cr(cond_opt)
             then
                 log.debug('do_cr')
-                return utils.esc(rule:get_map_cr({rule = rule, line = line, color = col, bufnr = bufnr}))
+                return utils.esc(rule:get_map_cr({ rule = rule, line = line, color = col, bufnr = bufnr }))
             end
         end
     end
@@ -598,8 +590,7 @@ M.autopairs_afterquote = function(line, key_char)
         line = line or utils.text_get_current_line(0)
         local _, col = utils.get_cursor()
         local prev_char, next_char = utils.text_cusor_line(line, col + 1, 1, 1, false)
-        if
-            utils.is_bracket(prev_char)
+        if utils.is_bracket(prev_char)
             and utils.is_quote(next_char)
             and not utils.is_in_quotes(line, col, next_char)
         then
@@ -649,7 +640,7 @@ end
 
 M.map_cr = function()
     M.completion_confirm = function()
-        if vim.fn.pumvisible() ~= 0  then
+        if vim.fn.pumvisible() ~= 0 then
             return M.esc("<cr>")
         else
             return M.autopairs_cr()

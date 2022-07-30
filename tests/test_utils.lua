@@ -27,6 +27,7 @@ utils.feed = function(text, num)
         result = result .. text
     end
     api.nvim_feedkeys(
+    ---@diagnostic disable-next-line: param-type-mismatch
         api.nvim_replace_termcodes(result, true, false, true),
         'x',
         true
@@ -59,8 +60,7 @@ local compare_text = function(linenr, text_after, name, cursor_add, end_cursor)
     )
     for i = 1, #text_after, 1 do
         local t = string.gsub(text_after[i], '%|', '')
-        if
-            t
+        if t
             and new_text[i]
             and t:gsub('%s+$', '') ~= new_text[i]:gsub('%s+$', '')
         then
@@ -92,7 +92,7 @@ end
 
 _G.Test_withfile = function(test_data, cb)
     for _, value in pairs(test_data) do
-        it('test ' .. value.name, function(done)
+        it('test ' .. value.name, function(_)
             local text_before = {}
             value.linenr = value.linenr or 1
             local pos_before = {
@@ -103,11 +103,11 @@ _G.Test_withfile = function(test_data, cb)
                 value.before = { value.before }
             end
             for index, text in pairs(value.before) do
-                local txt = string.gsub(text, '%|', '')
+                local txt = string.gsub(tostring(text), '%|', '')
                 table.insert(text_before, txt)
-                if string.match(text, '%|') then
-                    if string.find(text, '%|') then
-                        pos_before.colnr = string.find(text, '%|')
+                if string.match(tostring(text), '%|') then
+                    if string.find(tostring(text), '%|') then
+                        pos_before.colnr = string.find(tostring(text), '%|')
                         pos_before.linenr = value.linenr + index - 1
                     end
                 end
@@ -120,6 +120,7 @@ _G.Test_withfile = function(test_data, cb)
             if cb.before_each then
                 cb.before_each(value)
             end
+            ---@diagnostic disable-next-line: missing-parameter
             if vim.fn.filereadable(vim.fn.expand(value.filepath)) == 1 then
                 vim.cmd(':e ' .. value.filepath)
                 if value.filetype then

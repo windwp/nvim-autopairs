@@ -19,7 +19,7 @@ local config = {}
 
 M.setup = function(cfg)
     if config.chars == nil then
-        config = vim.tbl_extend('force', default_config, cfg or {})
+        config = vim.tbl_extend('force', default_config, cfg or {}) or {}
         npairs.config.fast_wrap = config
     end
 end
@@ -60,16 +60,14 @@ M.show = function(line)
         for i = col + 2, #line, 1 do
             local char = line:sub(i, i)
             local char2 = line:sub(i - 1, i)
-            if
-                string.match(char, config.pattern)
+            if string.match(char, config.pattern)
                 or (char == ' ' and string.match(char2, '%w'))
             then
                 local key = config.keys:sub(index, index)
                 index = index + 1
-                if
-                    utils.is_quote(char)
+                if utils.is_quote(char)
                     or (
-                        utils.is_close_bracket(char)
+                    utils.is_close_bracket(char)
                         and utils.is_in_quotes(line, col, prev_char)
                     )
                 then
@@ -142,7 +140,8 @@ M.highlight_wrap = function(tbl_pos, row, col, end_col)
             M.ns_fast_wrap,
             config.highlight_grey,
             { row, col },
-            { row, end_col }
+            { row, end_col },
+            {}
         )
     end
     for _, pos in ipairs(tbl_pos) do

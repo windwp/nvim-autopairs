@@ -1,5 +1,4 @@
 local Cond = require('nvim-autopairs.conds')
-local log = require('nvim-autopairs._log')
 
 --- @class Rule
 --- @field start_pair string
@@ -8,8 +7,8 @@ local log = require('nvim-autopairs._log')
 --- @field map_cr_func function      dynamic change mapping_cr
 --- @field end_pair_length number    change end_pair length for key map like <left>
 --- @field key_map string|nil        equal nil mean it will skip on autopairs map
---- @field filetypes table
---- @field not_filetypes table
+--- @field filetypes table|nil
+--- @field not_filetypes table|nil
 --- @field is_regex boolean          use regex to compare
 --- @field is_multibyte boolean
 --- @field is_endwise boolean        only use on end_wise
@@ -33,21 +32,21 @@ function Rule.new(...)
         end
     end
     opt = vim.tbl_extend('force', {
-        key_map       = "",
-        start_pair    = nil,
-        end_pair      = nil,
-        end_pair_func = false,
-        filetypes     = nil,
-        not_filetypes = nil,
-        move_cond     = nil,
-        del_cond      = {},
-        cr_cond       = {},
-        pair_cond     = {},
-        is_endwise    = false,
-        is_regex      = false,
-        is_multibyte  = false,
+        key_map         = "",
+        start_pair      = nil,
+        end_pair        = nil,
+        end_pair_func   = false,
+        filetypes       = nil,
+        not_filetypes   = nil,
+        move_cond       = nil,
+        del_cond        = {},
+        cr_cond         = {},
+        pair_cond       = {},
+        is_endwise      = false,
+        is_regex        = false,
+        is_multibyte    = false,
         end_pair_length = nil,
-    }, opt)
+    }, opt) or {}
 
     ---@param rule Rule
     local function constructor(rule)
@@ -71,6 +70,7 @@ function Rule.new(...)
         end
         return rule
     end
+
     local r = setmetatable(opt, { __index = Rule })
     return constructor(r)
 end
@@ -113,7 +113,6 @@ function Rule:get_map_cr(opts)
     return '<c-g>u<cr><c-c>O'
 end
 
-
 function Rule:replace_map_cr(value)
     self.map_cr_func = value
     return self
@@ -147,29 +146,29 @@ function Rule:set_end_pair_length(length)
 end
 
 function Rule:with_move(cond)
-    if self.move_cond == nil then self.move_cond = {}end
+    if self.move_cond == nil then self.move_cond = {} end
     table.insert(self.move_cond, cond)
     return self
 end
 
 function Rule:with_del(cond)
-    if self.del_cond == nil then self.del_cond = {}end
+    if self.del_cond == nil then self.del_cond = {} end
     table.insert(self.del_cond, cond)
     return self
 end
 
 function Rule:with_cr(cond)
-    if self.cr_cond == nil then self.cr_cond = {}end
+    if self.cr_cond == nil then self.cr_cond = {} end
     table.insert(self.cr_cond, cond)
     return self
 end
 
 ---add condition to rule
 ---@param cond any
----@param pos number = 1. It have higher priority to another condition
+---@param pos number|nil = 1. It have higher priority to another condition
 ---@return Rule
 function Rule:with_pair(cond, pos)
-    if self.pair_cond == nil then self.pair_cond = {}end
+    if self.pair_cond == nil then self.pair_cond = {} end
     if pos then
         table.insert(self.pair_cond, pos, cond)
     else
@@ -177,7 +176,6 @@ function Rule:with_pair(cond, pos)
     end
     return self
 end
-
 
 function Rule:only_cr(cond)
     self.key_map = nil
