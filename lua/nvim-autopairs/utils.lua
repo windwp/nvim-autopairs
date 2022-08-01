@@ -11,7 +11,8 @@ M.key = {
     join_left = "<c-g>U<left>",
     join_right = "<c-g>U<right>",
     undo_sequence = "<c-g>u",
-    noundo_sequence = "<c-g>U"
+    noundo_sequence = "<c-g>U",
+    abbr = "<c-]>"
 }
 
 M.set_vchar = function(text)

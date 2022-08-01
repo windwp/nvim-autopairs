@@ -26,6 +26,7 @@ local default = {
     enable_afterquote = true,
     enable_check_bracket_line = true,
     enable_bracket_in_quote = true,
+    enable_abbr = false,
     ts_config = {
         lua = { 'string', 'source' },
         javascript = { 'string', 'template_string' },
@@ -459,6 +460,9 @@ M.autopairs_map = function(bufnr, char)
                 local result = char .. end_pair .. utils.esc(move_text)
                 if rule.is_undo then
                     result = utils.esc(utils.key.undo_sequence) .. result .. utils.esc(utils.key.undo_sequence)
+                end
+                if M.config.enable_abbr then
+                    result = utils.esc(utils.key.abbr) .. result
                 end
                 log.debug("key_map :" .. result)
                 return result

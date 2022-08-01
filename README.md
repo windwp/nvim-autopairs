@@ -38,6 +38,7 @@ local enable_moveright = true
 local enable_afterquote = true  -- add bracket pairs after quote
 local enable_check_bracket_line = true  --- check bracket in same line
 local enable_bracket_in_quote = true --
+local enable_abbr = false -- trigger abbreviation
 local break_undo = true -- switch for basic rule break undo sequence
 local check_ts = false
 local map_cr = true
