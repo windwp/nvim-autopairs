@@ -363,10 +363,12 @@ local autopairs_delete = function(bufnr, key)
                 and utils.compare(rule.end_pair, next_char, rule.is_regex)
                 and rule:can_del({
                     ts_node = M.state.ts_node,
+                    rule = rule,
                     bufnr = bufnr,
                     prev_char = prev_char,
                     next_char = next_char,
                     line = line,
+                    col = col,
                 })
             then
                 local input = ''
