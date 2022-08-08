@@ -238,6 +238,43 @@ local data = {
         }
     },
     {
+        name = "move ) inside nested function call" ,
+        filetype="javascript",
+        key    = [[)]],
+        before = {
+          "fn(fn(|))",
+        },
+        after  = {
+          "fn(fn()|)",
+        }
+    },
+    {
+        name = "move } inside singleline function's params" ,
+        filetype="javascript",
+        key    = [[}]],
+        before = {
+          "({|}) => {}",
+        },
+        after  = {
+          "({}|) => {}",
+        }
+    },
+    {
+        name = "move } inside multiline function's params" ,
+        filetype="javascript",
+        key    = [[}]],
+        before = {
+          "({|}) => {",
+          "",
+          "}",
+        },
+        after  = {
+          "({}|) => {",
+          "",
+          "}",
+        }
+    },
+    {
         name = "breakline on markdown " ,
         filetype="markdown",
         key    = [[<cr>]],

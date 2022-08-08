@@ -156,6 +156,27 @@ local function count_bracket_char(line, prev_char, next_char)
     return count_prev_char, count_next_char
 end
 
+-- Checks if bracket chars are balanced around specific postion.
+---@param line string
+---@param open_char string
+---@param close_char string
+---@param col integer position
+local function is_brackets_balanced_around_position(line, open_char, close_char, col)
+    local balance = 0
+    for i = 1, #line, 1 do
+        local c = line:sub(i, i)
+        if c == open_char then
+            balance = balance + 1
+        elseif balance > 0 and c == close_char then
+            balance = balance - 1
+            if col <= i and balance == 0 then
+              break
+            end
+        end
+    end
+    return balance == 0
+end
+
 cond.is_bracket_line = function()
     return function(opts)
         log.debug('is_bracket_line')
@@ -181,15 +202,15 @@ cond.is_bracket_line_move = function()
             utils.is_close_bracket(opts.char)
             and opts.char == opts.rule.end_pair
         then
+            -- ((   many char |)) => move
             -- ((   many char |) => not move
-            local count_prev_char, count_next_char = count_bracket_char(
+            local is_balanced = is_brackets_balanced_around_position(
                 opts.line,
                 opts.rule.start_pair,
-                opts.char
+                opts.char,
+                opts.col
             )
-            if count_prev_char ~= 0 and count_prev_char > count_next_char then
-                return false
-            end
+            return is_balanced
         end
     end
 end
