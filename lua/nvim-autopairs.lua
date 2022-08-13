@@ -53,18 +53,19 @@ M.setup = function(opt)
     end
 
     M.force_attach()
-
-    api.nvim_exec(
-        [[
-    augroup autopairs_buf
-    autocmd!
-    autocmd BufEnter,BufWinEnter * lua require("nvim-autopairs").on_attach()
-    autocmd BufDelete * lua require("nvim-autopairs").set_buf_rule(nil,tonumber(vim.fn.expand("<abuf>")))
-    autocmd FileType * lua require("nvim-autopairs").force_attach()
-    augroup end
-        ]],
-        false
-    )
+    local group = vim.api.nvim_create_augroup('autopairs_buf', { clear = true })
+    api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
+        group = group, pattern = '*',
+        command = 'lua require("nvim-autopairs").on_attach()'
+    })
+    api.nvim_create_autocmd('BufDelete', {
+        group = group, pattern = '*',
+        command = 'lua require("nvim-autopairs").set_buf_rule(nil,tonumber(vim.fn.expand("<abuf>")))'
+    })
+    api.nvim_create_autocmd('FileType', {
+        group = group, pattern = '*',
+        command = 'lua require("nvim-autopairs").force_attach()'
+    })
 end
 
 M.add_rule = function(rule)
@@ -179,7 +180,7 @@ M.get_buf_rules = function(bufnr)
     return M.state.rules[bufnr or vim.api.nvim_get_current_buf()] or {}
 end
 
----@param rules table list or rule
+---@param rules nil|table list or rule
 ---@param bufnr number buffer number
 M.set_buf_rule = function(rules, bufnr)
     if bufnr == 0 or bufnr == nil then
@@ -237,12 +238,12 @@ M.on_attach = function(bufnr)
     local enable_insert_auto = false
     local autopairs_keymaps = {}
     local expr_map = function(key)
-        api.nvim_buf_set_keymap(bufnr, 'i', key, '',{
-                expr = true,
-                noremap = true,
-                desc = "autopairs map key",
-                callback = function() return M.autopairs_map(bufnr, key) end,
-            }
+        api.nvim_buf_set_keymap(bufnr, 'i', key, '', {
+            expr = true,
+            noremap = true,
+            desc = "autopairs map key",
+            callback = function() return M.autopairs_map(bufnr, key) end,
+        }
         )
         table.insert(autopairs_keymaps, key)
     end
@@ -271,19 +272,13 @@ M.on_attach = function(bufnr)
     if enable_insert_auto then
         -- capture all key use it to trigger regex pairs
         -- it can make an issue with paste from register
-        api.nvim_exec(
-            string.format(
-                [[
-            augroup autopairs_insert_%d
-                autocmd!
-                autocmd InsertCharPre <buffer=%d> call luaeval("require('nvim-autopairs').autopairs_insert(%d, _A)", v:char)
-            augroup end ]],
-                bufnr,
-                bufnr,
-                bufnr
-            ),
-            false
-        )
+        api.nvim_create_autocmd('InsertCharPre', {
+            group = api.nvim_create_augroup(string.format("autopairs_insert_%d", bufnr), { clear = true }),
+            buffer = bufnr,
+            callback = function()
+                M.autopairs_insert(bufnr, vim.v.char)
+            end
+        })
     end
 
     if M.config.fast_wrap and M.config.fast_wrap.map then

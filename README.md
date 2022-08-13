@@ -2,7 +2,7 @@
 
 A super powerful autopair plugin for Neovim that supports multiple characters.
 
-Requires neovim 0.5+
+Requires neovim 0.7
 
 ## Installation
 
