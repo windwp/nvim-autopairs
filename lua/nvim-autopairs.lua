@@ -133,6 +133,15 @@ M.force_attach = function(bufnr)
     M.on_attach(bufnr)
 end
 
+local del_keymaps = function()
+    local status, autopairs_keymaps = pcall(api.nvim_buf_get_var, 0, 'autopairs_keymaps')
+    if status and autopairs_keymaps and #autopairs_keymaps > 0 then
+        for _, key in pairs(autopairs_keymaps) do
+            pcall(api.nvim_buf_del_keymap, 0, 'i', key)
+        end
+    end
+end
+
 local function is_disable()
     if M.state.disabled then
         return true
@@ -158,9 +167,7 @@ local function is_disable()
     end
 
     if utils.check_filetype(M.config.disable_filetype, vim.bo.filetype) then
-        -- should have a way to remove the mapping when vim.bo.filetype = ''
-        -- now we only remove a rule
-        -- the event FileType happen after BufEnter
+        del_keymaps()
         M.set_buf_rule({}, 0)
         return true
     end
@@ -226,61 +233,40 @@ M.on_attach = function(bufnr)
     if utils.is_attached(bufnr) then
         return
     end
+    del_keymaps()
     local enable_insert_auto = false
+    local autopairs_keymaps = {}
+    local expr_map = function(key)
+        api.nvim_buf_set_keymap(bufnr, 'i', key, '',{
+                expr = true,
+                noremap = true,
+                desc = "autopairs map key",
+                callback = function() return M.autopairs_map(bufnr, key) end,
+            }
+        )
+        table.insert(autopairs_keymaps, key)
+    end
     for _, rule in pairs(rules) do
         if rule.key_map ~= nil then
             if rule.is_regex == false then
                 if rule.key_map == '' then
                     rule.key_map = rule.start_pair:sub(#rule.start_pair)
                 end
-                local mapping = string.format(
-                    "v:lua.MPairs.autopairs_map(%d,%q)",
-                    bufnr,
-                    rule.key_map:gsub("<", "<lt>")
-                )
-                api.nvim_buf_set_keymap(
-                    bufnr,
-                    'i',
-                    rule.key_map,
-                    mapping,
-                    { expr = true, noremap = true }
-                )
-
+                expr_map(rule.key_map)
                 local key_end = rule.key_end or rule.end_pair:sub(1, 1)
                 if #key_end >= 1 and key_end ~= rule.key_map and rule.move_cond ~= nil then
-                    mapping = string.format(
-                        "v:lua.MPairs.autopairs_map(%d,%q)",
-                        bufnr,
-                        key_end
-                    )
-                    vim.api.nvim_buf_set_keymap(
-                        bufnr,
-                        'i',
-                        key_end,
-                        mapping,
-                        { expr = true, noremap = true }
-                    )
+                    expr_map(key_end)
                 end
             else
                 if rule.key_map ~= '' then
-                    local mapping = string.format(
-                        "v:lua.MPairs.autopairs_map(%d,%q)",
-                        bufnr,
-                        rule.key_map:gsub("<", "<lt>")
-                    )
-                    api.nvim_buf_set_keymap(
-                        bufnr,
-                        'i',
-                        rule.key_map,
-                        mapping,
-                        { expr = true, noremap = true }
-                    )
+                    expr_map(rule.key_map)
                 elseif rule.is_endwise == false then
                     enable_insert_auto = true
                 end
             end
         end
     end
+    vim.api.nvim_buf_set_var(bufnr, 'autopairs_keymaps', autopairs_keymaps)
 
     if enable_insert_auto then
         -- capture all key use it to trigger regex pairs

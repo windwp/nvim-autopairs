@@ -1,0 +1,17 @@
+except	nvim-autopairs-rules.txt	/*except*
+nvim-autopairs-Mapping-`<CR>`	nvim-autopairs.txt	/*nvim-autopairs-Mapping-`<CR>`*
+nvim-autopairs-default-values	nvim-autopairs.txt	/*nvim-autopairs-default-values*
+nvim-autopairs-installation	nvim-autopairs.txt	/*nvim-autopairs-installation*
+nvim-autopairs-nvim-autopairs	nvim-autopairs.txt	/*nvim-autopairs-nvim-autopairs*
+nvim-autopairs-rules-Optional-`check_pair`-parameter	nvim-autopairs-rules.txt	/*nvim-autopairs-rules-Optional-`check_pair`-parameter*
+nvim-autopairs-rules-advanced-methods	nvim-autopairs-rules.txt	/*nvim-autopairs-rules-advanced-methods*
+nvim-autopairs-rules-conditions	nvim-autopairs-rules.txt	/*nvim-autopairs-rules-conditions*
+nvim-autopairs-rules-controlling-rule-behavior	nvim-autopairs-rules.txt	/*nvim-autopairs-rules-controlling-rule-behavior*
+nvim-autopairs-rules-method-explanations	nvim-autopairs-rules.txt	/*nvim-autopairs-rules-method-explanations*
+nvim-autopairs-rules-method-overview	nvim-autopairs-rules.txt	/*nvim-autopairs-rules-method-overview*
+nvim-autopairs-rules-rule-basics	nvim-autopairs-rules.txt	/*nvim-autopairs-rules-rule-basics*
+nvim-autopairs-rules-shorthand-methods	nvim-autopairs-rules.txt	/*nvim-autopairs-rules-shorthand-methods*
+nvim-autopairs-rules-table-of-contents	nvim-autopairs-rules.txt	/*nvim-autopairs-rules-table-of-contents*
+nvim-autopairs-rules.txt	nvim-autopairs-rules.txt	/*nvim-autopairs-rules.txt*
+nvim-autopairs-table-of-contents	nvim-autopairs.txt	/*nvim-autopairs-table-of-contents*
+nvim-autopairs.txt	nvim-autopairs.txt	/*nvim-autopairs.txt*
