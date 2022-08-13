@@ -53,18 +53,20 @@ M.setup = function(opt)
     end
 
     M.force_attach()
-    local group = vim.api.nvim_create_augroup('autopairs_buf', { clear = true })
+    local group = api.nvim_create_augroup('autopairs_buf', { clear = true })
     api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
         group = group, pattern = '*',
-        command = 'lua require("nvim-autopairs").on_attach()'
+        callback = function () M.on_attach() end
     })
     api.nvim_create_autocmd('BufDelete', {
         group = group, pattern = '*',
-        command = 'lua require("nvim-autopairs").set_buf_rule(nil,tonumber(vim.fn.expand("<abuf>")))'
+        callback = function (data)
+            M.set_buf_rule(nil, tonumber(data.buf) or 0)
+        end,
     })
     api.nvim_create_autocmd('FileType', {
         group = group, pattern = '*',
-        command = 'lua require("nvim-autopairs").force_attach()'
+        callback = function () M.force_attach() end
     })
 end
 
@@ -100,7 +102,7 @@ M.remove_rule = function(pair)
             if r.start_pair ~= pair then
                 table.insert(state_tbl, r)
             elseif r.key_map and r.key_map ~= '' then
-                vim.api.nvim_buf_del_keymap(0, 'i', r.key_map)
+                api.nvim_buf_del_keymap(0, 'i', r.key_map)
             end
         end
         M.set_buf_rule(state_tbl, 0)
@@ -177,14 +179,14 @@ end
 
 ---@return table <number, Rule>
 M.get_buf_rules = function(bufnr)
-    return M.state.rules[bufnr or vim.api.nvim_get_current_buf()] or {}
+    return M.state.rules[bufnr or api.nvim_get_current_buf()] or {}
 end
 
 ---@param rules nil|table list or rule
 ---@param bufnr number buffer number
 M.set_buf_rule = function(rules, bufnr)
     if bufnr == 0 or bufnr == nil then
-        bufnr = vim.api.nvim_get_current_buf()
+        bufnr = api.nvim_get_current_buf()
     end
     M.state.rules[bufnr] = rules
 end
@@ -267,7 +269,7 @@ M.on_attach = function(bufnr)
             end
         end
     end
-    vim.api.nvim_buf_set_var(bufnr, 'autopairs_keymaps', autopairs_keymaps)
+    api.nvim_buf_set_var(bufnr, 'autopairs_keymaps', autopairs_keymaps)
 
     if enable_insert_auto then
         -- capture all key use it to trigger regex pairs
@@ -353,10 +355,10 @@ local autopairs_delete = function(bufnr, key)
                 })
             then
                 local input = ''
-                for _ = 1, vim.api.nvim_strwidth(rule.start_pair), 1 do
+                for _ = 1, api.nvim_strwidth(rule.start_pair), 1 do
                     input = input .. utils.key.bs
                 end
-                for _ = 1, vim.api.nvim_strwidth(rule.end_pair), 1 do
+                for _ = 1, api.nvim_strwidth(rule.end_pair), 1 do
                     input = input .. utils.key.del
                 end
                 return utils.esc('<c-g>U' .. input)
@@ -594,7 +596,7 @@ M.autopairs_afterquote = function(line, key_char)
                 is_prev_slash = char == '\\'
             end
             if count == 2 and index >= (#line - 2) then
-                local rules = M.get_buf_rules(vim.api.nvim_get_current_buf())
+                local rules = M.get_buf_rules(api.nvim_get_current_buf())
                 for _, rule in pairs(rules) do
                     if rule.start_pair == prev_char and char_end ~= rule.end_pair then
                         local new_text = line:sub(0, index)
@@ -632,7 +634,7 @@ M.map_cr = function()
             return M.autopairs_cr()
         end
     end
-    vim.api.nvim_set_keymap(
+    api.nvim_set_keymap(
         'i',
         '<CR>',
         'v:lua.MPairs.completion_confirm()',
