@@ -409,7 +409,7 @@ M.autopairs_map = function(bufnr, char)
     for _, rule in pairs(rules) do
         if rule.start_pair then
             if char:match('<.*>') then
-                new_text = line:sub(1, col) .. line:sub(col + 1, #line)
+                new_text = line
                 add_char = 0
             else
                 new_text = line:sub(1, col) .. char .. line:sub(col + 1, #line)
