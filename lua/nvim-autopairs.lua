@@ -233,7 +233,11 @@ M.on_attach = function(bufnr)
                 if rule.key_map == '' then
                     rule.key_map = rule.start_pair:sub(#rule.start_pair)
                 end
-                local mapping = string.format('v:lua.MPairs.autopairs_map(%d,%q)', bufnr, rule.key_map:gsub("<", "<lt>"))
+                local mapping = string.format(
+                    "v:lua.MPairs.autopairs_map(%d,%q)",
+                    bufnr,
+                    rule.key_map:gsub("<", "<lt>")
+                )
                 api.nvim_buf_set_keymap(
                     bufnr,
                     'i',
@@ -245,7 +249,7 @@ M.on_attach = function(bufnr)
                 local key_end = rule.key_end or rule.end_pair:sub(1, 1)
                 if #key_end >= 1 and key_end ~= rule.key_map and rule.move_cond ~= nil then
                     mapping = string.format(
-                        [[v:lua.MPairs.autopairs_map(%d, %q)]],
+                        "v:lua.MPairs.autopairs_map(%d,%q)",
                         bufnr,
                         key_end
                     )
