@@ -233,7 +233,7 @@ M.on_attach = function(bufnr)
                 if rule.key_map == '' then
                     rule.key_map = rule.start_pair:sub(#rule.start_pair)
                 end
-                local mapping = string.format('v:lua.MPairs.autopairs_map(%d,%q)', bufnr, rule.key_map)
+                local mapping = string.format('v:lua.MPairs.autopairs_map(%d,%q)', bufnr, rule.key_map:gsub("<", "<lt>"))
                 api.nvim_buf_set_keymap(
                     bufnr,
                     'i',
@@ -262,7 +262,7 @@ M.on_attach = function(bufnr)
                     local mapping = string.format(
                         "v:lua.MPairs.autopairs_map(%d,%q)",
                         bufnr,
-                        rule.key_map
+                        rule.key_map:gsub("<", "<lt>")
                     )
                     api.nvim_buf_set_keymap(
                         bufnr,
@@ -403,8 +403,8 @@ M.autopairs_map = function(bufnr, char)
     local add_char = 1
     local rules = M.get_buf_rules(bufnr)
     for _, rule in pairs(rules) do
-        if rule.start_pair then
-            if rule.key_map and rule.key_map:match('<.*>') then
+        if rule.key_map == char then
+            if char:match('<.*>') then
                 new_text = line:sub(1, col) .. line:sub(col + 1, #line)
                 add_char = 0
             else
@@ -467,7 +467,7 @@ M.autopairs_map = function(bufnr, char)
             end
         end
     end
-    return M.autopairs_afterquote(new_text, char)
+    return M.autopairs_afterquote(new_text, utils.esc(char))
 end
 
 M.autopairs_insert = function(bufnr, char)
