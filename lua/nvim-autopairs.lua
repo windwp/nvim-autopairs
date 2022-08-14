@@ -557,10 +557,6 @@ M.autopairs_cr = function(bufnr)
                 prev_char = prev_char,
                 next_char = next_char,
             }
-
-            local end_pair = rule:get_end_pair(cond_opt)
-            local end_pair_length = rule:get_end_pair_length(end_pair)
-
             -- log.debug('prev_char' .. rule.start_pair)
             -- log.debug('prev_char' .. prev_char)
             -- log.debug('next_char' .. next_char)
@@ -568,6 +564,8 @@ M.autopairs_cr = function(bufnr)
                 and utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_cr(cond_opt)
             then
+                local end_pair = rule:get_end_pair(cond_opt)
+                local end_pair_length = rule:get_end_pair_length(end_pair)
                 return utils.esc(
                     end_pair
                     .. utils.repeat_key(utils.key.join_left, end_pair_length)
