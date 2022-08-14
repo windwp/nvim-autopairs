@@ -442,9 +442,9 @@ M.autopairs_map = function(bufnr, char)
                 return utils.esc(utils.repeat_key(utils.key.join_right, end_pair_length))
             end
 
-            if utils.compare(rule.start_pair, prev_char, rule.is_regex)
+            if rule.key_map == char
+                and utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_pair(cond_opt)
-                and rule.key_map == char
             then
                 local end_pair = rule:get_end_pair(cond_opt)
                 local end_pair_length = rule:get_end_pair_length(end_pair)
