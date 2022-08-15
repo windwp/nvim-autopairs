@@ -50,6 +50,13 @@ local data = {
         before = [[""| ]],
         after  = [["""|""" ]]
     },
+    {
+        name = "don't repeat python quote" ,
+        filetype = "python",
+        key    = [["]],
+        before = [[a"""|""" ]],
+        after  = [[a""""|"" ]]
+    },
 
     {
         name = "add markdown quote" ,

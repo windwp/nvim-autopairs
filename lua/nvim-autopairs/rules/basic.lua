@@ -36,25 +36,30 @@ local function setup(opt)
         Rule("```.*$", "```", { 'markdown', 'vimwiki', 'rmarkdown', 'rmd', 'pandoc' })
             :only_cr()
             :use_regex(true),
-        Rule('"""', '"""', { 'python', 'elixir', 'julia', 'kotlin' }),
-        Rule("'''", "'''", { 'python' }),
+        Rule('"""', '"""', { 'python', 'elixir', 'julia', 'kotlin' })
+            :with_pair(cond.not_before_char('"', 3)),
+        Rule("'''", "'''", { 'python' })
+            :with_pair(cond.not_before_char('"', 3)),
         basic("'", "'", '-rust')
             :with_pair(cond.not_before_regex("%w")),
         basic("'", "'", 'rust')
             :with_pair(cond.not_before_regex("[%w<&]"))
             :with_pair(cond.not_after_text(">")),
         basic("`", "`"),
-        basic('"', '"','-vim'),
-        basic('"', '"','vim')
+        basic('"', '"', '-vim'),
+        basic('"', '"', 'vim')
             :with_pair(cond.not_before_regex("^%s*$", -1)),
         bracket("(", ")"),
         bracket("[", "]"),
         bracket("{", "}"),
         Rule(">[%w%s]*$", "^%s*</",
-            { 'html', 'typescript', 'typescriptreact', 'javascript' , 'javascriptreact', 'svelte', 'vue', 'xml', 'rescript'})
+            { 'html', 'typescript', 'typescriptreact', 'javascript', 'javascriptreact', 'svelte', 'vue', 'xml',
+                'rescript' })
             :only_cr()
             :use_regex(true)
     }
     return rules
 end
+
 return { setup = setup }
+
