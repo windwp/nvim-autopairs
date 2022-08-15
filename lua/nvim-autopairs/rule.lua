@@ -169,11 +169,7 @@ end
 ---@return Rule
 function Rule:with_pair(cond, pos)
     if self.pair_cond == nil then self.pair_cond = {} end
-    if pos then
-        table.insert(self.pair_cond, pos, cond)
-    else
-        table.insert(self.pair_cond, cond)
-    end
+    self.pair_cond[pos or (#self.pair_cond+1)] = cond
     return self
 end
 

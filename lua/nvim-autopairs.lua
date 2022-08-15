@@ -56,17 +56,17 @@ M.setup = function(opt)
     local group = api.nvim_create_augroup('autopairs_buf', { clear = true })
     api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
         group = group, pattern = '*',
-        callback = function () M.on_attach() end
+        callback = function() M.on_attach() end
     })
     api.nvim_create_autocmd('BufDelete', {
         group = group, pattern = '*',
-        callback = function (data)
+        callback = function(data)
             M.set_buf_rule(nil, tonumber(data.buf) or 0)
         end,
     })
     api.nvim_create_autocmd('FileType', {
         group = group, pattern = '*',
-        callback = function () M.force_attach() end
+        callback = function() M.force_attach() end
     })
 end
 
@@ -245,8 +245,7 @@ M.on_attach = function(bufnr)
             noremap = true,
             desc = "autopairs map key",
             callback = function() return M.autopairs_map(bufnr, key) end,
-        }
-        )
+        })
         table.insert(autopairs_keymaps, key)
     end
     for _, rule in pairs(rules) do
