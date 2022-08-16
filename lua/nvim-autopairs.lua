@@ -233,11 +233,11 @@ M.on_attach = function(bufnr)
                 if rule.key_map == '' then
                     rule.key_map = rule.start_pair:sub(#rule.start_pair)
                 end
-                local key = string.format('"%s"', rule.key_map)
-                if rule.key_map == '"' then
-                    key = [['"']]
-                end
-                local mapping = string.format('v:lua.MPairs.autopairs_map(%d,%s)', bufnr, key)
+                local mapping = string.format(
+                    "v:lua.MPairs.autopairs_map(%d,%q)",
+                    bufnr,
+                    rule.key_map:gsub("<", "<lt>")
+                )
                 api.nvim_buf_set_keymap(
                     bufnr,
                     'i',
@@ -249,7 +249,7 @@ M.on_attach = function(bufnr)
                 local key_end = rule.key_end or rule.end_pair:sub(1, 1)
                 if #key_end >= 1 and key_end ~= rule.key_map and rule.move_cond ~= nil then
                     mapping = string.format(
-                        [[v:lua.MPairs.autopairs_map(%d, '%s')]],
+                        "v:lua.MPairs.autopairs_map(%d,%q)",
                         bufnr,
                         key_end
                     )
@@ -264,9 +264,9 @@ M.on_attach = function(bufnr)
             else
                 if rule.key_map ~= '' then
                     local mapping = string.format(
-                        "v:lua.MPairs.autopairs_map(%d,'%s')",
+                        "v:lua.MPairs.autopairs_map(%d,%q)",
                         bufnr,
-                        rule.key_map
+                        rule.key_map:gsub("<", "<lt>")
                     )
                     api.nvim_buf_set_keymap(
                         bufnr,
@@ -408,8 +408,8 @@ M.autopairs_map = function(bufnr, char)
     local rules = M.get_buf_rules(bufnr)
     for _, rule in pairs(rules) do
         if rule.start_pair then
-            if rule.key_map and rule.key_map:match('<.*>') then
-                new_text = line:sub(1, col) .. line:sub(col + 1, #line)
+            if char:match('<.*>') then
+                new_text = line
                 add_char = 0
             else
                 new_text = line:sub(1, col) .. char .. line:sub(col + 1, #line)
@@ -446,7 +446,8 @@ M.autopairs_map = function(bufnr, char)
                 return utils.esc(utils.repeat_key(utils.key.join_right, end_pair_length))
             end
 
-            if utils.compare(rule.start_pair, prev_char, rule.is_regex)
+            if rule.key_map == char
+                and utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_pair(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
@@ -471,7 +472,7 @@ M.autopairs_map = function(bufnr, char)
             end
         end
     end
-    return M.autopairs_afterquote(new_text, char)
+    return M.autopairs_afterquote(new_text, utils.esc(char))
 end
 
 M.autopairs_insert = function(bufnr, char)
@@ -557,10 +558,6 @@ M.autopairs_cr = function(bufnr)
                 prev_char = prev_char,
                 next_char = next_char,
             }
-
-            local end_pair = rule:get_end_pair(cond_opt)
-            local end_pair_length = rule:get_end_pair_length(end_pair)
-
             -- log.debug('prev_char' .. rule.start_pair)
             -- log.debug('prev_char' .. prev_char)
             -- log.debug('next_char' .. next_char)
@@ -568,6 +565,8 @@ M.autopairs_cr = function(bufnr)
                 and utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_cr(cond_opt)
             then
+                local end_pair = rule:get_end_pair(cond_opt)
+                local end_pair_length = rule:get_end_pair_length(end_pair)
                 return utils.esc(
                     end_pair
                     .. utils.repeat_key(utils.key.join_left, end_pair_length)
