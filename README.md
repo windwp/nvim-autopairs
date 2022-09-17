@@ -339,7 +339,7 @@ Before        Input         After
   require('nvim-autopairs').enable()
   require('nvim-autopairs').remove_rule('(') -- remove rule (
   require('nvim-autopairs').clear_rules() -- clear all rules
-  -- get rule " then modify it. It can return a list of rule
+  -- get rule " then modify it. It can return a list of rule or just a rule
   require('nvim-autopairs').get_rule('"') 
 ```
 
