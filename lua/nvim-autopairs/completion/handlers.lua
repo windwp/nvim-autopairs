@@ -12,7 +12,7 @@ M["*"] = function(char, item, bufnr, commit_character)
     local char_before, char_after = utils.text_cusor_line(line, col, 1, 1, false)
 
     if char == '' or char_before == char or char_after == char
-        or (item.data and item.data.funcParensDisabled)
+    or (item.data and type(item.data) == 'table' and item.data.funcParensDisabled)
         or (item.textEdit and item.textEdit.newText and item.textEdit.newText:match "[%(%[%$]")
         or (item.insertText and item.insertText:match "[%(%[%$]")
         or char == commit_character
