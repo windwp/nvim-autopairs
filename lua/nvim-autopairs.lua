@@ -19,6 +19,7 @@ local default = {
     disable_filetype = { 'TelescopePrompt', 'spectre_panel' },
     disable_in_macro = false,
     disable_in_visualblock = false,
+    disable_in_replace_mode = true,
     ignored_next_char = [=[[%w%%%'%[%"%.]]=],
     break_undo = true,
     check_ts = false,
@@ -162,6 +163,10 @@ local function is_disable()
     if M.config.disable_in_macro
         and (vim.fn.reg_recording() ~= '' or vim.fn.reg_executing() ~= '')
     then
+        return true
+    end
+
+    if M.config.disable_in_replace_mode and vim.api.nvim_get_mode().mode == "R" then
         return true
     end
 
