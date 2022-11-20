@@ -56,7 +56,6 @@ M.show = function(line)
         local index = 1
         local str_length = #line
         local offset = -1
-        local is_end_key = true
         for i = col + 2, #line, 1 do
             local char = line:sub(i, i)
             local char2 = line:sub(i - 1, i)
@@ -74,11 +73,6 @@ M.show = function(line)
                     offset = 0
                 end
 
-                if i == str_length then
-                    is_end_key = false
-                    key = config.end_key
-                    offset = 0
-                end
                 table.insert(
                     list_pos,
                     { col = i + offset, key = key, char = char, pos = i }
@@ -86,12 +80,10 @@ M.show = function(line)
             end
         end
 
-        if is_end_key then
-            table.insert(
-                list_pos,
-                { col = str_length + 1, key = config.end_key, pos = str_length + 1 }
-            )
-        end
+		table.insert(
+			list_pos,
+			{ col = str_length + 1, key = config.end_key, pos = str_length + 1 }
+		)
 
         M.highlight_wrap(list_pos, row, col, #line)
         vim.defer_fn(function()
