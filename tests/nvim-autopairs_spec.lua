@@ -689,6 +689,12 @@ local data = {
             [[}]],
         },
     },
+    {
+        name='open bracker on back tick',
+        key = [[(]],
+        before = [[ |`abcd`]],
+        after = [[ (`abcd`) ]]
+    }
 }
 
 local run_data = _G.Test_filter(data)
