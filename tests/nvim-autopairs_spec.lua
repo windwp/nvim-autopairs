@@ -1,4 +1,3 @@
-local helpers = {}
 local npairs = require('nvim-autopairs')
 local Rule = require('nvim-autopairs.rule')
 local cond = require('nvim-autopairs.conds')
@@ -694,6 +693,18 @@ local data = {
         key = [[(]],
         before = [[ |`abcd`]],
         after = [[ (`abcd`) ]]
+    },
+    {
+        name='should not add bracket on line have bracket ',
+        key = [[(]],
+        before = [[ |(abcd))]],
+        after = [[ ((abcd)) ]]
+    },
+    {
+        name='not add bracket on line have bracket ',
+        key = [[(]],
+        before = [[ |(abcd) ( visual)]],
+        after = [[ ()(abcd) ( visual)]]
     }
 }
 

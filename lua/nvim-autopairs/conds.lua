@@ -199,13 +199,16 @@ cond.is_bracket_line = function()
     ---@param opts CondOpts
     return function(opts)
         log.debug('is_bracket_line')
-        if utils.is_bracket(opts.char) and opts.next_char == opts.rule.end_pair then
+        if utils.is_bracket(opts.char) and
+            (opts.next_char == opts.rule.end_pair
+                or opts.next_char == opts.rule.start_pair)
+        then
             -- ((  many char |)) => add
             -- (   many char |)) => not add
             local count_prev_char, count_next_char = count_bracket_char(
                 opts.line,
-                opts.char,
-                opts.next_char
+                opts.rule.start_pair,
+                opts.rule.end_pair
             )
             if count_prev_char ~= count_next_char then
                 return false
