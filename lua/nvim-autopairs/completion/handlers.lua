@@ -51,6 +51,7 @@ M["*"] = function(char, item, bufnr, rules, commit_character)
             }
             if rule.key_map and rule:can_pair(cond_opt) then
                 vim.api.nvim_feedkeys(rule.key_map, "i", true)
+                return
             end
         end
     end
