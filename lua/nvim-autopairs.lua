@@ -302,7 +302,7 @@ M.on_attach = function(bufnr)
             bufnr,
             'i',
             '<bs>',
-            string.format('v:lua.MPairs.autopairs_bs(%d)', bufnr),
+            'v:lua.MPairs.autopairs_bs()',
             { expr = true, noremap = true }
         )
     end
