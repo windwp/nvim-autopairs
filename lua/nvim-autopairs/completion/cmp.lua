@@ -38,7 +38,8 @@ M.filetypes = {
             handler = handlers.lisp
         }
     },
-    tex = false
+    tex = false,
+    haskell = false
 }
 
 M.on_confirm_done = function(opts)
