@@ -25,7 +25,6 @@ local function bracket(opt, ...)
 end
 
 local function setup(opt)
-
     -- stylua: ignore
     local rules = {
         Rule("<!--", "-->", 'html'):with_cr(cond.none()),
