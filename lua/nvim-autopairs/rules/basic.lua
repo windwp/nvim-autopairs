@@ -1,7 +1,7 @@
 local Rule = require("nvim-autopairs.rule")
 local cond = require("nvim-autopairs.conds")
 
-local function basic (opt, ...)
+local function basic(opt, ...)
 	local move_func = opt.enable_moveright and cond.move_right or cond.none
 	local rule = Rule(...):with_move(move_func()):with_pair(cond.not_add_quote_inside_quote())
 
@@ -13,7 +13,7 @@ local function basic (opt, ...)
 end
 
 local function bracket(opt, ...)
-	local rule = basic(...)
+	local rule = basic(opt, ...)
 	if opt.enable_check_bracket_line == true then
 		rule:with_pair(cond.is_bracket_line()):with_move(cond.is_bracket_line_move())
 	end
