@@ -39,7 +39,8 @@ M.filetypes = {
         }
     },
     tex = false,
-    haskell = false
+    haskell = false,
+    purescript = false
 }
 
 M.on_confirm_done = function(opts)
