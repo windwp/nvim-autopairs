@@ -13,8 +13,12 @@ local Cond = require('nvim-autopairs.conds')
 --- @field is_multibyte boolean
 --- @field is_endwise boolean        only use on end_wise
 --- @field is_undo boolean           add break undo sequence
-local Rule = {}
-Rule.__index = Rule
+
+local Rule = setmetatable({}, {
+  __call = function(self, ...)
+    return self.new(...)
+  end,
+})
 
 ---@return Rule
 function Rule.new(...)
@@ -218,4 +222,4 @@ function Rule:can_cr(opt)
     return can_do(self.cr_cond, opt)
 end
 
-return Rule.new
+return Rule
