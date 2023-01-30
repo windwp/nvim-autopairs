@@ -373,7 +373,7 @@ npairs.setup({
     fast_wrap = {
       map = '<M-e>',
       chars = { '{', '[', '(', '"', "'" },
-      pattern = [=[[%'%"%)%>%]%)%}%,]]=],
+      pattern = [=[[%'%"%>%]%)%}%,]]=],
       end_key = '$',
       keys = 'qwertyuiopzxcvbnmasdfghjkl',
       check_comma = true,
