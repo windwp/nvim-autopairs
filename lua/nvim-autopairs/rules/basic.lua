@@ -75,6 +75,7 @@ local function setup(opt)
                 "vue",
                 "xml",
                 "rescript",
+				"astro",
             }
         ):only_cr():use_regex(true),
     }
