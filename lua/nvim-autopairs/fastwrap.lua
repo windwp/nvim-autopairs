@@ -11,6 +11,7 @@ local default_config = {
     keys = 'qwertyuiopzxcvbnmasdfghjkl',
     highlight = 'Search',
     highlight_grey = 'Comment',
+    manual_position = false,
 }
 
 M.ns_fast_wrap = vim.api.nvim_create_namespace('autopairs_fastwrap')
@@ -64,11 +65,13 @@ M.show = function(line)
             then
                 local key = config.keys:sub(index, index)
                 index = index + 1
-                if utils.is_quote(char)
+                if not config.manual_position and (
+                    utils.is_quote(char)
                     or (
                     utils.is_close_bracket(char)
                         and utils.is_in_quotes(line, col, prev_char)
                     )
+                )
                 then
                     offset = 0
                 end
@@ -80,9 +83,17 @@ M.show = function(line)
             end
         end
 
+        local end_col, end_pos
+        if config.manual_position then
+            end_col = str_length + offset
+            end_pos = str_length
+        else
+            end_col = str_length + 1
+            end_pos = str_length + 1
+        end
 		table.insert(
 			list_pos,
-			{ col = str_length + 1, key = config.end_key, pos = str_length + 1 }
+			{ col = end_col, key = config.end_key, pos = end_pos }
 		)
 
         M.highlight_wrap(list_pos, row, col, #line)
@@ -90,6 +101,17 @@ M.show = function(line)
             local char = #list_pos == 1 and config.end_key or M.getchar_handler()
             vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
             for _, pos in pairs(list_pos) do
+                local hl_mark = {
+                    { pos = pos.pos - 1, key = 'h' },
+                    { pos = pos.pos + 1, key = 'l' },
+                }
+                if config.manual_position then
+                    if char == pos.key or char == string.upper(pos.key) then
+                        M.highlight_wrap(hl_mark, row, col, #line)
+                        M.choose_pos(row, line, pos, end_pair)
+                        break
+                    end
+                end
                 if char == pos.key then
                     M.move_bracket(line, pos.col, end_pair, false)
                     break
@@ -104,6 +126,29 @@ M.show = function(line)
         return
     end
     vim.cmd('startinsert')
+end
+
+M.choose_pos = function(row, line, pos, end_pair)
+    vim.defer_fn(function()
+        local char = M.getchar_handler()
+        vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
+        local change_pos = false
+        local col = pos.col
+        if char == 'H' or char == 'L' then
+            change_pos = true
+        end
+        if char == 'h' or char == 'l' then
+            change_pos = false
+        end
+        if char == 'h' or char == 'H' then
+            col = pos.col
+        end
+        if char == 'l' or char == 'L' then
+            col = pos.col + 1
+        end
+        M.move_bracket(line, col, end_pair, change_pos)
+        vim.cmd('startinsert')
+    end, 10)
 end
 
 M.move_bracket = function(line, target_pos, end_pair, change_pos)
