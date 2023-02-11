@@ -1,3 +1,4 @@
+
 local utils = require('nvim-autopairs.utils')
 local log = require('nvim-autopairs._log')
 local npairs = require('nvim-autopairs')
@@ -76,6 +77,10 @@ M.show = function(line)
                     offset = 0
                 end
 
+                if config.manual_position and i == str_length then
+                    key = config.end_key
+                end
+
                 table.insert(
                     list_pos,
                     { col = i + offset, key = key, char = char, pos = i }
@@ -91,10 +96,12 @@ M.show = function(line)
             end_col = str_length + 1
             end_pos = str_length + 1
         end
-		table.insert(
-			list_pos,
-			{ col = end_col, key = config.end_key, pos = end_pos }
-		)
+        if #list_pos == 0 or list_pos[#list_pos].key ~= config.end_key then
+            table.insert(
+                list_pos,
+                { col = end_col, key = config.end_key, pos = end_pos }
+            )
+        end
 
         M.highlight_wrap(list_pos, row, col, #line)
         vim.defer_fn(function()
@@ -105,12 +112,10 @@ M.show = function(line)
                     { pos = pos.pos - 1, key = 'h' },
                     { pos = pos.pos + 1, key = 'l' },
                 }
-                if config.manual_position then
-                    if char == pos.key or char == string.upper(pos.key) then
-                        M.highlight_wrap(hl_mark, row, col, #line)
-                        M.choose_pos(row, line, pos, end_pair)
-                        break
-                    end
+                if config.manual_position and (char == pos.key or char == string.upper(pos.key)) then
+                    M.highlight_wrap(hl_mark, row, col, #line)
+                    M.choose_pos(row, line, pos, end_pair)
+                    break
                 end
                 if char == pos.key then
                     M.move_bracket(line, pos.col, end_pair, false)
@@ -130,7 +135,7 @@ end
 
 M.choose_pos = function(row, line, pos, end_pair)
     vim.defer_fn(function()
-        local char = M.getchar_handler()
+        local char = pos.char == nil and 'l' or M.getchar_handler()
         vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
         local change_pos = false
         local col = pos.col
