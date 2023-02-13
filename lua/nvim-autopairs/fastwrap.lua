@@ -1,4 +1,3 @@
-
 local utils = require('nvim-autopairs.utils')
 local log = require('nvim-autopairs._log')
 local npairs = require('nvim-autopairs')
