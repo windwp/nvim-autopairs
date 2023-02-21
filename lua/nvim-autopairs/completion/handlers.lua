@@ -17,7 +17,6 @@ M["*"] = function(char, item, bufnr, rules, commit_character)
     or (item.data and type(item.data) == 'table' and item.data.funcParensDisabled)
         or (item.textEdit and item.textEdit.newText and item.textEdit.newText:match "[%(%[%$]")
         or (item.insertText and item.insertText:match "[%(%[%$]")
-        or vim.tbl_contains(commit_character, char)
     then
         return
     end
