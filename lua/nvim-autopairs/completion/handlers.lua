@@ -8,7 +8,7 @@ local M = {}
 ---@param bufnr number
 ---@param rules table
 ---@param commit_character table<string>
-M["*"] = function(char, item, bufnr, rules, commit_character)
+M["*"] = function(char, item, bufnr, rules, _)
     local line = utils.text_get_current_line(bufnr)
     local _, col = utils.get_cursor()
     local char_before, char_after = utils.text_cusor_line(line, col, 1, 1, false)
@@ -17,7 +17,6 @@ M["*"] = function(char, item, bufnr, rules, commit_character)
     or (item.data and type(item.data) == 'table' and item.data.funcParensDisabled)
         or (item.textEdit and item.textEdit.newText and item.textEdit.newText:match "[%(%[%$]")
         or (item.insertText and item.insertText:match "[%(%[%$]")
-        or vim.tbl_contains(commit_character, char)
     then
         return
     end
@@ -58,7 +57,7 @@ M["*"] = function(char, item, bufnr, rules, commit_character)
 end
 
 ---Handler with "clojure", "clojurescript", "fennel", "janet
-M.lisp = function (char, item, bufnr, _, commit_character)
+M.lisp = function (char, item, bufnr, _, _)
   local line = utils.text_get_current_line(bufnr)
   local _, col = utils.get_cursor()
   local char_before, char_after = utils.text_cusor_line(line, col, 1, 1, false)
@@ -68,7 +67,6 @@ M.lisp = function (char, item, bufnr, _, commit_character)
     or (item.data and item.data.funcParensDisabled)
     or (item.textEdit and item.textEdit.newText and item.textEdit.newText:match "[%(%[%$]")
     or (item.insertText and item.insertText:match "[%(%[%$]")
-    or vim.tbl_contains(commit_character, char)
   then
     return
   end
