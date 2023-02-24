@@ -26,12 +26,12 @@ M.is_quote = function (char)
 end
 
 M.is_bracket = function (char)
-    return char == "(" or char == '[' or char == '{'
+    return char == "(" or char == '[' or char == '{' or char == '<'
 end
 
 
 M.is_close_bracket = function (char)
-    return char == ")" or char == ']' or char == '}'
+    return char == ")" or char == ']' or char == '}' or char == '>'
 end
 
 M.compare = function (value, text, is_regex)
