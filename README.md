@@ -30,7 +30,7 @@ use {
 ## Default values
 
 ``` lua
-local disable_filetype = { "TelescopePrompt" }
+local disable_filetype = { "TelescopePrompt", "spectre_panel" }
 local disable_in_macro = false  -- disable when recording or executing a macro
 local disable_in_visualblock = false -- disable when insert after visual block mode
 local disable_in_replace_mode = true
@@ -343,7 +343,7 @@ Before        Input         After
   require('nvim-autopairs').remove_rule('(') -- remove rule (
   require('nvim-autopairs').clear_rules() -- clear all rules
   -- get rule " then modify it. It can return a list of rule or just a rule
-  require('nvim-autopairs').get_rule('"') 
+  require('nvim-autopairs').get_rule('"')
 ```
 
 * Sample
