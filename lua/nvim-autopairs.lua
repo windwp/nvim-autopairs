@@ -367,6 +367,34 @@ local autopairs_delete = function(bufnr, key)
                 end
                 return utils.esc('<c-g>U' .. input)
             end
+            local prev_2_char, prev_1_char = utils.text_cusor_line(
+                line,
+                col-#rule.end_pair,
+                #rule.start_pair,
+                #rule.end_pair,
+                rule.is_regex
+            )
+            if utils.compare(rule.start_pair, prev_2_char, rule.is_regex)
+                and utils.compare(rule.end_pair, prev_1_char, rule.is_regex)
+                and rule:can_del({
+                    ts_node = M.state.ts_node,
+                    rule = rule,
+                    bufnr = bufnr,
+                    prev_char = prev_2_char,
+                    next_char = prev_1_char,
+                    line = line,
+                    col = col-#rule.end_pair,
+                })
+            then
+                local input = ''
+                for _ = 1, api.nvim_strwidth(rule.start_pair), 1 do
+                    input = input .. utils.key.bs
+                end
+                for _ = 1, api.nvim_strwidth(rule.end_pair), 1 do
+                    input = input .. utils.key.bs
+                end
+                return utils.esc('<c-g>U' .. input)
+            end
         end
     end
     return utils.esc(key)
