@@ -62,7 +62,11 @@ M.setup = function(opt)
     api.nvim_create_autocmd('BufDelete', {
         group = group, pattern = '*',
         callback = function(data)
-            M.set_buf_rule(nil, tonumber(data.buf) or 0)
+            local cur = api.nvim_get_current_buf()
+            local bufnr = tonumber(data.buf) or 0
+            if bufnr ~= cur then
+                M.set_buf_rule(nil, bufnr)
+            end
         end,
     })
     api.nvim_create_autocmd('FileType', {
