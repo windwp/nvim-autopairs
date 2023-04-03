@@ -43,9 +43,29 @@ M.compare = function (value, text, is_regex)
     return false
 end
 
+---check if a single quote is a prime
+---@param line string line of text
+---@param pos number  position of the single quote in line
+---@return boolean
+M.is_prime = function (line, pos)
+    -- Only treat single quotes as primes in text files
+    local text_fts = {
+        "",
+        "tex",
+        "help",
+        "text",
+        "markdown",
+        "gitcommit",
+    }
+    if not vim.tbl_contains(text_fts, vim.bo.ft) then
+        return false
+    end
+    return line:sub(pos -1, pos):match("%w'")
+end
+
 ---check cursor is inside a quote
 ---@param line string
----@param pos number  positin in line
+---@param pos number  position in line
 ---@param quote_type nil|string specify a quote
 ---@return boolean
 M.is_in_quotes = function (line, pos, quote_type)
@@ -56,15 +76,17 @@ M.is_in_quotes = function (line, pos, quote_type)
     while cIndex < string.len(line) and cIndex < pos  do
         cIndex = cIndex + 1
         local char = line:sub(cIndex, cIndex)
+        local prev_char = line:sub(cIndex -1, cIndex -1)
         if
             result == true and
             char == last_char and
-            line:sub(cIndex -1, cIndex -1) ~= "\\"
+            prev_char ~= "\\"
         then
             result = false
             last_char = quote_type or ''
-        elseif result == false and M.is_quote(char) 
+        elseif result == false and M.is_quote(char)
             and (not quote_type or char == quote_type)
+            and not M.is_prime(line, cIndex)
         then
             last_char = quote_type or char
             result = true
