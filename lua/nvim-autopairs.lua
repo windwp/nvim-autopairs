@@ -28,6 +28,7 @@ local default = {
     enable_check_bracket_line = true,
     enable_bracket_in_quote = true,
     enable_abbr = false,
+    enable_delete_pair_before = false,
     ts_config = {
         lua = { 'string', 'source' },
         javascript = { 'string', 'template_string' },
@@ -374,26 +375,28 @@ local autopairs_delete = function(bufnr, key)
                 #rule.end_pair,
                 rule.is_regex
             )
-            if utils.compare(rule.start_pair, prev_2_char, rule.is_regex)
-                and utils.compare(rule.end_pair, prev_1_char, rule.is_regex)
-                and rule:can_del({
-                    ts_node = M.state.ts_node,
-                    rule = rule,
-                    bufnr = bufnr,
-                    prev_char = prev_2_char,
-                    next_char = prev_1_char,
-                    line = line,
-                    col = col-#rule.end_pair,
-                })
-            then
-                local input = ''
-                for _ = 1, api.nvim_strwidth(rule.start_pair), 1 do
-                    input = input .. utils.key.bs
+            if M.config.enable_delete_pair_before then
+                if utils.compare(rule.start_pair, prev_2_char, rule.is_regex)
+                    and utils.compare(rule.end_pair, prev_1_char, rule.is_regex)
+                    and rule:can_del({
+                        ts_node = M.state.ts_node,
+                        rule = rule,
+                        bufnr = bufnr,
+                        prev_char = prev_2_char,
+                        next_char = prev_1_char,
+                        line = line,
+                        col = col-#rule.end_pair,
+                    })
+                then
+                    local input = ''
+                    for _ = 1, api.nvim_strwidth(rule.start_pair), 1 do
+                        input = input .. utils.key.bs
+                    end
+                    for _ = 1, api.nvim_strwidth(rule.end_pair), 1 do
+                        input = input .. utils.key.bs
+                    end
+                    return utils.esc('<c-g>U' .. input)
                 end
-                for _ = 1, api.nvim_strwidth(rule.end_pair), 1 do
-                    input = input .. utils.key.bs
-                end
-                return utils.esc('<c-g>U' .. input)
             end
         end
     end
