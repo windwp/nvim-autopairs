@@ -17,7 +17,7 @@ M.key = {
 
 M.set_vchar = function(text)
     text = text:gsub('"', '\\"')
-  vim.cmd(string.format([[let v:char = "%s"]],text))
+    vim.v.char = text
 end
 
 
