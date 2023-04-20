@@ -54,6 +54,7 @@ local function setup(opt)
             "^%s*</",
             {
                 "html",
+                "php",
                 "typescript",
                 "typescriptreact",
                 "javascript",
