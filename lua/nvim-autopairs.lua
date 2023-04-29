@@ -215,14 +215,14 @@ M.on_attach = function(bufnr)
             table.insert(rules, rule)
         end
     end
-    -- sort by length
+    -- sort by pair and keymap
     table.sort(rules, function(a, b)
         if a.start_pair == b.start_pair then
-            if not b.key_map then
-                return a.key_map and 1
+            if not b.key_map and a.key_map then
+                return true
             end
-            if not a.key_map then
-                return b.key_map and -1
+            if not a.key_map and b.key_map then
+                return false
             end
             return #a.key_map < #b.key_map
         end
@@ -627,6 +627,7 @@ M.autopairs_afterquote = function(line, key_char)
 end
 
 M.autopairs_closequote_expr = function()
+    ---@diagnostic disable-next-line: param-type-mismatch
     vim.fn.setline('.', M.state.expr_quote)
 end
 
