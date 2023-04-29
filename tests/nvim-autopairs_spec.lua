@@ -705,6 +705,12 @@ local data = {
         key = [[(]],
         before = [[ |(abcd) ( visual)]],
         after = [[ ()(abcd) ( visual)]]
+    },
+    {
+        name = 'should add single quote when it have primes char',
+        key = [[']],
+        before = [[Ben's friends say: | ]],
+        after = [[Ben's friends say: '|' ]]
     }
 }
 
