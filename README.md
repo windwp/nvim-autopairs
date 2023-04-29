@@ -342,15 +342,14 @@ Before        Input         After
   require('nvim-autopairs').enable()
   require('nvim-autopairs').remove_rule('(') -- remove rule (
   require('nvim-autopairs').clear_rules() -- clear all rules
-  -- get rule " then modify it. It can return a list of rule or just a rule
-  require('nvim-autopairs').get_rule('"')
+  require('nvim-autopairs').get_rules('"')
 ```
 
 * Sample
 ```lua
 -- remove add single quote on filetype scheme or lisp
-require("nvim-autopairs").get_rule("'")[1].not_filetypes = { "scheme", "lisp" }
-require("nvim-autopairs").get_rule("'")[1]:with_pair(cond.not_after_text("["))
+require("nvim-autopairs").get_rules("'")[1].not_filetypes = { "scheme", "lisp" }
+require("nvim-autopairs").get_rules("'")[1]:with_pair(cond.not_after_text("["))
 ```
 
 ### FastWrap

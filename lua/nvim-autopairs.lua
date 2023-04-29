@@ -80,16 +80,20 @@ M.add_rule = function(rule)
 end
 
 M.get_rule = function(start_pair)
+    local tbl = M.get_rule(start_pair)
+    if #tbl == 1 then
+        return tbl[1]
+    end
+    return tbl
+end
+
+M.get_rules = function(start_pair)
     local tbl = {}
     for _, r in pairs(M.config.rules) do
         if r.start_pair == start_pair then
             table.insert(tbl, r)
         end
     end
-    if #tbl == 1 then
-        return tbl[1]
-    end
-    return tbl
 end
 
 M.remove_rule = function(pair)
