@@ -222,11 +222,11 @@ M.on_attach = function(bufnr)
     -- sort by pair and keymap
     table.sort(rules, function(a, b)
         if a.start_pair == b.start_pair then
-            if not b.key_map and a.key_map then
-                return true
+            if not b.key_map then
+                return a.key_map
             end
-            if not a.key_map and b.key_map then
-                return false
+            if not a.key_map then
+                return b.key_map
             end
             return #a.key_map < #b.key_map
         end
