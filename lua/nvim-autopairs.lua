@@ -80,7 +80,7 @@ M.add_rule = function(rule)
 end
 
 M.get_rule = function(start_pair)
-    local tbl = M.get_rule(start_pair)
+    local tbl = M.get_rules(start_pair)
     if #tbl == 1 then
         return tbl[1]
     end
