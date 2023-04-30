@@ -94,6 +94,7 @@ M.get_rules = function(start_pair)
             table.insert(tbl, r)
         end
     end
+    return tbl
 end
 
 M.remove_rule = function(pair)
