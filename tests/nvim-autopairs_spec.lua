@@ -170,6 +170,36 @@ local data = {
         after  = [[("abcd}|} ]]
     },
     {
+        -- ref: issue #331
+        name = "move right, should not move on non-end-pair char: `§|§` with (" ,
+        setup_func = function()
+          npairs.add_rule(Rule("§","§"):with_move(cond.done()))
+        end,
+        key    = [[(]],
+        before = [[§|§]],
+        after  = [[§(|)§]]
+    },
+    {
+        -- ref: issue #331
+        name = "move right, should not move on non-end-pair char: `#|#` with \"" ,
+        setup_func = function()
+          npairs.add_rule(Rule("#","#"):with_move(cond.done()))
+        end,
+        key    = [["]],
+        before = [[#|#]],
+        after  = [[#"|"#]]
+    },
+    {
+        -- ref: issue #331 and #330
+        name = "move right, should not move on non-end-pair char: `<|>` with (" ,
+        setup_func = function()
+          npairs.add_rule(Rule("<",">"):with_move(cond.done()))
+        end,
+        key    = [[(]],
+        before = [[<|>]],
+        after  = [[<(|)>]],
+    },
+    {
         name = "move right when inside grave with special slash" ,
         key    = [[`]],
         before = [[(`abcd\"|`)]],

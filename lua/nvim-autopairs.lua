@@ -434,7 +434,12 @@ M.autopairs_map = function(bufnr, char)
             -- log.debug("start_pair" .. rule.start_pair)
             -- log.debug('prev_char' .. prev_char)
             -- log.debug('next_char' .. next_char)
-            if utils.compare(rule.end_pair, next_char, rule.is_regex)
+            local char_matches_rule = (rule.end_pair == char or rule.key_map == char)
+            -- for simple pairs, char will match end_pair
+            -- for more complex pairs, user should map the wanted end char with `use_key`
+            --   on a dedicated rule
+            if char_matches_rule
+                and utils.compare(rule.end_pair, next_char, rule.is_regex)
                 and rule:can_move(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
