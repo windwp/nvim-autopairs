@@ -41,6 +41,7 @@ local function setup(opt)
         Rule("```.*$", "```", { "markdown", "vimwiki", "rmarkdown", "rmd", "pandoc" }):only_cr():use_regex(true),
         Rule('"""', '"""', { "python", "elixir", "julia", "kotlin" }):with_pair(cond.not_before_char('"', 3)),
         Rule("'''", "'''", { "python" }):with_pair(cond.not_before_char('"', 3)),
+        Rule("<", ">", "rust"):with_pair(cond.before_regex("%a+")):with_move(function(opts) return opts.char == ">" end),
         quote("'", "'", "-rust"):with_pair(cond.not_before_regex("%w")),
         quote("'", "'", "rust"):with_pair(cond.not_before_regex("[%w<&]")):with_pair(cond.not_after_text(">")),
         quote("`", "`"),
