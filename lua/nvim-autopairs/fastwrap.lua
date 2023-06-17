@@ -11,7 +11,7 @@ local default_config = {
     keys = 'qwertyuiopzxcvbnmasdfghjkl',
     highlight = 'Search',
     highlight_grey = 'Comment',
-    manual_position = false,
+    manual_position = true,
 }
 
 M.ns_fast_wrap = vim.api.nvim_create_namespace('autopairs_fastwrap')
