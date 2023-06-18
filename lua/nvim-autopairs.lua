@@ -29,7 +29,7 @@ local default = {
     enable_bracket_in_quote = true,
     enable_abbr = false,
     ts_config = {
-        lua = { 'string', 'source' },
+        lua = { 'string', 'source', 'string_content' },
         javascript = { 'string', 'template_string' },
     },
 }

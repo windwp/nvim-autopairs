@@ -50,7 +50,7 @@ local data = {
         setup_func = function()
             npairs.add_rules({
                 Rule('%', '%', 'lua'):with_pair(
-                    ts_conds.is_ts_node({ 'string', 'comment' })
+                    ts_conds.is_ts_node({ 'string', 'comment', 'string_content' })
                 ),
             })
         end,
