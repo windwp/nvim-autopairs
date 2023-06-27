@@ -17,7 +17,7 @@ local default = {
     map_c_w = false,
     map_cr = true,
     disable_filetype = { 'TelescopePrompt', 'spectre_panel' },
-    disable_in_macro = false,
+    disable_in_macro = true,
     disable_in_visualblock = false,
     disable_in_replace_mode = true,
     ignored_next_char = [=[[%w%%%'%[%"%.%`%$]]=],
