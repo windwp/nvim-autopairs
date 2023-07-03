@@ -321,7 +321,7 @@ M.on_attach = function(bufnr)
             bufnr,
             "i",
             utils.key.c_h,
-            string.format("v:lua.MPairs.autopairs_c_h(%d)", bufnr),
+            'v:lua.MPairs.autopairs_c_h()',
             { expr = true, noremap = true }
         )
     end
@@ -331,7 +331,7 @@ M.on_attach = function(bufnr)
             bufnr,
             'i',
             '<c-w>',
-            string.format('v:lua.MPairs.autopairs_c_w(%d)', bufnr),
+            'v:lua.MPairs.autopairs_c_w()',
             { expr = true, noremap = true }
         )
     end
