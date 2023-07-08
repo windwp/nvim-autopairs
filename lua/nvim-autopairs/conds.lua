@@ -45,10 +45,11 @@ cond.before_regex = function(regex, length)
     ---@param opts CondOpts
     return function(opts)
         log.debug('before_regex')
-        if length < 0 then
-            length = opts.col
+        local captured_length = length
+        if captured_length < 0 then
+            captured_length = opts.col
         end
-        local str = utils.text_sub_char(opts.line, opts.col - 1, -length)
+        local str = utils.text_sub_char(opts.line, opts.col - 1, -captured_length)
         if str:match(regex) then
             return true
         end
@@ -90,10 +91,11 @@ cond.after_regex = function(regex, length)
     ---@param opts CondOpts
     return function(opts)
         log.debug('after_regex')
-        if length < 0 then
-            length = #opts.line
+        local captured_length = length
+        if captured_length < 0 then
+            captured_length = #opts.line
         end
-        local str = utils.text_sub_char(opts.line, opts.col, length)
+        local str = utils.text_sub_char(opts.line, opts.col, captured_length)
         if str:match(regex) then
             return true
         end
@@ -132,10 +134,11 @@ cond.not_before_regex = function(regex, length)
     ---@param opts CondOpts
     return function(opts)
         log.debug('not_before_regex')
-        if length < 0 then
-            length = opts.col
+        local captured_length = length
+        if captured_length < 0 then
+            captured_length = opts.col
         end
-        local str = utils.text_sub_char(opts.line, opts.col - 1, -length)
+        local str = utils.text_sub_char(opts.line, opts.col - 1, -captured_length)
         if str:match(regex) then
             return false
         end
@@ -150,10 +153,11 @@ cond.not_after_regex = function(regex, length)
     ---@param opts CondOpts
     return function(opts)
         log.debug('not_after_regex')
-        if length < 0 then
-            length = #opts.line
+        local captured_length = length
+        if captured_length < 0 then
+            captured_length = #opts.line
         end
-        local str = utils.text_sub_char(opts.line, opts.col, length)
+        local str = utils.text_sub_char(opts.line, opts.col, captured_length)
         if str:match(regex) then
             return false
         end
