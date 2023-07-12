@@ -37,19 +37,14 @@ cond.invert = function(func)
     end
 end
 
-cond.before_regex = function(regex, length)
-    length = length or 1
+cond.before_regex = function(regex)
     if not regex then
         return cond.none()
     end
     ---@param opts CondOpts
     return function(opts)
         log.debug('before_regex')
-        local captured_length = length
-        if captured_length < 0 then
-            captured_length = opts.col
-        end
-        local str = utils.text_sub_char(opts.line, opts.col - 1, -captured_length)
+        local str = utils.text_sub_char(opts.line, opts.col - 1, -opts.col)
         if str:match(regex) then
             return true
         end
@@ -83,19 +78,14 @@ cond.after_text = function(text)
     end
 end
 
-cond.after_regex = function(regex, length)
-    length = length or 1
+cond.after_regex = function(regex)
     if not regex then
         return cond.none()
     end
     ---@param opts CondOpts
     return function(opts)
         log.debug('after_regex')
-        local captured_length = length
-        if captured_length < 0 then
-            captured_length = #opts.line
-        end
-        local str = utils.text_sub_char(opts.line, opts.col, captured_length)
+        local str = utils.text_sub_char(opts.line, opts.col, #opts.line)
         if str:match(regex) then
             return true
         end
@@ -126,38 +116,28 @@ cond.not_after_text = function(text)
     end
 end
 
-cond.not_before_regex = function(regex, length)
-    length = length or 1
+cond.not_before_regex = function(regex)
     if not regex then
         return cond.none()
     end
     ---@param opts CondOpts
     return function(opts)
         log.debug('not_before_regex')
-        local captured_length = length
-        if captured_length < 0 then
-            captured_length = opts.col
-        end
-        local str = utils.text_sub_char(opts.line, opts.col - 1, -captured_length)
+        local str = utils.text_sub_char(opts.line, opts.col - 1, -opts.col)
         if str:match(regex) then
             return false
         end
     end
 end
 
-cond.not_after_regex = function(regex, length)
-    length = length or 1
+cond.not_after_regex = function(regex)
     if not regex then
         return cond.none()
     end
     ---@param opts CondOpts
     return function(opts)
         log.debug('not_after_regex')
-        local captured_length = length
-        if captured_length < 0 then
-            captured_length = #opts.line
-        end
-        local str = utils.text_sub_char(opts.line, opts.col, captured_length)
+        local str = utils.text_sub_char(opts.line, opts.col, #opts.line)
         if str:match(regex) then
             return false
         end
