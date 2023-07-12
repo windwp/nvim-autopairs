@@ -7,7 +7,7 @@ local function quote_creator(opt)
         local rule = Rule(...):with_move(move_func()):with_pair(cond.not_add_quote_inside_quote())
 
         if #opt.ignored_next_char > 1 then
-            rule:with_pair(cond.not_after_regex(opt.ignored_next_char))
+            rule:with_pair(cond.not_after_regex(opt.ignored_next_char .. '$'))
         end
         rule:use_undo(opt.break_undo)
         return rule
@@ -41,11 +41,11 @@ local function setup(opt)
         Rule("```.*$", "```", { "markdown", "vimwiki", "rmarkdown", "rmd", "pandoc" }):only_cr():use_regex(true),
         Rule('"""', '"""', { "python", "elixir", "julia", "kotlin" }):with_pair(cond.not_before_char('"', 3)),
         Rule("'''", "'''", { "python" }):with_pair(cond.not_before_char('"', 3)),
-        quote("'", "'", "-rust"):with_pair(cond.not_before_regex("%w")),
-        quote("'", "'", "rust"):with_pair(cond.not_before_regex("[%w<&]")):with_pair(cond.not_after_text(">")),
+        quote("'", "'", "-rust"):with_pair(cond.not_before_regex("%w$")),
+        quote("'", "'", "rust"):with_pair(cond.not_before_regex("[%w<&]$")):with_pair(cond.not_after_text(">")),
         quote("`", "`"),
         quote('"', '"', "-vim"),
-        quote('"', '"', "vim"):with_pair(cond.not_before_regex("^%s*$", -1)),
+        quote('"', '"', "vim"):with_pair(cond.not_before_regex("^%s*$")),
         bracket("(", ")"),
         bracket("[", "]"),
         bracket("{", "}"),
