@@ -7,7 +7,7 @@ local function quote_creator(opt)
         local rule = Rule(...):with_move(move_func()):with_pair(cond.not_add_quote_inside_quote())
 
         if #opt.ignored_next_char > 1 then
-            rule:with_pair(cond.not_after_regex(opt.ignored_next_char .. '$'))
+            rule:with_pair(cond.not_after_regex('^' .. opt.ignored_next_char))
         end
         rule:use_undo(opt.break_undo)
         return rule
