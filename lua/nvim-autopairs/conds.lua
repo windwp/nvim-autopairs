@@ -43,7 +43,7 @@ cond.before_regex = function(regex, length)
     ---@param opts CondOpts
     return function(opts)
         log.debug('before_regex')
-        local str = utils.text_sub_char(opts.line, opts.col - 1, length - opts.col)
+        local str = utils.text_sub_char(opts.line, opts.col - 1, length or -opts.col)
         if str:match(regex) then
             return true
         end
