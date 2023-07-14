@@ -760,6 +760,12 @@ local data = {
         after      = [[{{("It doesn't name %s", ''), 'ErrorMsg''|' }},  ]],
         end_cursor = 41
     },
+    {
+        name   = "80 add normal quote with '",
+        key    = [["]],
+        before = [[aa| 'aa]],
+        after  = [[aa"|" 'aa]]
+    },
 }
 
 local run_data = _G.Test_filter(data)
