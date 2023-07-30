@@ -68,8 +68,10 @@ M.is_in_quotes = function (line, pos, quote_type)
             result == false and
             M.is_quote(char) and
             (not quote_type or char == quote_type) and
-            --a single quote with a word before is not count
-            not (char == "'" and prev_char:match("%w"))
+            --a single quote with a word before is not count unless in python
+            --(e.g. f'string {with_brackets}')
+            not (char == "'" and prev_char:match("%w") and
+                vim.bo.filetype ~= "python")
         then
             last_char = quote_type or char
             result = true
