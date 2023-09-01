@@ -53,6 +53,7 @@ local function setup(opt)
             "^%s*</",
             {
                 "html",
+                "htmldjango",
                 "php",
                 "typescript",
                 "typescriptreact",
