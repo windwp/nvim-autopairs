@@ -115,7 +115,6 @@ cond.not_after_text = function(text)
 end
 
 cond.not_before_regex = function(regex, length)
-    log.debug(length)
     length = length or 1
     if length < 0 then length = nil end
     ---@param opts CondOpts
