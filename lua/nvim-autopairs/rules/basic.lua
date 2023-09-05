@@ -1,5 +1,6 @@
 local Rule = require("nvim-autopairs.rule")
 local cond = require("nvim-autopairs.conds")
+local utils = require('nvim-autopairs.utils')
 
 local function quote_creator(opt)
     local quote = function(...)
@@ -32,7 +33,6 @@ local function bracket_creator(opt)
 end
 
 local function setup(opt)
-    -- stylua: ignore
     local quote = quote_creator(opt)
     local bracket = bracket_creator(opt)
     local rules = {
@@ -41,7 +41,15 @@ local function setup(opt)
         Rule("```.*$", "```", { "markdown", "vimwiki", "rmarkdown", "rmd", "pandoc" }):only_cr():use_regex(true),
         Rule('"""', '"""', { "python", "elixir", "julia", "kotlin" }):with_pair(cond.not_before_char('"', 3)),
         Rule("'''", "'''", { "python" }):with_pair(cond.not_before_char('"', 3)),
-        quote("'", "'", "-rust"):with_pair(cond.not_before_regex("%w")),
+        quote("'", "'", "-rust")
+            :with_pair(function(opts)
+                -- python literals string
+                local str = utils.text_sub_char(opts.line, opts.col - 1, 1)
+                if vim.bo.filetype == 'python' and str:match("[frbuFRBU]") then
+                    return true
+                end
+            end)
+            :with_pair(cond.not_before_regex("%w")),
         quote("'", "'", "rust"):with_pair(cond.not_before_regex("[%w<&]")):with_pair(cond.not_after_text(">")),
         quote("`", "`"),
         quote('"', '"', "-vim"),
@@ -54,6 +62,8 @@ local function setup(opt)
             "^%s*</",
             {
                 "html",
+                "htmldjango",
+                "php",
                 "typescript",
                 "typescriptreact",
                 "javascript",

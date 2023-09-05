@@ -17,7 +17,7 @@ local default = {
     map_c_w = false,
     map_cr = true,
     disable_filetype = { 'TelescopePrompt', 'spectre_panel' },
-    disable_in_macro = false,
+    disable_in_macro = true,
     disable_in_visualblock = false,
     disable_in_replace_mode = true,
     ignored_next_char = [=[[%w%%%'%[%"%.%`%$]]=],
@@ -30,7 +30,7 @@ local default = {
     enable_abbr = false,
     enable_delete_pair_before = false,
     ts_config = {
-        lua = { 'string', 'source' },
+        lua = { 'string', 'source', 'string_content' },
         javascript = { 'string', 'template_string' },
     },
 }
@@ -63,7 +63,11 @@ M.setup = function(opt)
     api.nvim_create_autocmd('BufDelete', {
         group = group, pattern = '*',
         callback = function(data)
-            M.set_buf_rule(nil, tonumber(data.buf) or 0)
+            local cur = api.nvim_get_current_buf()
+            local bufnr = tonumber(data.buf) or 0
+            if bufnr ~= cur then
+                M.set_buf_rule(nil, bufnr)
+            end
         end,
     })
     api.nvim_create_autocmd('FileType', {
@@ -77,14 +81,19 @@ M.add_rule = function(rule)
 end
 
 M.get_rule = function(start_pair)
+    local tbl = M.get_rules(start_pair)
+    if #tbl == 1 then
+        return tbl[1]
+    end
+    return tbl
+end
+
+M.get_rules = function(start_pair)
     local tbl = {}
     for _, r in pairs(M.config.rules) do
         if r.start_pair == start_pair then
             table.insert(tbl, r)
         end
-    end
-    if #tbl == 1 then
-        return tbl[1]
     end
     return tbl
 end
@@ -212,14 +221,14 @@ M.on_attach = function(bufnr)
             table.insert(rules, rule)
         end
     end
-    -- sort by length
+    -- sort by pair and keymap
     table.sort(rules, function(a, b)
         if a.start_pair == b.start_pair then
             if not b.key_map then
-                return a.key_map and 1
+                return a.key_map
             end
             if not a.key_map then
-                return b.key_map and -1
+                return b.key_map
             end
             return #a.key_map < #b.key_map
         end
@@ -313,7 +322,7 @@ M.on_attach = function(bufnr)
             bufnr,
             "i",
             utils.key.c_h,
-            string.format("v:lua.MPairs.autopairs_c_h(%d)", bufnr),
+            'v:lua.MPairs.autopairs_c_h()',
             { expr = true, noremap = true }
         )
     end
@@ -323,7 +332,7 @@ M.on_attach = function(bufnr)
             bufnr,
             'i',
             '<c-w>',
-            string.format('v:lua.MPairs.autopairs_c_w(%d)', bufnr),
+            'v:lua.MPairs.autopairs_c_w()',
             { expr = true, noremap = true }
         )
     end
@@ -456,7 +465,12 @@ M.autopairs_map = function(bufnr, char)
             -- log.debug("start_pair" .. rule.start_pair)
             -- log.debug('prev_char' .. prev_char)
             -- log.debug('next_char' .. next_char)
-            if utils.compare(rule.end_pair, next_char, rule.is_regex)
+            local char_matches_rule = (rule.end_pair == char or rule.key_map == char)
+            -- for simple pairs, char will match end_pair
+            -- for more complex pairs, user should map the wanted end char with `use_key`
+            --   on a dedicated rule
+            if char_matches_rule
+                and utils.compare(rule.end_pair, next_char, rule.is_regex)
                 and rule:can_move(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
@@ -654,6 +668,7 @@ M.autopairs_afterquote = function(line, key_char)
 end
 
 M.autopairs_closequote_expr = function()
+    ---@diagnostic disable-next-line: param-type-mismatch
     vim.fn.setline('.', M.state.expr_quote)
 end
 
