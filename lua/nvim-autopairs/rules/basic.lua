@@ -5,7 +5,9 @@ local utils = require('nvim-autopairs.utils')
 local function quote_creator(opt)
     local quote = function(...)
         local move_func = opt.enable_moveright and cond.move_right or cond.none
-        local rule = Rule(...):with_move(move_func()):with_pair(cond.not_add_quote_inside_quote())
+        local rule = Rule(...)
+            :with_move(move_func())
+            :with_pair(cond.not_add_quote_inside_quote())
 
         if #opt.ignored_next_char > 1 then
             rule:with_pair(cond.not_after_regex(opt.ignored_next_char))
@@ -21,7 +23,8 @@ local function bracket_creator(opt)
     local bracket = function(...)
         local rule = quote(...)
         if opt.enable_check_bracket_line == true then
-            rule:with_pair(cond.is_bracket_line()):with_move(cond.is_bracket_line_move())
+            rule:with_pair(cond.is_bracket_line())
+                :with_move(cond.is_bracket_line_move())
         end
         if opt.enable_bracket_in_quote then
             -- still add bracket if text is quote "|" and next_char have "

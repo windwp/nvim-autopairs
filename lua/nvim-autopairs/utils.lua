@@ -1,4 +1,4 @@
-local M={}
+local M = {}
 local api = vim.api
 local log = require('nvim-autopairs._log')
 
@@ -21,20 +21,20 @@ M.set_vchar = function(text)
 end
 
 
-M.is_quote = function (char)
+M.is_quote = function(char)
     return char == "'" or char == '"' or char == '`'
 end
 
-M.is_bracket = function (char)
+M.is_bracket = function(char)
     return char == "(" or char == '[' or char == '{' or char == '<'
 end
 
 
-M.is_close_bracket = function (char)
+M.is_close_bracket = function(char)
     return char == ")" or char == ']' or char == '}' or char == '>'
 end
 
-M.compare = function (value, text, is_regex)
+M.compare = function(value, text, is_regex)
     if is_regex and string.match(text, value) then
         return true
     elseif text == value then
@@ -89,14 +89,14 @@ M.is_attached = function(bufnr)
 end
 
 
-M.set_attach = function(bufnr,value)
+M.set_attach = function(bufnr, value)
     api.nvim_buf_set_var(bufnr or 0, "nvim-autopairs", value)
 end
 
 M.is_in_table = function(tbl, val)
     if tbl == nil then return false end
     for _, value in pairs(tbl) do
-        if val== value then return true end
+        if val == value then return true end
     end
     return false
 end
@@ -112,7 +112,7 @@ M.check_not_filetype = function(tbl, filetype)
 end
 
 M.is_in_range = function(row, col, range)
-    local start_row, start_col, end_row, end_col  = unpack(range)
+    local start_row, start_col, end_row, end_col = unpack(range)
 
     return (row > start_row or (start_row == row and col >= start_col))
         and (row < end_row or (row == end_row and col <= end_col))
@@ -132,9 +132,9 @@ M.text_get_current_line = function(bufnr)
 end
 
 M.repeat_key = function(key, num)
-    local text=''
+    local text = ''
     for _ = 1, num, 1 do
-       text=text..key
+        text = text .. key
     end
     return text
 end
@@ -149,7 +149,7 @@ M.text_cusor_line = function(line, col, prev_count, next_count, is_regex)
         prev_count = col
         next_count = #line - col
     end
-    local prev = M.text_sub_char(line, col, - prev_count)
+    local prev = M.text_sub_char(line, col, -prev_count)
     local next = M.text_sub_char(line, col + 1, next_count)
     return prev, next
 end
@@ -159,14 +159,14 @@ M.text_sub_char = function(line, start, num)
     if num < 0 then
         start = start + num + 1
     else
-        finish = start + num -1
+        finish = start + num - 1
     end
     return string.sub(line, start, finish)
 end
 
 -- P(M.text_sub_char("aa'' aaa", 3, -1))
 M.insert_char = function(text)
-		api.nvim_put({text}, "c", false, true)
+    api.nvim_put({ text }, "c", false, true)
 end
 
 M.feed = function(text, num)
@@ -178,21 +178,21 @@ M.feed = function(text, num)
     end
     log.debug("result" .. result)
     api.nvim_feedkeys(api.nvim_replace_termcodes(
-        result, true, false, true),
-		"n", true)
+            result, true, false, true),
+        "n", true)
 end
 
 M.esc = function(cmd)
     return vim.api.nvim_replace_termcodes(cmd, true, false, true)
 end
 
-M.is_block_wise_mode = function ()
-  return vim.fn.visualmode() == ''
+M.is_block_wise_mode = function()
+    return vim.fn.visualmode() == ''
 end
 
 --- get prev_char with out key_map
 M.get_prev_char = function(opt)
-    return opt.line:sub(opt.col -1, opt.col + #opt.rule.start_pair -2)
+    return opt.line:sub(opt.col - 1, opt.col + #opt.rule.start_pair - 2)
 end
 
 return M
