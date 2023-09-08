@@ -801,6 +801,13 @@ local data = {
         before   = [[print(f'|')]],
         after    = [[print(f'{|}')]]
     },
+    {
+        name     = "86 move ' is working on python",
+        filetype = "python",
+        key      = [[']],
+        before   = [[('|') ]],
+        after    = [[(''|) ]]
+    },
 }
 
 local run_data = _G.Test_filter(data)
@@ -814,7 +821,6 @@ describe('autopairs ', function()
             if value.setup_func then
                 value.setup_func()
             end
-
         end,
     })
 end)

@@ -48,30 +48,33 @@ end
 ---@param pos number position in line
 ---@param quote_type nil|string specify a quote
 ---@return boolean
-M.is_in_quotes = function (line, pos, quote_type)
+M.is_in_quotes = function(line, pos, quote_type)
     local cIndex = 0
     local result = false
     local last_char = quote_type or ''
 
-    while cIndex < string.len(line) and cIndex < pos  do
+    while cIndex < string.len(line) and cIndex < pos do
         cIndex = cIndex + 1
         local char = line:sub(cIndex, cIndex)
         local prev_char = line:sub(cIndex - 1, cIndex - 1)
         if
-            result == true and
-            char == last_char and
-            prev_char ~= "\\"
+            result == true
+            and char == last_char
+            and prev_char ~= "\\"
         then
             result = false
             last_char = quote_type or ''
         elseif
-            result == false and
-            M.is_quote(char) and
-            (not quote_type or char == quote_type) and
+            result == false
+            and M.is_quote(char)
+            and (not quote_type or char == quote_type)
             --a single quote with a word before is not count unless it is a
             -- prefixed string in python (e.g. f'string {with_brackets}')
-            not (char == "'" and prev_char:match(vim.bo.filetype == "python"
-                and "[^frbuFRBU]" or "%w"))
+            and not (
+                char == "'"
+                and prev_char:match('%w')
+                and (vim.bo.filetype ~= 'python' or prev_char:match('[^frbuFRBU]'))
+            )
         then
             last_char = quote_type or char
             result = true
