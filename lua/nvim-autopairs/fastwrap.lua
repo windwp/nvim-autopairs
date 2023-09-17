@@ -8,6 +8,9 @@ local default_config = {
     chars = { '{', '[', '(', '"', "'" },
     pattern = [=[[%'%"%>%]%)%}%,]]=],
     end_key = '$',
+    before_key = 'h',
+    after_key = 'l',
+    cursor_pos_before = true,
     keys = 'qwertyuiopzxcvbnmasdfghjkl',
     highlight = 'Search',
     highlight_grey = 'Comment',
@@ -108,8 +111,8 @@ M.show = function(line)
             vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
             for _, pos in pairs(list_pos) do
                 local hl_mark = {
-                    { pos = pos.pos - 1, key = 'h' },
-                    { pos = pos.pos + 1, key = 'l' },
+                    { pos = pos.pos - 1, key = config.before_key  },
+                    { pos = pos.pos + 1, key = config.after_key  },
                 }
                 if config.manual_position and (char == pos.key or char == string.upper(pos.key)) then
                     M.highlight_wrap(hl_mark, row, col, #line)
@@ -134,20 +137,14 @@ end
 
 M.choose_pos = function(row, line, pos, end_pair)
     vim.defer_fn(function()
-        local char = pos.char == nil and 'l' or M.getchar_handler()
+        local char = pos.char == nil and config.before_key or M.getchar_handler()
         vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
         local change_pos = false
         local col = pos.col
-        if char == 'H' or char == 'L' then
+        if char == string.upper(config.before_key) or char == string.upper(config.after_key) then
             change_pos = true
         end
-        if char == 'h' or char == 'l' then
-            change_pos = false
-        end
-        if char == 'h' or char == 'H' then
-            col = pos.col
-        end
-        if char == 'l' or char == 'L' then
+        if char == config.after_key or char == string.upper(config.after_key) then
             col = pos.col + 1
         end
         M.move_bracket(line, col, end_pair, change_pos)
@@ -169,7 +166,7 @@ M.move_bracket = function(line, target_pos, end_pair, change_pos)
     line = line:sub(1, target_pos) .. end_pair .. line:sub(target_pos + 1, #line)
     vim.api.nvim_set_current_line(line)
     if change_pos then
-        vim.api.nvim_win_set_cursor(0, { row + 1, target_pos })
+        vim.api.nvim_win_set_cursor(0, { row + 1, target_pos + (config.cursor_pos_before and 0 or 1) })
     end
 end
 
