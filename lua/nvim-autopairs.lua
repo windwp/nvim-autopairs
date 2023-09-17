@@ -581,7 +581,7 @@ M.autopairs_cr = function(bufnr)
                 and rule:can_cr(cond_opt)
             then
                 log.debug('do_cr')
-                return utils.esc('<CR><CMD>normal ====k$<CR><right><CR>')
+                return utils.esc(rule:get_map_cr({ rule = rule, line = line, color = col, bufnr = bufnr }))
             end
         end
     end
