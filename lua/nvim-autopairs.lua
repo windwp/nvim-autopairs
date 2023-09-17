@@ -567,12 +567,10 @@ M.autopairs_cr = function(bufnr)
                 and rule:can_cr(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
-                local end_pair_length = rule:get_end_pair_length(end_pair)
                 return utils.esc(
-                    end_pair
-                    .. utils.repeat_key(utils.key.join_left, end_pair_length)
+                    '<CR>' .. end_pair
                     -- FIXME do i need to re indent twice #118
-                    .. '<cr><esc>====O'
+                    .. '<CMD>normal ====k$<CR><right><CR>'
                 )
             end
 
@@ -583,7 +581,7 @@ M.autopairs_cr = function(bufnr)
                 and rule:can_cr(cond_opt)
             then
                 log.debug('do_cr')
-                return utils.esc(rule:get_map_cr({ rule = rule, line = line, color = col, bufnr = bufnr }))
+                return utils.esc('<CR><CMD>normal ====k$<CR><right><CR>')
             end
         end
     end
