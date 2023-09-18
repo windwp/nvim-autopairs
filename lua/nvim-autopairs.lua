@@ -56,11 +56,13 @@ M.setup = function(opt)
     M.force_attach()
     local group = api.nvim_create_augroup('autopairs_buf', { clear = true })
     api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
-        group = group, pattern = '*',
+        group = group,
+        pattern = '*',
         callback = function() M.on_attach() end
     })
     api.nvim_create_autocmd('BufDelete', {
-        group = group, pattern = '*',
+        group = group,
+        pattern = '*',
         callback = function(data)
             local cur = api.nvim_get_current_buf()
             local bufnr = tonumber(data.buf) or 0
@@ -70,7 +72,8 @@ M.setup = function(opt)
         end,
     })
     api.nvim_create_autocmd('FileType', {
-        group = group, pattern = '*',
+        group = group,
+        pattern = '*',
         callback = function() M.force_attach() end
     })
 end
@@ -398,7 +401,7 @@ M.autopairs_map = function(bufnr, char)
         return char
     end
     local line = utils.text_get_current_line(bufnr)
-    local _, col = utils.get_cursor()
+    local row, col = utils.get_cursor()
     local new_text = ''
     local add_char = 1
     local rules = M.get_buf_rules(bufnr)
@@ -452,24 +455,24 @@ M.autopairs_map = function(bufnr, char)
                 and rule:can_pair(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
-                local end_pair_length = rule:get_end_pair_length(end_pair)
-                local move_text = utils.repeat_key(utils.key.join_left, end_pair_length)
                 if add_char == 0 then
-                    move_text = ''
                     char = ''
                 end
                 if end_pair:match('<.*>') then
                     end_pair = utils.esc(end_pair)
                 end
-                local result = char .. end_pair .. utils.esc(move_text)
+                local result = char .. end_pair
                 if rule.is_undo then
                     result = utils.esc(utils.key.undo_sequence) .. result .. utils.esc(utils.key.undo_sequence)
                 end
                 if M.config.enable_abbr then
                     result = utils.esc(utils.key.abbr) .. result
                 end
+                api.nvim_feedkeys(result, "tn", false) --t mode makes it send the keys right away n more is for noremap
+                --not sure how to convert bufnr to a win id 
+                api.nvim_win_set_cursor(0, {row,col})
                 log.debug("key_map :" .. result)
-                return result
+                return ''
             end
         end
     end
