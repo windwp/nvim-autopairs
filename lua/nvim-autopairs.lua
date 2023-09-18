@@ -470,7 +470,9 @@ M.autopairs_map = function(bufnr, char)
                 end
                 api.nvim_feedkeys(result, "tn", false) --t mode makes it send the keys right away n more is for noremap
                 --not sure how to convert bufnr to a win id 
-                api.nvim_win_set_cursor(0, {row,col})
+                print(row,col)
+                api.nvim_win_set_cursor(0, {row,col + #char})
+                abort() -- lua is such a good language
                 log.debug("key_map :" .. result)
                 return ''
             end
