@@ -7,7 +7,7 @@ local M = {}
 
 local pairRow,pairCol = 0,0
 local lastbuf = 0
-vim.api.nvim_create_user_command("Resrverd_autopairs_jumptbackpairs",function ()
+vim.api.nvim_create_user_command("ResrverdAutopairsJumptbackpairs",function ()
      api.nvim_win_set_cursor(lastbuf,{pairRow,pairCol})
 end,{})
 
