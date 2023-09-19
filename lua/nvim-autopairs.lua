@@ -469,7 +469,7 @@ M.autopairs_map = function(bufnr, char)
                 if end_pair:match('<.*>') then
                     end_pair = utils.esc(end_pair)
                 end
-                local result = char .. end_pair .. '<cmd>RESERVERD_AUTOPAIRS_JUMPTBACKPAIRS<cr>'
+                local result = char .. end_pair .. utils.esc('<cmd>RESERVERD_AUTOPAIRS_JUMPTBACKPAIRS<cr>')
                 if rule.is_undo then
                     result = utils.esc(utils.key.undo_sequence) .. result .. utils.esc(utils.key.undo_sequence)
                 end
