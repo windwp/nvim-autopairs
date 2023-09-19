@@ -6,9 +6,8 @@ local highlighter = nil
 local M = {}
 
 local pairRow,pairCol = 0,0
-local lastwin = 0
 vim.api.nvim_create_user_command("AutopairsJumptbackpairs",function ()
-     api.nvim_win_set_cursor(api.nvim_win_get_buf(lastwin),{pairRow,pairCol})
+     api.nvim_win_set_cursor(0,{pairRow,pairCol})
 end,{})
 
 M.state = {
@@ -407,7 +406,6 @@ M.autopairs_map = function(bufnr, char)
     local row, col = utils.get_cursor()
     pairCol = col
     pairRow = row
-    lastwin = bufnr
     local new_text = ''
     local add_char = 1
     local rules = M.get_buf_rules(bufnr)
