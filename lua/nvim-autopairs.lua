@@ -459,7 +459,7 @@ M.autopairs_map = function(bufnr, char)
                 and rule:can_pair(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
-                pairCol = pairCol + 1
+                pairCol = pairCol + #char
                 if add_char == 0 then
                     pairCol = pairCol - 1
                     char = ''
