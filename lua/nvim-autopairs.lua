@@ -6,7 +6,7 @@ local highlighter = nil
 local M = {}
 
 local pairRow,pairCol = 0,0
-vim.api.nvim_create_user_command("AutopairsJumptbackpairs",function ()
+vim.api.nvim_create_user_command("ReservedAutopairsJumptbackpairs",function ()
      api.nvim_win_set_cursor(0,{pairRow,pairCol})
 end,{})
 
@@ -467,7 +467,7 @@ M.autopairs_map = function(bufnr, char)
                 if end_pair:match('<.*>') then
                     end_pair = utils.esc(end_pair)
                 end
-                local result = char .. end_pair .. utils.esc('<cmd>AutopairsJumptbackpairs<cr>')
+                local result = utils.esc("<c-g>u") .. char .. end_pair .. utils.esc('<cmd>ReservedAutopairsJumptbackpairs<cr>')
                 if rule.is_undo then
                     result = utils.esc(utils.key.undo_sequence) .. result .. utils.esc(utils.key.undo_sequence)
                 end
