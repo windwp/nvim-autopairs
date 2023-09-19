@@ -5,6 +5,12 @@ local api = vim.api
 local highlighter = nil
 local M = {}
 
+local pairRow,pairCol = 0,0
+local lastbuf = 0
+vim.api.nvim_create_user_command("RESERVERD_AUTOPAIRS_JUMPTBACKPAIRS",function ()
+     api.nvim_win_set_cursor(lastbuf,{pairRow,pairCol})
+end,{})
+
 M.state = {
     disabled = false,
     rules = {},
@@ -398,7 +404,10 @@ M.autopairs_map = function(bufnr, char)
         return char
     end
     local line = utils.text_get_current_line(bufnr)
-    local _, col = utils.get_cursor()
+    local row, col = utils.get_cursor()
+    pairCol = col
+    pairRow = row
+    lastbuf = bufnr
     local new_text = ''
     local add_char = 1
     local rules = M.get_buf_rules(bufnr)
@@ -452,16 +461,15 @@ M.autopairs_map = function(bufnr, char)
                 and rule:can_pair(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
-                local end_pair_length = rule:get_end_pair_length(end_pair)
-                local move_text = utils.repeat_key(utils.key.join_left, end_pair_length)
+                pairCol = pairCol + 1
                 if add_char == 0 then
-                    move_text = ''
+                    pairCol = pairCol - 1
                     char = ''
                 end
                 if end_pair:match('<.*>') then
                     end_pair = utils.esc(end_pair)
                 end
-                local result = char .. end_pair .. utils.esc(move_text)
+                local result = char .. end_pair .. '<cmd>RESERVERD_AUTOPAIRS_JUMPTBACKPAIRS<cr>'
                 if rule.is_undo then
                     result = utils.esc(utils.key.undo_sequence) .. result .. utils.esc(utils.key.undo_sequence)
                 end
