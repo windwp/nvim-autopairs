@@ -114,7 +114,7 @@ function Rule:get_map_cr(opts)
     if self.map_cr_func then
         return self.map_cr_func(opts)
     end
-    return '<c-g>u<CR><CMD>normal ====<CR><up><end><CR>'
+    return '<c-g>u<CR><CMD>normal! ====<CR><up><end><CR>'
 end
 function Rule:replace_map_cr(value)
     self.map_cr_func = value
