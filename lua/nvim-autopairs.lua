@@ -576,7 +576,7 @@ M.autopairs_cr = function(bufnr)
                 return utils.esc(
                     '<CR>' .. end_pair
                     -- FIXME do i need to re indent twice #118
-                    .. '<CMD>normal ====<CR><up><end><right><CR>'
+                    .. '<CMD>normal ====<CR><up><end><CR>'
                 )
             end
 
