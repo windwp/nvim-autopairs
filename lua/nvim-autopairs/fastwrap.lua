@@ -59,7 +59,7 @@ M.show = function(line)
         end
         local list_pos = {}
         local index = 1
-        local str_length = #line + 1
+        local str_length = #line
         local offset = -1
         for i = col + 2, #line, 1 do
             local char = line:sub(i, i)
@@ -93,12 +93,11 @@ M.show = function(line)
 
         local end_col, end_pos
         if config.manual_position then
-            end_col = str_length + offset
-            end_pos = str_length
+            end_col = str_length + offset + 1
         else
             end_col = str_length + 1
-            end_pos = str_length + 1
         end
+        end_pos = str_length + 1
         if #list_pos == 0 or list_pos[#list_pos].key ~= config.end_key then
             table.insert(
                 list_pos,
