@@ -59,7 +59,7 @@ M.show = function(line)
         end
         local list_pos = {}
         local index = 1
-        local str_length = #line
+        local str_length = #line + 1
         local offset = -1
         for i = col + 2, #line, 1 do
             local char = line:sub(i, i)
