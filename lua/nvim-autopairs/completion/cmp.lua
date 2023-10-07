@@ -14,6 +14,12 @@ M.filetypes = {
             handler = handlers["*"]
         }
     },
+    python = {
+        ["("] = {
+            kind = { Kind.Function, Kind.Method },
+            handler = handlers.python
+        }
+    },
     clojure = {
         ["("] = {
             kind = { Kind.Function, Kind.Method },
