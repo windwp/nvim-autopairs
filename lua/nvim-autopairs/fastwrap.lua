@@ -6,7 +6,7 @@ local M = {}
 local default_config = {
     map = '<M-e>',
     chars = { '{', '[', '(', '"', "'" },
-    pattern = [=[[%'%"%>%]%)%}%,]]=],
+    pattern = [=[[%'%"%>%]%)%}%,%`]]=],
     end_key = '$',
     before_key = 'h',
     after_key = 'l',
@@ -99,15 +99,17 @@ M.show = function(line)
             end_col = str_length + 1
             end_pos = str_length + 1
         end
+        -- add end_key to list extmark
         if #list_pos == 0 or list_pos[#list_pos].key ~= config.end_key then
             table.insert(
                 list_pos,
-                { col = end_col, key = config.end_key, pos = end_pos }
+                { col = end_col, key = config.end_key, pos = end_pos, char = config.end_key }
             )
         end
 
         M.highlight_wrap(list_pos, row, col, #line)
         vim.defer_fn(function()
+            -- get the first char
             local char = #list_pos == 1 and config.end_key or M.getchar_handler()
             vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
             for _, pos in pairs(list_pos) do
@@ -138,7 +140,11 @@ end
 
 M.choose_pos = function(row, line, pos, end_pair)
     vim.defer_fn(function()
-        local char = pos.char == nil and config.before_key or M.getchar_handler()
+        -- select a second key
+        local char =
+            pos.char == nil and config.before_key
+            or pos.char == config.end_key and config.after_key
+            or M.getchar_handler()
         vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
         local change_pos = false
         local col = pos.col
