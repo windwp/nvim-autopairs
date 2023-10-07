@@ -195,4 +195,33 @@ M.get_prev_char = function(opt)
     return opt.line:sub(opt.col - 1, opt.col + #opt.rule.start_pair - 2)
 end
 
+M.enable_ctrl_f_formatting = function()
+    M.old_cinkeys = vim.o.cinkeys
+    M.old_indentkeys = vim.o.indentkeys
+    M.old_cindent = vim.o.cindent
+    M.old_indentexpr = vim.o.indentexpr
+    if vim.o.filetype == 'lisp' then
+        vim.cmd(
+            'if !exists("*GetLispIndent")\n' ..
+            'function GetLispIndent() \n' ..
+            'return lispindent(v:lnum) \n' ..
+            'endfunction\n' ..
+            'endif \n')
+        vim.o.indentexpr = 'GetLispIndent()'
+    end
+    if vim.o.indentexpr ~= '' then
+        vim.o.indentkeys = '!^F'
+    else
+        vim.o.cinkeys = '!^F'
+        vim.o.cindent = true
+    end
+end
+
+M.restore_user_configuration = function()
+    vim.o.cindent = M.old_cindent
+    vim.o.cinkeys = M.old_cinkeys 
+    vim.o.indentexpr = M.old_indentexpr
+    vim.o.indentkeys = M.old_indentkeys
+end
+
 return M

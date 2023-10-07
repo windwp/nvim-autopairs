@@ -114,9 +114,9 @@ function Rule:get_map_cr(opts)
     if self.map_cr_func then
         return self.map_cr_func(opts)
     end
-    require('nvim-autopairs').enable_ctrl_f_formatting()
+    require('nvim-autopairs.utils').enable_ctrl_f_formatting()
     return '<c-g>u<CR><CR><C-f><C-f><up><C-f><c-g>u' ..
-        '<cmd>lua require(\'nvim-autopairs\').restore_user_configuration()<cr>'
+        '<cmd>lua require(\'nvim-autopairs.utils\').restore_user_configuration()<cr>'
 end
 
 function Rule:replace_map_cr(value)

@@ -555,14 +555,6 @@ M.enable_ctrl_f_formatting = function()
     end
 end
 
-M.restore_user_configuration = function()
-    vim.o.cindent = M.old_cindent
-    vim.o.cinkeys = M.old_cinkeys 
-    vim.o.indentexpr = M.old_indentexpr
-    vim.o.indentkeys = M.old_indentkeys
-end
-
-
 M.autopairs_cr = function(bufnr)
     if is_disable() then
         return utils.esc('<cr>')
@@ -600,12 +592,12 @@ M.autopairs_cr = function(bufnr)
                 and rule:can_cr(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
-                M.enable_ctrl_f_formatting()
+                utils.enable_ctrl_f_formatting()
                 return utils.esc(
                     '<CR><CR>' .. end_pair ..
                     -- FIXME do i need to re indent twice #118
                     '<C-f><C-f><up><C-f>' ..
-                    '<cmd>lua require(\'nvim-autopairs\').restore_user_configuration()<cr>'
+                    '<cmd>lua require(\'nvim-autopairs.utils\').restore_user_configuration()<cr>'
                 )
             end
 
