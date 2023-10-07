@@ -56,11 +56,13 @@ M.setup = function(opt)
     M.force_attach()
     local group = api.nvim_create_augroup('autopairs_buf', { clear = true })
     api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
-        group = group, pattern = '*',
+        group = group,
+        pattern = '*',
         callback = function() M.on_attach() end
     })
     api.nvim_create_autocmd('BufDelete', {
-        group = group, pattern = '*',
+        group = group,
+        pattern = '*',
         callback = function(data)
             local cur = api.nvim_get_current_buf()
             local bufnr = tonumber(data.buf) or 0
@@ -70,7 +72,8 @@ M.setup = function(opt)
         end,
     })
     api.nvim_create_autocmd('FileType', {
-        group = group, pattern = '*',
+        group = group,
+        pattern = '*',
         callback = function() M.force_attach() end
     })
 end
@@ -530,6 +533,36 @@ M.autopairs_insert = function(bufnr, char)
     return char
 end
 
+M.enable_ctrl_f_formatting = function()
+    M.old_cinkeys = vim.o.cinkeys
+    M.old_indentkeys = vim.o.indentkeys
+    M.old_cindent = vim.o.cindent
+    M.old_indentexpr = vim.o.indentexpr
+    if vim.o.filetype == 'lisp' then
+        vim.cmd(
+            'if !exists("*GetLispIndent")\n' ..
+            'function GetLispIndent() \n' ..
+            'return lispindent(v:lnum) \n' ..
+            'endfunction\n' ..
+            'endif \n')
+        vim.o.indentexpr = 'GetLispIndent()'
+    end
+    if vim.o.indentexpr ~= '' then
+        vim.o.indentkeys = '!^F'
+    else
+        vim.o.cinkeys = '!^F'
+        vim.o.cindent = true
+    end
+end
+
+M.restore_user_configuration = function()
+    vim.o.cindent = M.old_cindent
+    vim.o.cinkeys = M.old_cinkeys 
+    vim.o.indentexpr = M.old_indentexpr
+    vim.o.indentkeys = M.old_indentkeys
+end
+
+
 M.autopairs_cr = function(bufnr)
     if is_disable() then
         return utils.esc('<cr>')
@@ -567,10 +600,12 @@ M.autopairs_cr = function(bufnr)
                 and rule:can_cr(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
+                M.enable_ctrl_f_formatting()
                 return utils.esc(
-                    '<CR>' .. end_pair
+                    '<CR><CR>' .. end_pair ..
                     -- FIXME do i need to re indent twice #118
-                    .. '<CMD>normal! ====<CR><up><end><CR>'
+                    '<C-f><C-f><up><C-f>' ..
+                    '<cmd>lua require(\'nvim-autopairs\').restore_user_configuration()<cr>'
                 )
             end
 
