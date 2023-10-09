@@ -200,7 +200,8 @@ M.enable_ctrl_f_formatting = function()
     M.old_indentkeys = vim.o.indentkeys
     M.old_cindent = vim.o.cindent
     M.old_indentexpr = vim.o.indentexpr
-    if vim.o.filetype == 'lisp' then
+    -- incase they set a custom lisp formatter
+    if vim.o.indentexpr == '' and vim.o.filetype == 'lisp' then
         vim.cmd(
             'if !exists("*GetLispIndent")\n' ..
             'function GetLispIndent() \n' ..

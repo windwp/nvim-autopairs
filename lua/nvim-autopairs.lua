@@ -533,28 +533,6 @@ M.autopairs_insert = function(bufnr, char)
     return char
 end
 
-M.enable_ctrl_f_formatting = function()
-    M.old_cinkeys = vim.o.cinkeys
-    M.old_indentkeys = vim.o.indentkeys
-    M.old_cindent = vim.o.cindent
-    M.old_indentexpr = vim.o.indentexpr
-    if vim.o.filetype == 'lisp' then
-        vim.cmd(
-            'if !exists("*GetLispIndent")\n' ..
-            'function GetLispIndent() \n' ..
-            'return lispindent(v:lnum) \n' ..
-            'endfunction\n' ..
-            'endif \n')
-        vim.o.indentexpr = 'GetLispIndent()'
-    end
-    if vim.o.indentexpr ~= '' then
-        vim.o.indentkeys = '!^F'
-    else
-        vim.o.cinkeys = '!^F'
-        vim.o.cindent = true
-    end
-end
-
 M.autopairs_cr = function(bufnr)
     if is_disable() then
         return utils.esc('<cr>')
