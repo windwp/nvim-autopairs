@@ -49,7 +49,15 @@ M["*"] = function(char, item, bufnr, rules, _)
                 next_char = next_char,
             }
             if rule.key_map and rule:can_pair(cond_opt) then
-                vim.api.nvim_feedkeys(rule.key_map, "i", true)
+                local functionsig = item.label
+                local pairs = utils.esc(rule.start_pair .. rule.end_pair)
+                local move_text = ''
+                if  autopairs.config.move_on_empty_functions == false or 
+                    functionsig:sub(#functionsig - 1,#functionsig) ~= pairs
+                    then
+                    move_text = utils.esc(utils.repeat_key('<left>',#rule.end_pair))
+                end
+                vim.api.nvim_feedkeys(pairs .. move_text, "i", false)
                 return
             end
         end

@@ -23,6 +23,7 @@ local default = {
     ignored_next_char = [=[[%w%%%'%[%"%.%`%$]]=],
     break_undo = true,
     check_ts = false,
+    move_on_empty_functions = true,
     enable_moveright = true,
     enable_afterquote = true,
     enable_check_bracket_line = true,
