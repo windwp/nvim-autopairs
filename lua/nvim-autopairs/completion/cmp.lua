@@ -1,6 +1,7 @@
 local autopairs = require('nvim-autopairs')
 local handlers = require('nvim-autopairs.completion.handlers')
 local cmp = require('cmp')
+local utils = require('nvim-autopairs.utils')
 
 local Kind = cmp.lsp.CompletionItemKind
 
@@ -105,14 +106,13 @@ M.cpp_pairs = function(evt)
             pairs = ' '
         end
         pairs = pairs .. '<>'
-        pairs = vim.api.nvim_replace_termcodes(pairs .. "<left>", true, false, true)
+        pairs = pairs .. utils.esc('<left>')
         vim.api.nvim_feedkeys(pairs, "n", false)
     end
 end
 
 local cmp_config = require('cmp.config')
 local cmp_comparetors = cmp_config.get().sorting.comparators
-local kind = cmp.lsp.CompletionItemKind
 
 local unpack = unpack or table.unpack
 local function cpp_sort_cmp(entry1, entry2)
@@ -121,10 +121,10 @@ local function cpp_sort_cmp(entry1, entry2)
    if vim.o.filetype ~= "cpp" then
       return nil
    end
-   if kind1 == kind.Constructor and kind2 == kind.Class then
+   if kind1 == Kind.Constructor and kind2 == Kind.Class then
       return false
    end
-   if kind1 == kind.Class and kind2 == kind.Constructor then
+   if kind1 == Kind.Class and kind2 == Kind.Constructor then
       return true
    end
    return nil
