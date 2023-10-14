@@ -1,6 +1,7 @@
 local autopairs = require('nvim-autopairs')
 local handlers = require('nvim-autopairs.completion.handlers')
 local cmp = require('cmp')
+local utils = require('nvim-autopairs.utils')
 
 local Kind = cmp.lsp.CompletionItemKind
 
