@@ -51,9 +51,9 @@ M.on_confirm_done = function(opts)
 
     return function(evt)
         if evt.commit_character then
-          return
+            return
         end
-        
+
         local entry = evt.entry
         local commit_character = entry:get_commit_characters()
         local bufnr = vim.api.nvim_get_current_buf()
@@ -62,11 +62,11 @@ M.on_confirm_done = function(opts)
 
         -- Without options and fallback
         if not opts.filetypes[filetype] and not opts.filetypes["*"] then
-          return
+            return
         end
 
         if opts.filetypes[filetype] == false then
-          return
+            return
         end
 
         -- If filetype is nil then use *
@@ -84,6 +84,7 @@ M.on_confirm_done = function(opts)
     end
 end
 
+local loaded_cpp_sort = false
 M.cpp_pairs = function()
     local cmp_config = require('cmp.config')
     local cmp_comparetors = cmp_config.get().sorting.comparators
@@ -103,15 +104,17 @@ M.cpp_pairs = function()
         end
         return nil
     end
-
-    cmp.setup({
-        sorting = {
-            comparators = {
-                cpp_sort_cmp,
-                unpack(cmp_comparetors),
+    if loaded_cpp_sort == false then
+        cmp.setup({
+            sorting = {
+                comparators = {
+                    cpp_sort_cmp,
+                    unpack(cmp_comparetors),
+                }
             }
-        }
-    })
+        })
+        loaded_cpp_sort = true
+    end
     return function(evt)
         if not (vim.o.filetype == "c" or vim.o.filetype == "cpp") then
             return
