@@ -52,12 +52,14 @@ M["*"] = function(char, item, bufnr, rules, _)
                 local functionsig = item.label
                 local pairs = utils.esc(rule.key_map)
                 local move_text = ''
+                OLD_lazy_redraw = vim.o.lazyredraw
+                vim.o.lazyredraw = true
                 if  autopairs.config.enable_move_on_empty_functions  and
                     functionsig:sub(#functionsig - 1,#functionsig) == '()'
                     then
-                    move_text = utils.esc(utils.repeat_key('<right>',#rule.end_pair))
+                    move_text = utils.esc(utils.repeat_key(utils.key.join_right,#rule.end_pair))
                 end
-                vim.api.nvim_feedkeys(pairs .. move_text, "i", false)
+                vim.api.nvim_feedkeys(pairs .. move_text .. utils.esc('<cmd>lua vim.o.lazyredraw = OLD_lazy_redraw<cr>'), "i", false)
                 return
             end
         end
