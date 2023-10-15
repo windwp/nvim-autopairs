@@ -34,7 +34,7 @@ function M.getchar_handler()
     if not ok then
         return nil
     end
-    if type(key) == 'number' then
+    if key ~= 27 and type(key) == 'number' then
         local key_str = vim.fn.nr2char(key)
         return key_str
     end
@@ -146,6 +146,7 @@ M.choose_pos = function(row, line, pos, end_pair)
             or pos.char == config.end_key and config.after_key
             or M.getchar_handler()
         vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
+        if not char then return end
         local change_pos = false
         local col = pos.col
         if char == string.upper(config.before_key) or char == string.upper(config.after_key) then
