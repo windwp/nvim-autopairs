@@ -461,9 +461,6 @@ M.autopairs_map = function(bufnr, char)
                 if end_pair:match('<.*>') then
                     end_pair = utils.esc(end_pair)
                 end
-                -- don't redraw the cursor twice
-                OLD_lazyredraw = vim.o.lz
-                vim.o.lazyredraw = true
                 local result = char .. end_pair .. utils.esc(move_text)
                 if rule.is_undo then
                     result = utils.esc(utils.key.undo_sequence) .. result .. utils.esc(utils.key.undo_sequence)
@@ -471,7 +468,10 @@ M.autopairs_map = function(bufnr, char)
                 if M.config.enable_abbr then
                     result = utils.esc(utils.key.abbr) .. result
                 end
-                result = result .. utils.esc('<cmd>lua vim.o.lazyredraw = OLD_lazyredraw<cr>')
+                -- don't redraw the cursor twice
+                local old_lazyredraw = vim.o.lazyredraw
+                vim.o.lazyredraw = true
+                result = result .. utils.esc("<cmd>lua vim.o.lazyredraw =" .. (old_lazyredraw and "true" or "false") .. "<cr>")
                 log.debug("key_map :" .. result)
                 return result
             end
