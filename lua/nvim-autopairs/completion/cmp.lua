@@ -137,8 +137,10 @@ M.cpp_pairs = function()
                 pairs = ' '
             end
             pairs = pairs .. '<>'
-            pairs = pairs .. utils.esc('<left>')
-            vim.api.nvim_feedkeys(pairs, "n", false)
+            pairs = pairs .. utils.esc(utils.key.join_left)
+            OLD_lazyredraw = vim.o.lazyredraw
+            vim.o.lazyredraw = true
+            vim.api.nvim_feedkeys(pairs .. utils.esc("<cmd>lua vim.o.lazyredraw = OLD_lazyredraw<cr>"),"i", false)
         end
     end
 end
