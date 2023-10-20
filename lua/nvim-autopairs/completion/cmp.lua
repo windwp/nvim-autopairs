@@ -104,7 +104,7 @@ M.cpp_pairs = function()
         end
         return nil
     end
-    if loaded_cpp_sort == false then
+    if loaded_cpp_sort == false and cmp_comparetors then
         cmp.setup({
             sorting = {
                 comparators = {
