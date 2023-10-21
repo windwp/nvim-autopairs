@@ -82,7 +82,9 @@ M.lisp = function (char, item, bufnr, _, _)
 end
 
 M.python = function(char, item, bufnr, rules, _)
-   item.data.funcParensDisabled = false
+   if item.data then
+       item.data.funcParensDisabled = false
+   end
    M["*"](char,item,bufnr,rules)
 end
 
