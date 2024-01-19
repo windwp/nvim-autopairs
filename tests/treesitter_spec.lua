@@ -13,7 +13,7 @@ vim.api.nvim_set_keymap(
 )
 
 ts.setup({
-    ensure_installed = { 'lua', 'javascript', 'rust' },
+    ensure_installed = { 'lua', 'javascript', 'rust', 'markdown', 'markdown_inline' },
     highlight = { enable = true },
     autopairs = { enable = true },
 })
@@ -92,6 +92,36 @@ local data = {
         key = '<',
         before = [[pub fn noop(_inp: Vec|) {]],
         after = [[pub fn noop(_inp: Vec<|>) {]],
+    },
+    {
+        setup_func = function()
+            npairs.add_rules({
+                Rule('*', '*', { 'markdown', 'markdown_inline' })
+                    :with_pair(ts_conds.is_not_in_context()),
+            })
+        end,
+        name = 'ts_context markdown `*` success md_context',
+        filepath = './tests/endwise/sample.md',
+        linenr = 2,
+        filetype = 'markdown',
+        key = '*',
+        before = [[|]],
+        after = [[*|*]],
+    },
+    {
+        setup_func = function()
+            npairs.add_rules({
+                Rule('*', '*', { 'markdown', 'markdown_inline' })
+                    :with_pair(ts_conds.is_not_in_context()),
+            })
+        end,
+        name = 'ts_context codeblock `*` fail js_context',
+        filepath = './tests/endwise/sample.md',
+        linenr = 6,
+        filetype = 'markdown',
+        key = '*',
+        before = [[let calc = 1  |]],
+        after = [[let calc = 1 *|]],
     },
 }
 
