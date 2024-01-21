@@ -133,6 +133,10 @@ _G.Test_withfile = function(test_data, cb)
                     vim.bo.filetype = value.filetype
                 end
             end
+            local status, parser = pcall(vim.treesitter.get_parser, 0)
+            if status then
+                parser:parse(true)
+            end
             vim.api.nvim_buf_set_lines(
                 0,
                 value.linenr - 1,
