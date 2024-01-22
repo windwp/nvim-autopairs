@@ -99,6 +99,8 @@ Check readme.md on nvim-cmp repo.
       'confirm_done',
       cmp_autopairs.on_confirm_done()
     )
+    -- if u want to insert <> pairs after templates, include and templated types
+    cmp.event:on('confirm_done', cmp_autopairs.cpp_pairs())
 <
 
 
