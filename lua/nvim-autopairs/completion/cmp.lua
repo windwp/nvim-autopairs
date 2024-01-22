@@ -45,6 +45,8 @@ M.filetypes = {
         }
     },
     tex = false,
+    plaintex = false,
+    context = false,
     haskell = false,
     purescript = false
 }
