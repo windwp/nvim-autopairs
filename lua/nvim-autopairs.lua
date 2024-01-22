@@ -468,6 +468,10 @@ M.autopairs_map = function(bufnr, char)
                 if M.config.enable_abbr then
                     result = utils.esc(utils.key.abbr) .. result
                 end
+                -- don't redraw the cursor twice
+                local old_lazyredraw = vim.o.lazyredraw
+                vim.o.lazyredraw = true
+                result = result .. utils.esc("<cmd>lua vim.o.lazyredraw =" .. (old_lazyredraw and "true" or "false") .. "<cr>")
                 log.debug("key_map :" .. result)
                 return result
             end
