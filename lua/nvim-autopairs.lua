@@ -624,7 +624,7 @@ M.autopairs_afterquote = function(line, key_char)
                             append = 'la'
                         end
                         return utils.esc(
-                            '<esc><cmd>lua MPairs.autopairs_closequote_expr()<cr>' .. append
+                            "<esc><cmd>lua require'nvim-autopairs'.autopairs_closequote_expr()<cr>" .. append
                         )
                     end
                 end
