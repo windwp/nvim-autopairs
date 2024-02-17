@@ -60,7 +60,7 @@ M.on_confirm_done = function(opts)
         if evt.commit_character then
           return
         end
-        
+
         local entry = evt.entry
         local commit_character = entry:get_commit_characters()
         local bufnr = vim.api.nvim_get_current_buf()

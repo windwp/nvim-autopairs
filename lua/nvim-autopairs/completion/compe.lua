@@ -7,7 +7,8 @@ local function_kind = nil
 
 local options = {}
 
-_G.MPairs.completion_done = function()
+local M = {}
+M.completion_done = function()
     local line = utils.text_get_current_line(0)
     local _, col = utils.get_cursor()
     local prev_char, next_char = utils.text_cusor_line(line, col, 1, 1, false)
@@ -40,7 +41,6 @@ _G.MPairs.completion_done = function()
     end
 end
 
-local M = {}
 M.setup = function(opt)
     opt = opt or { map_cr = true, map_complete = true, auto_select = false, map_char = {all = '('}}
     if not opt.map_char then opt.map_char = {} end
@@ -52,12 +52,12 @@ M.setup = function(opt)
         vim.api.nvim_set_keymap(
             'i',
             '<CR>',
-            'v:lua.MPairs.completion_confirm()',
-            { expr = true, noremap = true }
+            '',
+            { callback = M.completion_confirm, expr = true, noremap = true }
         )
     end
     if opt.auto_select then
-        _G.MPairs.completion_confirm = function()
+        M.completion_confirm = function()
             if vim.fn.pumvisible() ~= 0 then
                 return vim.fn['compe#confirm']({ keys = '<CR>', select = true })
             else
@@ -65,7 +65,7 @@ M.setup = function(opt)
             end
         end
     else
-        _G.MPairs.completion_confirm = function()
+        M.completion_confirm = function()
             if vim.fn.pumvisible() ~= 0 and vim.fn.complete_info()['selected'] ~= -1 then
                 return vim.fn['compe#confirm'](npairs.esc('<cr>'))
             else
@@ -78,7 +78,7 @@ M.setup = function(opt)
         vim.cmd([[
             augroup autopairs_compe
             autocmd!
-            autocmd User CompeConfirmDone call v:lua.MPairs.completion_done()
+            autocmd User CompeConfirmDone lua require'nvim-autopairs.completion.compe'.completion_done()
             augroup end
         ]])
     end

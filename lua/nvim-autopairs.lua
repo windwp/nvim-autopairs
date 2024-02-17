@@ -311,8 +311,8 @@ M.on_attach = function(bufnr)
             bufnr,
             'i',
             '<bs>',
-            'v:lua.MPairs.autopairs_bs()',
-            { expr = true, noremap = true }
+            '',
+            { callback = M.autopairs_bs, expr = true, noremap = true }
         )
     end
 
@@ -321,8 +321,8 @@ M.on_attach = function(bufnr)
             bufnr,
             "i",
             utils.key.c_h,
-            'v:lua.MPairs.autopairs_c_h()',
-            { expr = true, noremap = true }
+            '',
+            { callback = M.autopairs_c_h, expr = true, noremap = true }
         )
     end
 
@@ -331,8 +331,8 @@ M.on_attach = function(bufnr)
             bufnr,
             'i',
             '<c-w>',
-            'v:lua.MPairs.autopairs_c_w()',
-            { expr = true, noremap = true }
+            '',
+            { callback = M.autopairs_c_w, expr = true, noremap = true }
         )
     end
     api.nvim_buf_set_var(bufnr, 'nvim-autopairs', 1)
@@ -624,7 +624,7 @@ M.autopairs_afterquote = function(line, key_char)
                             append = 'la'
                         end
                         return utils.esc(
-                            '<esc><cmd>lua MPairs.autopairs_closequote_expr()<cr>' .. append
+                            "<esc><cmd>lua require'nvim-autopairs'.autopairs_closequote_expr()<cr>" .. append
                         )
                     end
                 end
@@ -654,11 +654,10 @@ M.map_cr = function()
     api.nvim_set_keymap(
         'i',
         '<CR>',
-        'v:lua.MPairs.completion_confirm()',
-        { expr = true, noremap = true }
+        '',
+        { callback = M.completion_confirm, expr = true, noremap = true }
     )
 end
 
 M.esc = utils.esc
-_G.MPairs = M
 return M
