@@ -15,6 +15,7 @@ local default = {
     map_bs = true,
     map_c_h = false,
     map_c_w = false,
+    map_custom_bs = false,
     map_cr = true,
     disable_filetype = { 'TelescopePrompt', 'spectre_panel' },
     disable_in_macro = true,
@@ -335,6 +336,17 @@ M.on_attach = function(bufnr)
             { callback = M.autopairs_c_w, expr = true, noremap = true }
         )
     end
+
+    if M.config.map_custom_bs then
+        api.nvim_buf_set_keymap(
+            bufnr,
+            'i',
+            M.config.map_custom_bs,
+            '',
+            { callback = M.autopairs_bs, expr = true, noremap = true }
+        )
+    end
+
     api.nvim_buf_set_var(bufnr, 'nvim-autopairs', 1)
 end
 
