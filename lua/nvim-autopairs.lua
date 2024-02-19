@@ -624,7 +624,7 @@ M.autopairs_afterquote = function(line, key_char)
                             append = 'la'
                         end
                         return utils.esc(
-                            "<esc><cmd>lua require'nvim-autopairs'.autopairs_closequote_expr()<cr>" .. append
+                            "<esc><cmd>lua require('nvim-autopairs').autopairs_closequote_expr()<cr>" .. append
                         )
                     end
                 end
@@ -643,19 +643,20 @@ M.check_break_line_char = function()
     return M.autopairs_cr()
 end
 
-M.map_cr = function()
-    M.completion_confirm = function()
-        if vim.fn.pumvisible() ~= 0 then
-            return M.esc("<cr>")
-        else
-            return M.autopairs_cr()
-        end
+M.completion_confirm =function ()
+    if vim.fn.pumvisible() ~= 0 then
+        return M.esc("<cr>")
+    else
+        return M.autopairs_cr()
     end
+end
+
+M.map_cr = function()
     api.nvim_set_keymap(
         'i',
         '<CR>',
-        '',
-        { callback = M.completion_confirm, expr = true, noremap = true }
+        "v:lua.require('nvim-autopairs').completion_confirm()",
+        {  expr = true, noremap = true }
     )
 end
 
