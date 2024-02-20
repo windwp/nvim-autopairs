@@ -48,7 +48,9 @@ M.filetypes = {
     plaintex = false,
     context = false,
     haskell = false,
-    purescript = false
+    purescript = false,
+    sh = false,
+    bash = false
 }
 
 M.on_confirm_done = function(opts)
