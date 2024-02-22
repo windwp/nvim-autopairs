@@ -22,7 +22,9 @@ return {
       { '"', mode = "i" },
       { "'", mode = "i" },
     },
-    opts = {} -- this is equalent to setup({}) function
+    config = true
+    -- use opts = {} for passing setup options
+    -- this is equalent to setup({}) function
 }
 ```
 
