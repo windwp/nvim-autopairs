@@ -13,7 +13,15 @@ Install the plugin with your preferred package manager:
 ```lua
 return {
     'windwp/nvim-autopairs',
-    event = "InsertEnter",
+    -- lazy supports lazy loading so use it to speed up neovim's
+    -- loading time
+    keys = {
+      { "(", mode = "i" },
+      { "{", mode = "i" },
+      { "[", mode = "i" },
+      { '"', mode = "i" },
+      { "'", mode = "i" },
+    },
     opts = {} -- this is equalent to setup({}) function
 }
 ```
@@ -34,6 +42,15 @@ EOF
 use {
 	"windwp/nvim-autopairs",
     config = function() require("nvim-autopairs").setup {} end
+    -- packer supports lazy loading so use it to speed up neovim's
+    -- loading time
+    keys = {
+      { "i", "(" },
+      { "i", "{" },
+      { "i", "[" },
+      { "i", '"' },
+      { "i", "'" },
+    },
 }
 ```
 
