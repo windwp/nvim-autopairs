@@ -11,10 +11,12 @@ Install the plugin with your preferred package manager:
 ### [lazy.nvim](https://github.com/folke/lazy.nvim)
 
 ```lua
-return {
+{
     'windwp/nvim-autopairs',
     event = "InsertEnter",
-    opts = {} -- this is equalent to setup({}) function
+    config = true
+    -- use opts = {} for passing setup options
+    -- this is equalent to setup({}) function
 }
 ```
 
@@ -32,30 +34,35 @@ EOF
 
 ```lua
 use {
-	"windwp/nvim-autopairs",
-    config = function() require("nvim-autopairs").setup {} end
+    "windwp/nvim-autopairs",
+    event = "InsertEnter",
+    config = function()
+        require("nvim-autopairs").setup {}
+    end
 }
 ```
 
 ## Default values
 
 ``` lua
-local disable_filetype = { "TelescopePrompt", "spectre_panel" }
-local disable_in_macro = true  -- disable when recording or executing a macro
-local disable_in_visualblock = false -- disable when insert after visual block mode
-local disable_in_replace_mode = true
-local ignored_next_char = [=[[%w%%%'%[%"%.%`%$]]=]
-local enable_moveright = true
-local enable_afterquote = true  -- add bracket pairs after quote
-local enable_check_bracket_line = true  --- check bracket in same line
-local enable_bracket_in_quote = true --
-local enable_abbr = false -- trigger abbreviation
-local break_undo = true -- switch for basic rule break undo sequence
-local check_ts = false
-local map_cr = true
-local map_bs = true  -- map the <BS> key
-local map_c_h = false  -- Map the <C-h> key to delete a pair
-local map_c_w = false -- map <c-w> to delete a pair if possible
+{
+    disable_filetype = { "TelescopePrompt", "spectre_panel" }
+    disable_in_macro = true  -- disable when recording or executing a macro
+    disable_in_visualblock = false -- disable when insert after visual block mode
+    disable_in_replace_mode = true
+    ignored_next_char = [=[[%w%%%'%[%"%.%`%$]]=]
+    enable_moveright = true
+    enable_afterquote = true  -- add bracket pairs after quote
+    enable_check_bracket_line = true  --- check bracket in same line
+    enable_bracket_in_quote = true --
+    enable_abbr = false -- trigger abbreviation
+    break_undo = true -- switch for basic rule break undo sequence
+    check_ts = false
+    map_cr = true
+    map_bs = true  -- map the <BS> key
+    map_c_h = false  -- Map the <C-h> key to delete a pair
+    map_c_w = false -- map <c-w> to delete a pair if possible
+}
 
 ```
 
