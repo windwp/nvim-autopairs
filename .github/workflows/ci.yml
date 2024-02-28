@@ -11,7 +11,7 @@ jobs:
       matrix:
         include:
           - os: ubuntu-20.04
-            url: https://github.com/neovim/neovim/releases/download/v0.7.0/nvim-linux64.tar.gz
+            url: https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
             manager: sudo apt-get
             packages: -y fd-find
     steps:
@@ -32,7 +32,7 @@ jobs:
           }
           mkdir -p ~/.local/share/nvim/site/pack/vendor/start
           git clone --depth 1 https://github.com/nvim-lua/plenary.nvim ~/.local/share/nvim/site/pack/vendor/start/plenary.nvim
-          git clone --depth 1 --branch v0.7.2 https://github.com/nvim-treesitter/nvim-treesitter ~/.local/share/nvim/site/pack/vendor/start/nvim-treesitter
+          git clone --depth 1 https://github.com/nvim-treesitter/nvim-treesitter ~/.local/share/nvim/site/pack/vendor/start/nvim-treesitter
           git clone --depth 1 https://github.com/nvim-treesitter/playground ~/.local/share/nvim/site/pack/vendor/start/playground
           ln -s $(pwd) ~/.local/share/nvim/site/pack/vendor/start
       - name: Run tests

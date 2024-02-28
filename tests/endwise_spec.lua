@@ -70,9 +70,6 @@ local data = {
 
 local run_data = _G.Test_filter(data)
 
-local _, ts_utils = pcall(require, 'nvim-treesitter.ts_utils')
-_G.TU = ts_utils
-
 describe('[endwise tag]', function()
     _G.Test_withfile(run_data, {
         -- need to understand this ??? new line make change cursor zzz

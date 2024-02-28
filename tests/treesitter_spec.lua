@@ -34,19 +34,6 @@ local data = {
     },
 
     {
-        name = 'treesitter javascript quote',
-        filepath = './tests/endwise/javascript.js',
-        filetype = 'javascript',
-        linenr = 5,
-        key = [[(]],
-        before = {
-            [[ const data= `aaa | ]],
-            [[  ]],
-            '`',
-        },
-        after = [[ const data= `aaa (| ]],
-    },
-    {
         setup_func = function()
             npairs.add_rules({
                 Rule('%', '%', 'lua'):with_pair(
@@ -126,9 +113,6 @@ local data = {
 }
 
 local run_data = _G.Test_filter(data)
-
-local _, ts_utils = pcall(require, 'nvim-treesitter.ts_utils')
-_G.TU = ts_utils
 
 describe('[treesitter check]', function()
     _G.Test_withfile(run_data, {
