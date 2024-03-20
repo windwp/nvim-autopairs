@@ -40,6 +40,7 @@ end
 cond.before_regex = function(regex, length)
     length = length or 1
     if length < 0 then length = nil end
+    length = length and -length
     ---@param opts CondOpts
     return function(opts)
         log.debug('before_regex')
@@ -117,6 +118,7 @@ end
 cond.not_before_regex = function(regex, length)
     length = length or 1
     if length < 0 then length = nil end
+    length = length and -length
     ---@param opts CondOpts
     return function(opts)
         log.debug('not_before_regex')

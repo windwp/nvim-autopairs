@@ -8,6 +8,7 @@ local utils = require('nvim-autopairs.utils')
 _G.npairs = npairs;
 
 -- use only = true to test 1 case
+-- stylua: ignore
 local data = {
     {
         -- only = true,
@@ -807,6 +808,17 @@ local data = {
         key      = [[']],
         before   = [[('|') ]],
         after    = [[(''|) ]]
+    },
+    {
+        setup_func = function()
+            npairs.add_rules({
+                Rule('123456', '789'):with_pair(cond.before_regex('^12345$', 5)),
+            })
+        end,
+        name = '87 test before_regex with a specific string length',
+        key = [[123456]],
+        before = [[    some text before| ]],
+        after = [[    some text before123456|789 ]],
     },
 }
 
