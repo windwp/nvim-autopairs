@@ -12,7 +12,7 @@ Install the plugin with your preferred package manager:
 
 ```lua
 {
-    'windwp/nvim-autopairs',
+    "windwp/nvim-autopairs",
     event = "InsertEnter",
     config = true
     -- use opts = {} for passing setup options
@@ -23,7 +23,7 @@ Install the plugin with your preferred package manager:
 ### [vim-plug](https://github.com/junegunn/vim-plug)
 
 ```vim
-Plug 'windwp/nvim-autopairs'
+Plug "windwp/nvim-autopairs"
 
 lua << EOF
 require("nvim-autopairs").setup {}
@@ -69,7 +69,7 @@ use {
 ### Override default values
 
 ``` lua
-require('nvim-autopairs').setup({
+require("nvim-autopairs").setup({
   disable_filetype = { "TelescopePrompt" , "vim" },
 })
 ```
@@ -94,10 +94,10 @@ Check readme.md on nvim-cmp repo.
 
 ``` lua
 -- If you want insert `(` after select function or method item
-local cmp_autopairs = require('nvim-autopairs.completion.cmp')
-local cmp = require('cmp')
+local cmp_autopairs = require("nvim-autopairs.completion.cmp")
+local cmp = require("cmp")
 cmp.event:on(
-  'confirm_done',
+  "confirm_done",
   cmp_autopairs.on_confirm_done()
 )
 ```
@@ -105,10 +105,10 @@ cmp.event:on(
 You can customize the kind of completion to add `(` or any character.
 
 ```lua
-local handlers = require('nvim-autopairs.completion.handlers')
+local handlers = require("nvim-autopairs.completion.handlers")
 
 cmp.event:on(
-  'confirm_done',
+  "confirm_done",
   cmp_autopairs.on_confirm_done({
     filetypes = {
       -- "*" is a alias to all filetypes
@@ -152,42 +152,42 @@ Don't use `nil` to disable a filetype. If a filetype is `nil` then `*` is used a
 
 ``` lua
 local remap = vim.api.nvim_set_keymap
-local npairs = require('nvim-autopairs')
+local npairs = require("nvim-autopairs")
 
 npairs.setup({ map_bs = false, map_cr = false })
 
 vim.g.coq_settings = { keymap = { recommended = false } }
 
 -- these mappings are coq recommended mappings unrelated to nvim-autopairs
-remap('i', '<esc>', [[pumvisible() ? "<c-e><esc>" : "<esc>"]], { expr = true, noremap = true })
-remap('i', '<c-c>', [[pumvisible() ? "<c-e><c-c>" : "<c-c>"]], { expr = true, noremap = true })
-remap('i', '<tab>', [[pumvisible() ? "<c-n>" : "<tab>"]], { expr = true, noremap = true })
-remap('i', '<s-tab>', [[pumvisible() ? "<c-p>" : "<bs>"]], { expr = true, noremap = true })
+remap("i", "<esc>", [[pumvisible() ? "<c-e><esc>" : "<esc>"]], { expr = true, noremap = true })
+remap("i", "<c-c>", [[pumvisible() ? "<c-e><c-c>" : "<c-c>"]], { expr = true, noremap = true })
+remap("i", "<tab>", [[pumvisible() ? "<c-n>" : "<tab>"]], { expr = true, noremap = true })
+remap("i", "<s-tab>", [[pumvisible() ? "<c-p>" : "<bs>"]], { expr = true, noremap = true })
 
 -- skip it, if you use another global object
 _G.MUtils= {}
 
 MUtils.CR = function()
   if vim.fn.pumvisible() ~= 0 then
-    if vim.fn.complete_info({ 'selected' }).selected ~= -1 then
-      return npairs.esc('<c-y>')
+    if vim.fn.complete_info({ "selected" }).selected ~= -1 then
+      return npairs.esc("<c-y>")
     else
-      return npairs.esc('<c-e>') .. npairs.autopairs_cr()
+      return npairs.esc("<c-e>") .. npairs.autopairs_cr()
     end
   else
     return npairs.autopairs_cr()
   end
 end
-remap('i', '<cr>', 'v:lua.MUtils.CR()', { expr = true, noremap = true })
+remap("i", "<cr>", "v:lua.MUtils.CR()", { expr = true, noremap = true })
 
 MUtils.BS = function()
-  if vim.fn.pumvisible() ~= 0 and vim.fn.complete_info({ 'mode' }).mode == 'eval' then
-    return npairs.esc('<c-e>') .. npairs.autopairs_bs()
+  if vim.fn.pumvisible() ~= 0 and vim.fn.complete_info({ "mode" }).mode == "eval" then
+    return npairs.esc("<c-e>") .. npairs.autopairs_bs()
   else
     return npairs.autopairs_bs()
   end
 end
-remap('i', '<bs>', 'v:lua.MUtils.BS()', { expr = true, noremap = true })
+remap("i", "<bs>", "v:lua.MUtils.BS()", { expr = true, noremap = true })
 ```
 </details>
 <details>
@@ -209,14 +209,14 @@ please check the settings of treesitter indent or install a plugin that has inde
 nvim-autopairs uses rules with conditions to check pairs.
 
 ``` lua
-local Rule = require('nvim-autopairs.rule')
-local npairs = require('nvim-autopairs')
+local Rule = require("nvim-autopairs.rule")
+local npairs = require("nvim-autopairs")
 
 npairs.add_rule(Rule("$$","$$","tex"))
 
 -- you can use some built-in conditions
 
-local cond = require('nvim-autopairs.conds')
+local cond = require("nvim-autopairs.conds")
 print(vim.inspect(cond))
 
 npairs.add_rules({
@@ -297,26 +297,26 @@ You can use treesitter to check for a pair.
 
 ```lua
 local npairs = require("nvim-autopairs")
-local Rule = require('nvim-autopairs.rule')
+local Rule = require("nvim-autopairs.rule")
 
 npairs.setup({
     check_ts = true,
     ts_config = {
-        lua = {'string'},-- it will not add a pair on that treesitter node
-        javascript = {'template_string'},
+        lua = {"string"},-- it will not add a pair on that treesitter node
+        javascript = {"template_string"},
         java = false,-- don't check treesitter on java
     }
 })
 
-local ts_conds = require('nvim-autopairs.ts-conds')
+local ts_conds = require("nvim-autopairs.ts-conds")
 
 
 -- press % => %% only while inside a comment or string
 npairs.add_rules({
   Rule("%", "%", "lua")
-    :with_pair(ts_conds.is_ts_node({'string','comment'})),
+    :with_pair(ts_conds.is_ts_node({"string","comment"})),
   Rule("$", "$", "lua")
-    :with_pair(ts_conds.is_not_ts_node({'function'}))
+    :with_pair(ts_conds.is_not_ts_node({"function"}))
 })
 ```
 
@@ -331,7 +331,7 @@ Before        Input         After
 ```
 
 ``` lua
-require('nvim-autopairs').setup({
+require("nvim-autopairs").setup({
   enable_check_bracket_line = false
 })
 ```
@@ -341,7 +341,7 @@ require('nvim-autopairs').setup({
 You can customize how nvim-autopairs will behave if it encounters a specific
 character
 ``` lua
-require('nvim-autopairs').setup({
+require("nvim-autopairs").setup({
   ignored_next_char = "[%w%.]" -- will ignore alphanumeric and `.` symbol
 })
 ```
@@ -355,11 +355,11 @@ Before        Input         After
 
 ### Plugin Integration
 ``` lua
-  require('nvim-autopairs').disable()
-  require('nvim-autopairs').enable()
-  require('nvim-autopairs').remove_rule('(') -- remove rule (
-  require('nvim-autopairs').clear_rules() -- clear all rules
-  require('nvim-autopairs').get_rules('"')
+  require("nvim-autopairs").disable()
+  require("nvim-autopairs").enable()
+  require("nvim-autopairs").remove_rule("(") -- remove rule (
+  require("nvim-autopairs").clear_rules() -- clear all rules
+  require("nvim-autopairs").get_rules('"')
 ```
 
 * Sample
@@ -390,17 +390,17 @@ npairs.setup({
 -- change default fast_wrap
 npairs.setup({
     fast_wrap = {
-      map = '<M-e>',
-      chars = { '{', '[', '(', '"', "'" },
+      map = "<M-e>",
+      chars = { "{", "[", "(", """, "'" },
       pattern = [=[[%'%"%>%]%)%}%,]]=],
-      end_key = '$',
-      before_key = 'h',
-      after_key = 'l',
+      end_key = "$",
+      before_key = "h",
+      after_key = "l",
       cursor_pos_before = true,
-      keys = 'qwertyuiopzxcvbnmasdfghjkl',
+      keys = "qwertyuiopzxcvbnmasdfghjkl",
       manual_position = true,
-      highlight = 'Search',
-      highlight_grey='Comment'
+      highlight = "Search",
+      highlight_grey="Comment"
     },
 })
 ```
