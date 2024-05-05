@@ -107,7 +107,13 @@ M.show = function(line)
             )
         end
 
-        M.highlight_wrap(list_pos, row, col, #line)
+        -- Create a whitespace string for the current line which replaces every non whitespace
+        -- character with a space and preserves tabs, so we can use it for highlighting with
+        -- virtual lines so that highlighting lines up correctly.
+        -- The string is limited to the last position in list_pos
+        local whitespace_line = line:sub(1, list_pos[#list_pos].end_pos):gsub("[^ \t]", " ")
+
+        M.highlight_wrap(list_pos, row, col, #line, whitespace_line)
         vim.defer_fn(function()
             -- get the first char
             local char = #list_pos == 1 and config.end_key or M.getchar_handler()
@@ -118,7 +124,7 @@ M.show = function(line)
                     { pos = pos.pos + 1, key = config.after_key },
                 }
                 if config.manual_position and (char == pos.key or char == string.upper(pos.key)) then
-                    M.highlight_wrap(hl_mark, row, col, #line)
+                    M.highlight_wrap(hl_mark, row, col, #line, whitespace_line)
                     M.choose_pos(row, line, pos, end_pair)
                     break
                 end
@@ -178,13 +184,13 @@ M.move_bracket = function(line, target_pos, end_pair, change_pos)
     end
 end
 
-M.highlight_wrap = function(tbl_pos, row, col, end_col)
+M.highlight_wrap = function(tbl_pos, row, col, end_col, whitespace_line)
     local bufnr = vim.api.nvim_win_get_buf(0)
     if config.use_virt_lines then
         local virt_lines = {}
         local start = 0
         for _, pos in ipairs(tbl_pos) do
-            virt_lines[#virt_lines + 1] = { string.rep(' ', pos.pos - start - 1), 'Normal' }
+            virt_lines[#virt_lines + 1] = { whitespace_line:sub(start + 1, pos.pos - 1), 'Normal' }
             virt_lines[#virt_lines + 1] = { pos.key, config.highlight }
             start = pos.pos
         end
