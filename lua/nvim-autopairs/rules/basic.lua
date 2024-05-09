@@ -1,5 +1,6 @@
 local Rule = require("nvim-autopairs.rule")
 local cond = require("nvim-autopairs.conds")
+local ts_conds = require('nvim-autopairs.ts-conds')
 local utils = require('nvim-autopairs.utils')
 
 local function quote_creator(opt)
@@ -79,6 +80,15 @@ local function setup(opt)
 				"astro",
             }
         ):only_cr():use_regex(true),
+      Rule("= ", ";", "nix")
+        :with_pair(function(info)
+          local prev_char = info.line:sub(info.col - 2, info.col - 2)
+          local rest_of_line = info.line:sub(info.col)
+          return ts_cond.is_not_ts_node_comment()
+            and prev_char:match('[%w%s]') ~= nil
+            and rest_of_line:match('^%s*$') ~= nil
+        end)
+        :set_end_pair_length(1),
     }
     return rules
 end
