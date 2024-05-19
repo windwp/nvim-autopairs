@@ -1,7 +1,4 @@
-local _, ts_utils = pcall(require, 'nvim-treesitter.ts_utils')
-
 local log = require('nvim-autopairs._log')
-local parsers = require'nvim-treesitter.parsers'
 local utils = require('nvim-autopairs.utils')
 local ts_get_node_text = vim.treesitter.get_node_text or vim.treesitter.query.get_node_text
 
@@ -17,8 +14,8 @@ conds.is_endwise_node = function(nodes)
         if nodes == nil then return true end
         if #nodes == 0 then return true end
 
-        parsers.get_parser():parse()
-        local target = ts_utils.get_node_at_cursor()
+        vim.treesitter.get_parser():parse()
+        local target = vim.treesitter.get_node({ ignore_injections = false })
         if target ~= nil and utils.is_in_table(nodes, target:type()) then
             local text = ts_get_node_text(target) or {""}
             local last = text[#text]:match(opts.rule.end_pair)
@@ -59,7 +56,9 @@ conds.is_in_range = function(callback, position)
     )
     return function(opts)
         log.debug('is_in_range')
-        if not parsers.has_parser() then
+        -- `parser` will be a table (on success) or a string (error message)
+        local _, parser = pcall(vim.treesitter.get_parser)
+        if not type(parser) == 'string' then
             return
         end
         local cursor = position()
@@ -71,7 +70,7 @@ conds.is_in_range = function(callback, position)
         local col = cursor[2]
 
         local bufnr = 0
-        local root_lang_tree = parsers.get_parser(bufnr)
+        local root_lang_tree = vim.treesitter.get_parser(bufnr)
         local lang_tree = root_lang_tree:language_for_range({ line, col, line, col })
 
         local result
@@ -110,8 +109,8 @@ conds.is_ts_node = function(nodes)
         log.debug('is_ts_node')
         if #nodes == 0 then return  end
 
-        parsers.get_parser():parse()
-        local target = ts_utils.get_node_at_cursor()
+        vim.treesitter.get_parser():parse()
+        local target = vim.treesitter.get_node({ ignore_injections = false })
         if target ~= nil and utils.is_in_table(nodes, target:type()) then
             return true
         end
@@ -126,8 +125,8 @@ conds.is_not_ts_node = function(nodes)
         log.debug('is_not_ts_node')
         if #nodes == 0 then return  end
 
-        parsers.get_parser():parse()
-        local target = ts_utils.get_node_at_cursor()
+        vim.treesitter.get_parser():parse()
+        local target = vim.treesitter.get_node({ ignore_injections = false })
         if target ~= nil and utils.is_in_table(nodes, target:type()) then
             return false
         end
@@ -139,8 +138,8 @@ conds.is_not_ts_node_comment = function()
         log.debug('not_in_ts_node_comment')
         if not opts.ts_node then return end
 
-        parsers.get_parser():parse()
-        local target = ts_utils.get_node_at_cursor()
+        vim.treesitter.get_parser():parse()
+        local target = vim.treesitter.get_node({ ignore_injections = false })
         if target ~= nil and utils.is_in_table(opts.ts_node, target:type()) then
             return false
         end
