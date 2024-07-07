@@ -68,6 +68,7 @@ local function setup(opt)
                 "html",
                 "htmldjango",
                 "php",
+                "blade",
                 "typescript",
                 "typescriptreact",
                 "javascript",
