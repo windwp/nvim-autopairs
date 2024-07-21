@@ -66,6 +66,7 @@ local function setup(opt)
             "^%s*</",
             {
                 "html",
+                "htmlangular",
                 "htmldjango",
                 "php",
                 "blade",
@@ -77,7 +78,7 @@ local function setup(opt)
                 "vue",
                 "xml",
                 "rescript",
-				"astro",
+                "astro",
             }
         ):only_cr():use_regex(true),
     }
