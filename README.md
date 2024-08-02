@@ -419,4 +419,7 @@ npairs.setup({
 ## Sponsors
 
 Thanks to everyone who sponsors my projects and makes continued development maintenance possible!
-<!-- patreon --><a href="https://github.com/t4t5"><img src="https://github.com/t4t5.png" width="60px" alt="" /></a><!-- patreon-->
+
+<!-- sponsors -->
+<a href="https://github.com/looshch"><img src="https://github.com/looshch.png" width="60px" alt="" /></a>
+<!-- sponsors -->
