@@ -307,12 +307,29 @@ M.on_attach = function(bufnr)
     end
 
     if M.config.map_bs then
+        local orig_bs = { rhs = utils.key.bs }
+        for _, mapping in ipairs(api.nvim_get_keymap("i")) do
+            if string.lower(mapping.lhs) == "<bs>" then
+                orig_bs = mapping
+                break
+            end
+        end
         api.nvim_buf_set_keymap(
             bufnr,
             'i',
             '<bs>',
             '',
-            { callback = M.autopairs_bs, expr = true, noremap = true }
+            { callback = function(buf)
+                if orig_bs.rhs then
+                    return M.autopairs_bs(buf, orig_bs.rhs)
+                elseif orig_bs.callback and orig_bs.expr then
+                    return M.autopairs_bs(buf, orig_bs.callback())
+                else
+                    -- can't call a keymap callback that's not an expression from an expression b/c
+                    -- it might cause an error, so we fall back to default <bs> key
+                    return M.autopairs_bs(buf, utils.key.bs)
+                end
+            end, expr = true, noremap = true }
         )
     end
 
@@ -389,8 +406,8 @@ M.autopairs_c_h = function(bufnr)
     return autopairs_delete(bufnr, utils.key.c_h)
 end
 
-M.autopairs_bs = function(bufnr)
-    return autopairs_delete(bufnr, utils.key.bs)
+M.autopairs_bs = function(bufnr, bs_key)
+    return autopairs_delete(bufnr, bs_key)
 end
 
 M.autopairs_map = function(bufnr, char)
