@@ -421,6 +421,4 @@ npairs.setup({
 
 Thanks to everyone who sponsors my projects and makes continued development maintenance possible!
 
-<!-- sponsors -->
-<a href="https://github.com/looshch"><img src="https://github.com/looshch.png" width="60px" alt="" /></a>
-<!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/looshch"><img src="https://github.com/looshch.png" width="60px" alt="george looshch" /></a><!-- sponsors -->
