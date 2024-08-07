@@ -156,6 +156,15 @@ takes place. There are no predicates if you don’t define any, and so any
 events without predicates behave as if they had a single predicate that always
 returns true.
 
+The predicate functions will receive an `opts` table with the following fields:
+- `rule` the `Rule` object - `bufnr` the buffer number - `col` the current
+column (1-indexed) - `ts_node` the current treesitter node (if treesitter is
+enabled) - `text` the current line, with typed char inserted - `line` the
+current line, before substitutions - `char` the typed char - `prev_char` the
+text just before cursor (with length `== #rule.start_pair`) - `next_char` the
+text just after cursor (with length `== #rule.start_pair` if rule is not regex,
+else end of line)
+
 A `Rule` may have more than one predicate defined for a given event, and the
 order that they are defined will be the order that they are checked. However,
 the **first** non-`nil` value returned by a predicate is used and the remaining
@@ -164,24 +173,25 @@ earlier have priority over predicates defined later.
 
 `WITH_PAIR(COND, POS)` ~
 
-After typing the opening part, `cond` will fire and the ending part will only
-be added if `cond` returned true. `with_pair` may be called more than once, and
-by default, each predicate is appended to a list. When the "pair" event fires,
-the _first_ predicate to return non-nil is used as the condition result.
-Specifying `pos` allows explicit control over the order of the predicates.
+After typing the opening part, the ending part will only be added if
+`cond(opts)` returned true. `with_pair` may be called more than once, and by
+default, each predicate is appended to a list. When the "pair" event fires, the
+_first_ predicate to return non-nil is used as the condition result. Specifying
+`pos` allows explicit control over the order of the predicates.
 
 `WITH_MOVE(COND)` ~
 
-If `cond` is true, the cursor is simply moved right when typing the ending part
-of the pair and the next character is also the ending part, e.g. `|" -> "|`
-when typing `"`. If `cond` returns false, the ending part is inserted as normal
-instead.
+If `cond(opts)` is true, the cursor is simply moved right when typing the
+ending part of the pair and the next character is also the ending part,
+e.g. `foo|"` => `foo"|` when typing `"`. If `cond(opts)` returns false, the
+ending part is inserted as normal instead.
 
 `WITH_CR(COND)` ~
 
-If `cond` is true, then move the ending part of the pair to a new line below
-the cursor after pressing `<CR>` while the cursor is between the pair (think
-curly braces opening a block). Otherwise `<CR>` behaves as normal. For example:
+If `cond(opts)` is true, then move the ending part of the pair to a new line
+below the cursor after pressing `<CR>` while the cursor is between the pair
+(think curly braces opening a block). Otherwise `<CR>` behaves as normal. For
+example:
 
 >
     {|}
@@ -199,8 +209,8 @@ Typing `<CR>` produces the following when `cond` is true:
 
 `WITH_DEL(COND)` ~
 
-If `cond` is true, when the cursor is between the pair, pressing `<BS>` to
-delete the opening part of the pair will delete the ending part as well.
+If `cond(opts)` is true, when the cursor is between the pair, pressing `<BS>`
+to delete the opening part of the pair will delete the ending part as well.
 
 THE `USE_*` METHODS                 *nvim-autopairs-rules-the-`use_*`-methods*
 
