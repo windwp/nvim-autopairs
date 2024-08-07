@@ -144,7 +144,7 @@ M.enable = function()
 end
 
 M.toggle = function()
-    M.state.disabled = ~M.state.disabled
+    M.state.disabled = not M.state.disabled
 end
 
 --- force remap key to buffer
