@@ -357,6 +357,7 @@ Before        Input         After
 ``` lua
   require('nvim-autopairs').disable()
   require('nvim-autopairs').enable()
+  require('nvim-autopairs').toggle()
   require('nvim-autopairs').remove_rule('(') -- remove rule (
   require('nvim-autopairs').clear_rules() -- clear all rules
   require('nvim-autopairs').get_rules('"')

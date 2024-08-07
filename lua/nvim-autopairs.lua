@@ -56,11 +56,13 @@ M.setup = function(opt)
     M.force_attach()
     local group = api.nvim_create_augroup('autopairs_buf', { clear = true })
     api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
-        group = group, pattern = '*',
+        group = group,
+        pattern = '*',
         callback = function() M.on_attach() end
     })
     api.nvim_create_autocmd('BufDelete', {
-        group = group, pattern = '*',
+        group = group,
+        pattern = '*',
         callback = function(data)
             local cur = api.nvim_get_current_buf()
             local bufnr = tonumber(data.buf) or 0
@@ -70,7 +72,8 @@ M.setup = function(opt)
         end,
     })
     api.nvim_create_autocmd('FileType', {
-        group = group, pattern = '*',
+        group = group,
+        pattern = '*',
         callback = function() M.force_attach() end
     })
 end
@@ -140,6 +143,10 @@ M.enable = function()
     M.state.disabled = false
 end
 
+M.toggle = function()
+    M.state.disabled = ~M.state.disabled
+end
+
 --- force remap key to buffer
 M.force_attach = function(bufnr)
     utils.set_attach(bufnr, 0)
@@ -204,6 +211,7 @@ M.set_buf_rule = function(rules, bufnr)
     end
     M.state.rules[bufnr] = rules
 end
+
 
 M.on_attach = function(bufnr)
     -- log.debug('on_attach' .. vim.bo.filetype)
@@ -643,7 +651,7 @@ M.check_break_line_char = function()
     return M.autopairs_cr()
 end
 
-M.completion_confirm =function ()
+M.completion_confirm = function()
     if vim.fn.pumvisible() ~= 0 then
         return M.esc("<cr>")
     else
@@ -656,7 +664,7 @@ M.map_cr = function()
         'i',
         '<CR>',
         "v:lua.require'nvim-autopairs'.completion_confirm()",
-        {  expr = true, noremap = true }
+        { expr = true, noremap = true }
     )
 end
 
