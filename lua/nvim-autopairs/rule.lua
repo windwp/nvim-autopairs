@@ -13,7 +13,6 @@ local Cond = require('nvim-autopairs.conds')
 --- @field is_multibyte boolean
 --- @field is_endwise boolean        only use on end_wise
 --- @field is_undo boolean           add break undo sequence
-
 local Rule = setmetatable({}, {
     __call = function(self, ...)
         return self.new(...)
@@ -172,7 +171,11 @@ end
 ---@return Rule
 function Rule:with_pair(cond, pos)
     if self.pair_cond == nil then self.pair_cond = {} end
-    self.pair_cond[pos or (#self.pair_cond + 1)] = cond
+    if pos then
+        table.insert(self.pair_cond, pos, cond)
+    else
+        table.insert(self.pair_cond, cond)
+    end
     return self
 end
 

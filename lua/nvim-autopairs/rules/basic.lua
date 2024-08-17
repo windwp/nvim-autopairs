@@ -5,6 +5,7 @@ local utils = require('nvim-autopairs.utils')
 local function quote_creator(opt)
     local quote = function(...)
         local move_func = opt.enable_moveright and cond.move_right or cond.none
+        ---@type Rule
         local rule = Rule(...)
             :with_move(move_func())
             :with_pair(cond.not_add_quote_inside_quote())
