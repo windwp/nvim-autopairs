@@ -18,6 +18,19 @@ INSTALLATION                                     *nvim-autopairs-installation*
 
 Install the plugin with your preferred package manager:
 
+LAZY.NVIM <HTTPS://GITHUB.COM/FOLKE/LAZY.NVIM> ~
+
+>
+    {
+        'windwp/nvim-autopairs',
+        event = "InsertEnter",
+        config = true
+        -- use opts = {} for passing setup options
+        -- this is equivalent to setup({}) function
+    }
+<
+
+
 VIM-PLUG <HTTPS://GITHUB.COM/JUNEGUNN/VIM-PLUG> ~
 
 >
@@ -34,7 +47,10 @@ PACKER <HTTPS://GITHUB.COM/WBTHOMASON/PACKER.NVIM> ~
 >
     use {
         "windwp/nvim-autopairs",
-        config = function() require("nvim-autopairs").setup {} end
+        event = "InsertEnter",
+        config = function()
+            require("nvim-autopairs").setup {}
+        end
     }
 <
 
@@ -42,22 +58,24 @@ PACKER <HTTPS://GITHUB.COM/WBTHOMASON/PACKER.NVIM> ~
 DEFAULT VALUES                                 *nvim-autopairs-default-values*
 
 >
-    local disable_filetype = { "TelescopePrompt" }
-    local disable_in_macro = false  -- disable when recording or executing a macro
-    local disable_in_visualblock = false -- disable when insert after visual block mode
-    local disable_in_replace_mode = true
-    local ignored_next_char = [=[[%w%%%'%[%"%.%`%$]]=]
-    local enable_moveright = true
-    local enable_afterquote = true  -- add bracket pairs after quote
-    local enable_check_bracket_line = true  --- check bracket in same line
-    local enable_bracket_in_quote = true --
-    local enable_abbr = false -- trigger abbreviation
-    local break_undo = true -- switch for basic rule break undo sequence
-    local check_ts = false
-    local map_cr = true
-    local map_bs = true  -- map the <BS> key
-    local map_c_h = false  -- Map the <C-h> key to delete a pair
-    local map_c_w = false -- map <c-w> to delete a pair if possible
+    {
+        disable_filetype = { "TelescopePrompt", "spectre_panel" }
+        disable_in_macro = true  -- disable when recording or executing a macro
+        disable_in_visualblock = false -- disable when insert after visual block mode
+        disable_in_replace_mode = true
+        ignored_next_char = [=[[%w%%%'%[%"%.%`%$]]=]
+        enable_moveright = true
+        enable_afterquote = true  -- add bracket pairs after quote
+        enable_check_bracket_line = true  --- check bracket in same line
+        enable_bracket_in_quote = true --
+        enable_abbr = false -- trigger abbreviation
+        break_undo = true -- switch for basic rule break undo sequence
+        check_ts = false
+        map_cr = true
+        map_bs = true  -- map the <BS> key
+        map_c_h = false  -- Map the <C-h> key to delete a pair
+        map_c_w = false -- map <c-w> to delete a pair if possible
+    }
 <
 
 
@@ -135,7 +153,7 @@ Mapping `<CR>`                         You can customize the kind of completion
               ---@param rules table
               ---@param commit_character table<string>
               handler = function(char, item, bufnr, rules, commit_character)
-                -- Your handler function. Inpect with print(vim.inspect{char, item, bufnr, rules, commit_character})
+                -- Your handler function. Inspect with print(vim.inspect{char, item, bufnr, rules, commit_character})
               end
             }
           },
@@ -371,10 +389,10 @@ PLUGIN INTEGRATION ~
 >
       require('nvim-autopairs').disable()
       require('nvim-autopairs').enable()
+      require('nvim-autopairs').toggle()
       require('nvim-autopairs').remove_rule('(') -- remove rule (
       require('nvim-autopairs').clear_rules() -- clear all rules
-      -- get rule " then modify it. It can return a list of rule or just a rule
-      require('nvim-autopairs').get_rule('"') 
+      require('nvim-autopairs').get_rules('"')
 <
 
 
@@ -384,18 +402,21 @@ PLUGIN INTEGRATION ~
 
 >
     -- remove add single quote on filetype scheme or lisp
-    require("nvim-autopairs").get_rule("'")[1].not_filetypes = { "scheme", "lisp" }
-    require("nvim-autopairs").get_rule("'")[1]:with_pair(cond.not_after_text("["}))
+    require("nvim-autopairs").get_rules("'")[1].not_filetypes = { "scheme", "lisp" }
+    require("nvim-autopairs").get_rules("'")[1]:with_pair(cond.not_after_text("["))
 <
 
 
 FASTWRAP ~
 
 >
-    Before        Input                    After
-    --------------------------------------------------
-    (|foobar      <M-e> then press $        (|foobar)
+    Before        Input                    After         Note
+    -----------------------------------------------------------------
+    (|foobar      <M-e> then press $       (|foobar)
     (|)(foobar)   <M-e> then press q       (|(foobar))
+    (|foo bar     <M-e> then press qh      (|foo) bar
+    (|foo bar     <M-e> then press qH      (foo|) bar
+    (|foo bar     <M-e> then press qH      (foo)| bar    if cursor_pos_before = false
 <
 
 
@@ -412,8 +433,11 @@ FASTWRAP ~
           chars = { '{', '[', '(', '"', "'" },
           pattern = [=[[%'%"%>%]%)%}%,]]=],
           end_key = '$',
+          before_key = 'h',
+          after_key = 'l',
+          cursor_pos_before = true,
           keys = 'qwertyuiopzxcvbnmasdfghjkl',
-          check_comma = true,
+          manual_position = true,
           highlight = 'Search',
           highlight_grey='Comment'
         },
@@ -436,8 +460,10 @@ rules <https://github.com/windwp/nvim-autopairs/wiki/Custom-rules>
 SPONSORS                                             *nvim-autopairs-sponsors*
 
 Thanks to everyone who sponsors my projects and makes continued development
-maintenance possible! <!-- patreon --><a href="https://github.com/t4t5"><img
-src="https://github.com/t4t5.png" width="60px" alt="" /></a><!-- patreon-->
+maintenance possible!
+
+<a href="https://github.com/looshch"><img src="https://github.com/looshch.png"
+width="60px" alt="george looshch" /></a><!-- sponsors -->
 
 Generated by panvimdoc <https://github.com/kdheepak/panvimdoc>
 
