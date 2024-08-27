@@ -304,6 +304,7 @@ npairs.setup({
     ts_config = {
         lua = {'string'},-- it will not add a pair on that treesitter node
         javascript = {'template_string'},
+        all = {'comment'}, -- don't add pairs in comments of any language
         java = false,-- don't check treesitter on java
     }
 })

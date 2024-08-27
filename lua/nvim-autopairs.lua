@@ -195,6 +195,17 @@ local function is_disable()
         M.set_buf_rule({}, 0)
         return true
     end
+
+    if M.config.check_ts and M.config.ts_config.all and #M.config .ts_config.all > 0 then
+        local cursor = api.nvim_win_get_cursor(0)
+        local ok, captures = pcall(vim.treesitter.get_captures_at_pos, 0, cursor[1] - 1, math.max(cursor[2] - 1, 0))
+        for _, capture in ipairs(ok and captures or {}) do
+            if vim.tbl_contains(M.config.ts_config.all, capture.capture) then
+                return true
+            end
+        end
+    end
+
     return false
 end
 
