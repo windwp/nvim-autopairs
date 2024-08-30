@@ -189,6 +189,10 @@ M.highlight_wrap = function(tbl_pos, row, col, end_col, whitespace_line)
     if config.use_virt_lines then
         local virt_lines = {}
         local start = 0
+        local left_col = vim.fn.winsaveview().leftcol
+        if left_col > 0 then
+            vim.fn.winrestview({ leftcol = 0 })
+        end
         for _, pos in ipairs(tbl_pos) do
             virt_lines[#virt_lines + 1] = { whitespace_line:sub(start + 1, pos.pos - 1), 'Normal' }
             virt_lines[#virt_lines + 1] = { pos.key, config.highlight }
