@@ -51,7 +51,8 @@ M.filetypes = {
     purescript = false,
     sh = false,
     bash = false,
-    nix = false
+    nix = false,
+    helm = false
 }
 
 M.on_confirm_done = function(opts)
