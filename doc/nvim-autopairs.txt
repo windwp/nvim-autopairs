@@ -412,6 +412,8 @@ FASTWRAP ~
           chars = { '{', '[', '(', '"', "'" },
           pattern = [=[[%'%"%>%]%)%}%,]]=],
           end_key = '$',
+	  end_is_end = true, -- use end_key directly (no follow up)
+	  avoid_move_to_end = true, -- stay for direct end_key use
           keys = 'qwertyuiopzxcvbnmasdfghjkl',
           check_comma = true,
           highlight = 'Search',
