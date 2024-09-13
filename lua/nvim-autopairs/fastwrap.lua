@@ -8,7 +8,6 @@ local default_config = {
     chars = { '{', '[', '(', '"', "'" },
     pattern = [=[[%'%"%>%]%)%}%,%`]]=],
     end_key = '$',
-    end_is_end = true, -- always treat end_key as eol
     avoid_move_to_end = true, -- choose your move behaviour for non-alphabetical end_keys' 
     before_key = 'h',
     after_key = 'l',
@@ -119,14 +118,12 @@ M.show = function(line)
         M.highlight_wrap(list_pos, row, col, #line, whitespace_line)
         vim.defer_fn(function()
             -- get the first char
-            --TODO: add logic to detect if two characters are necessary or just one
             local char = #list_pos == 1 and config.end_key or M.getchar_handler()
             vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
 
-            -- FIXME: add logic to avoid duplicate key locations
             for _, pos in pairs(list_pos) do
                 -- handle end_key specially
-                if char == config.end_key and char == pos.key and config.end_is_end then
+                if char == config.end_key and char == pos.key then
                     vim.print("Run to end!")
                     -- M.highlight_wrap({pos = pos.pos, key = config.end_key}, row, col, #line, whitespace_line)
                     local move_end_key = (not config.avoid_move_to_end and char == string.upper(config.end_key))
