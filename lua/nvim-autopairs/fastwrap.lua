@@ -8,6 +8,7 @@ local default_config = {
     chars = { '{', '[', '(', '"', "'" },
     pattern = [=[[%'%"%>%]%)%}%,%`]]=],
     end_key = '$',
+    avoid_move_to_end = true, -- choose your move behaviour for non-alphabetical end_keys' 
     before_key = 'h',
     after_key = 'l',
     cursor_pos_before = true,
@@ -57,7 +58,7 @@ M.show = function(line)
         if end_pair == '' then
             return
         end
-        local list_pos = {}
+        local list_pos = {} --holds target locations
         local index = 1
         local str_length = #line
         local offset = -1
@@ -90,6 +91,7 @@ M.show = function(line)
                 )
             end
         end
+        log.debug(list_pos)
 
         local end_col, end_pos
         if config.manual_position then
@@ -118,7 +120,16 @@ M.show = function(line)
             -- get the first char
             local char = #list_pos == 1 and config.end_key or M.getchar_handler()
             vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
+
             for _, pos in pairs(list_pos) do
+                -- handle end_key specially
+                if char == config.end_key and char == pos.key then
+                    vim.print("Run to end!")
+                    -- M.highlight_wrap({pos = pos.pos, key = config.end_key}, row, col, #line, whitespace_line)
+                    local move_end_key = (not config.avoid_move_to_end and char == string.upper(config.end_key))
+                    M.move_bracket(line, pos.col+1, end_pair, move_end_key)
+                    break
+                end
                 local hl_mark = {
                     { pos = pos.pos - 1, key = config.before_key },
                     { pos = pos.pos + 1, key = config.after_key },
