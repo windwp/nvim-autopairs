@@ -421,4 +421,4 @@ npairs.setup({
 
 Thanks to everyone who sponsors my projects and makes continued development maintenance possible!
 
-<!-- sponsors --><a href="https://github.com/looshch"><img src="https://github.com/looshch.png" width="60px" alt="george looshch" /></a><!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/looshch"><img src="https:&#x2F;&#x2F;avatars.githubusercontent.com&#x2F;u&#x2F;45432373?u&#x3D;56759fa0249df8316ca41b3485c3aa28fee1af12&amp;v&#x3D;4" width="60px" alt="george looshch" /></a><!-- sponsors -->
