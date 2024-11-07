@@ -215,7 +215,7 @@ M.highlight_wrap = function(tbl_pos, row, col, end_col, whitespace_line)
         })
     else
         if config.highlight_grey then
-            vim.highlight.range(
+            vim.hl.range(
                 bufnr,
                 M.ns_fast_wrap,
                 config.highlight_grey,
