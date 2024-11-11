@@ -215,7 +215,15 @@ M.highlight_wrap = function(tbl_pos, row, col, end_col, whitespace_line)
         })
     else
         if config.highlight_grey then
-            vim.highlight.range(
+            -- TODO: Deleteme after nvim 0.11 is released.
+            local hl
+            vim.fn.has("nvim-0.11") == 1 then
+                hl = vim.hl
+            else
+                hl = vim.highlight
+            end
+    
+            hl.range(
                 bufnr,
                 M.ns_fast_wrap,
                 config.highlight_grey,
