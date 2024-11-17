@@ -69,6 +69,7 @@ local function setup(opt)
                 "html",
                 "htmlangular",
                 "htmldjango",
+                "eruby",
                 "php",
                 "blade",
                 "typescript",
