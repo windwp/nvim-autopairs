@@ -43,7 +43,7 @@ local function setup(opt)
         Rule("<!--", "-->", { "html", "markdown" }):with_cr(cond.none()),
         Rule("```", "```", { "markdown", "vimwiki", "rmarkdown", "rmd", "pandoc" }),
         Rule("```.*$", "```", { "markdown", "vimwiki", "rmarkdown", "rmd", "pandoc" }):only_cr():use_regex(true),
-        Rule('"""', '"""', { "python", "elixir", "julia", "kotlin" }):with_pair(cond.not_before_char('"', 3)),
+        Rule('"""', '"""', { "python", "elixir", "julia", "kotlin", "scala", "sbt" }):with_pair(cond.not_before_char('"', 3)),
         Rule("'''", "'''", { "python" }):with_pair(cond.not_before_char('"', 3)),
         quote("'", "'", { "-rust", "-nix" })
             :with_pair(function(opts)
