@@ -829,7 +829,7 @@ local data = {
         end,
         before   = [[ | ]],
         after    = {
-            '   ',
+            '',
             'test({',
             'test({|',
         }
