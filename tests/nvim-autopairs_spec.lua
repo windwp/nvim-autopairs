@@ -820,11 +820,25 @@ local data = {
         before = [[    some text before| ]],
         after = [[    some text before123456|789 ]],
     },
+    {
+        name     = "88 disable on count mode",
+        filetype = "txt",
+        key      = function()
+            local keys = vim.api.nvim_replace_termcodes('2otest({<esc>', true, true, true)
+            vim.api.nvim_feedkeys(keys, 'x', true)
+        end,
+        before   = [[ | ]],
+        after    = {
+            '   ',
+            'test({',
+            'test({|',
+        }
+    },
 }
 
 local run_data = _G.Test_filter(data)
 
-describe('autopairs ', function()
+describe("autopairs ", function()
     _G.Test_withfile(run_data, {
         cursor_add = 0,
         before_each = function(value)

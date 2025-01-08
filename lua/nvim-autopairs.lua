@@ -190,6 +190,10 @@ local function is_disable()
         return true
     end
 
+    if vim.v.count > 0 then
+        return true
+    end
+
     if utils.check_filetype(M.config.disable_filetype, vim.bo.filetype) then
         del_keymaps()
         M.set_buf_rule({}, 0)
