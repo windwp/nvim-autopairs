@@ -16,6 +16,7 @@ local default = {
     map_c_h = false,
     map_c_w = false,
     map_cr = true,
+    enabled = nil,
     disable_filetype = { 'TelescopePrompt', 'spectre_panel' },
     disable_in_macro = true,
     disable_in_visualblock = false,
@@ -194,7 +195,10 @@ local function is_disable()
         return true
     end
 
-    if utils.check_filetype(M.config.disable_filetype, vim.bo.filetype) then
+    if
+        utils.check_filetype(M.config.disable_filetype, vim.bo.filetype)
+        or (M.config.enabled and not M.config.enabled(api.nvim_get_current_buf()))
+    then
         del_keymaps()
         M.set_buf_rule({}, 0)
         return true
