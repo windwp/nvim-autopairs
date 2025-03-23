@@ -12,6 +12,11 @@ local rules = {
     endwise('[%s=]%scase%s.+$',   'end', 'ruby', nil),
     endwise('[%s=]%swhile%s.+$',  'end', 'ruby', nil),
     endwise('[%s=]%suntil%s.+$',  'end', 'ruby', nil),
+    endwise('^if%s.+$',           'end', 'ruby', nil),
+    endwise('^unless%s.+$',       'end', 'ruby', nil),
+    endwise('^case%s.+$',         'end', 'ruby', nil),
+    endwise('^while%s.+$',        'end', 'ruby', nil),
+    endwise('^until%s.+$',        'end', 'ruby', nil),
 }
 
 return rules
