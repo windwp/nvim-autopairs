@@ -67,6 +67,7 @@ local function setup(opt)
             ">[%w%s]*$",
             "^%s*</",
             {
+                "heex",
                 "html",
                 "htmlangular",
                 "htmldjango",
