@@ -161,6 +161,10 @@ M.text_sub_char = function(line, start, num)
     else
         finish = start + num - 1
     end
+
+    if start + finish < 0 then
+        return ""
+    end
     return string.sub(line, start, finish)
 end
 

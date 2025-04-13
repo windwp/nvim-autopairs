@@ -7,6 +7,8 @@ _G.log = log
 local utils = require('nvim-autopairs.utils')
 _G.npairs = npairs;
 
+--  make test-file FILE=tests/nvim-autopairs_spec.lua
+
 -- use only = true to test 1 case
 -- stylua: ignore
 local data = {
@@ -831,6 +833,16 @@ local data = {
         after    = {
             '',
             '  test({',
+        }
+    },
+    {
+        name     = "89 <cr> key on markdown",
+        filetype = "markdown",
+        key      = [[<cr>]],
+        before   = [[|```python ]],
+        after    = {
+            "",
+            "|```python"
         }
     },
 }
