@@ -1,12 +1,25 @@
 local ts_get_node_text = vim.treesitter.get_node_text or vim.treesitter.query.get_node_text
 local M = {}
 
+local flatten = (function()
+  if vim.fn.has "nvim-0.11" == 1 then
+    return function(t)
+      return vim.iter(t):flatten():totable()
+    end
+  else
+    return function(t)
+      return vim.tbl_flatten(t)
+    end
+  end
+end)()
+
+
 --- Returns the language tree at the given position.
 ---@return LanguageTree
 function M.get_language_tree_at_position(position)
     local language_tree = vim.treesitter.get_parser()
     language_tree:for_each_tree(function(_, tree)
-        if tree:contains(vim.tbl_flatten({ position, position })) then
+        if tree:contains(flatten({ position, position })) then
             language_tree = tree
         end
     end)
