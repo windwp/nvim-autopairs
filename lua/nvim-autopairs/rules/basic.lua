@@ -41,9 +41,9 @@ local function setup(opt)
     local bracket = bracket_creator(opt)
     local rules = {
         Rule("<!--", "-->", { "html", "markdown" }):with_cr(cond.none()),
-        Rule("```", "```", { "markdown", "vimwiki", "rmarkdown", "rmd", "pandoc", "quarto" })
+        Rule("```", "```", { "markdown", "vimwiki", "rmarkdown", "rmd", "pandoc", "quarto", "typst" })
             :with_pair(cond.not_before_char('`', 3)),
-        Rule("```.*$", "```", { "markdown", "vimwiki", "rmarkdown", "rmd", "pandoc", "quarto" }):only_cr():use_regex(true),
+        Rule("```.*$", "```", { "markdown", "vimwiki", "rmarkdown", "rmd", "pandoc", "quarto", "typst" }):only_cr():use_regex(true),
         Rule('"""', '"""', { "python", "elixir", "julia", "kotlin", "scala","sbt" }):with_pair(cond.not_before_char('"', 3)),
         Rule("'''", "'''", { "python" }):with_pair(cond.not_before_char("'", 3)),
         quote("'", "'", { "-rust", "-nix" })
