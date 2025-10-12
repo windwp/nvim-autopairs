@@ -318,7 +318,7 @@ M.on_attach = function(bufnr)
             'i',
             M.config.fast_wrap.map,
             "<esc>l<cmd>lua require('nvim-autopairs.fastwrap').show()<cr>",
-            { noremap = true }
+            { noremap = true, desc = "autopairs fastwrap" }
         )
     end
 
@@ -328,7 +328,7 @@ M.on_attach = function(bufnr)
             'i',
             '<bs>',
             '',
-            { callback = M.autopairs_bs, expr = true, noremap = true }
+            { callback = M.autopairs_bs, expr = true, noremap = true, desc = "autopairs delete" }
         )
     end
 
@@ -338,7 +338,7 @@ M.on_attach = function(bufnr)
             "i",
             utils.key.c_h,
             '',
-            { callback = M.autopairs_c_h, expr = true, noremap = true }
+            { callback = M.autopairs_c_h, expr = true, noremap = true, desc = "autopairs delete" }
         )
     end
 
@@ -348,7 +348,7 @@ M.on_attach = function(bufnr)
             'i',
             '<c-w>',
             '',
-            { callback = M.autopairs_c_w, expr = true, noremap = true }
+            { callback = M.autopairs_c_w, expr = true, noremap = true, desc = "autopairs delete" }
         )
     end
     api.nvim_buf_set_var(bufnr, 'nvim-autopairs', 1)
@@ -672,7 +672,7 @@ M.map_cr = function()
         'i',
         '<CR>',
         "v:lua.require'nvim-autopairs'.completion_confirm()",
-        { expr = true, noremap = true }
+        { expr = true, noremap = true, desc = "autopairs completion confirm" }
     )
 end
 
