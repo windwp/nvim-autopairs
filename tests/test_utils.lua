@@ -133,8 +133,8 @@ _G.Test_withfile = function(test_data, cb)
                     vim.bo.filetype = value.filetype
                 end
             end
-            local status, parser = pcall(vim.treesitter.get_parser, 0)
-            if status then
+            local parser = vim.treesitter.get_parser(0, nil, { error = false })
+            if parser ~= nil then
                 parser:parse(true)
             end
             vim.api.nvim_buf_set_lines(
