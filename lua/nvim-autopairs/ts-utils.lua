@@ -15,9 +15,10 @@ end)()
 
 
 --- Returns the language tree at the given position.
----@return LanguageTree
+---@return vim.treesitter.LanguageTree|nil
 function M.get_language_tree_at_position(position)
     local language_tree = vim.treesitter.get_parser()
+    if language_tree == nil then return nil end
     language_tree:for_each_tree(function(_, tree)
         if tree:contains(flatten({ position, position })) then
             language_tree = tree
