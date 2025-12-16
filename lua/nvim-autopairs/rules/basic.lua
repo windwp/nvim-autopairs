@@ -44,8 +44,8 @@ local function setup(opt)
         Rule("```", "```", { "markdown", "vimwiki", "rmarkdown", "rmd", "pandoc", "quarto", "typst" })
             :with_pair(cond.not_before_char('`', 3)),
         Rule("```.*$", "```", { "markdown", "vimwiki", "rmarkdown", "rmd", "pandoc", "quarto", "typst" }):only_cr():use_regex(true),
-        Rule('"""', '"""', { "python", "elixir", "julia", "kotlin", "scala","sbt" }):with_pair(cond.not_before_char('"', 3)),
-        Rule("'''", "'''", { "python" }):with_pair(cond.not_before_char("'", 3)),
+        Rule('"""', '"""', { "python", "elixir", "julia", "kotlin", "scala", "sbt", "toml" }):with_pair(cond.not_before_char('"', 3)),
+        Rule("'''", "'''", { "python", "toml" }):with_pair(cond.not_before_char("'", 3)),
         quote("'", "'", { "-rust", "-nix" })
             :with_pair(function(opts)
                 -- python literals string
