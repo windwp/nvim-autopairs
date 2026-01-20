@@ -58,7 +58,15 @@ local function setup(opt)
         quote("'", "'", "rust"):with_pair(cond.not_before_regex("[%w<&]")):with_pair(cond.not_after_text(">")),
         Rule("''", "''", 'nix'):with_move(cond.after_text("'")),
         quote("`", "`"),
-        quote('"', '"', "-vim"),
+        quote('"', '"', { "-vim", "-bash", "-sh" }),
+        quote('"', '"', { "bash", "sh" }):with_pair(function(opts)
+            -- add a constraint for quote check if input " in bash command 
+            -- substitution "$()", variable expansion "${}".
+            local str = utils.get_shell_substitution_content_before_pos(opts.text, opts.col - 1)
+            if str then
+                return not utils.is_in_quotes(str, #str, '"')
+            end
+        end, 1),
         quote('"', '"', "vim"):with_pair(cond.not_before_regex("^%s*$", -1)),
         bracket("(", ")"),
         bracket("[", "]"),

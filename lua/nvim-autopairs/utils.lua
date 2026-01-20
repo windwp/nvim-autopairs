@@ -199,4 +199,31 @@ M.get_prev_char = function(opt)
     return opt.line:sub(opt.col - 1, opt.col + #opt.rule.start_pair - 2)
 end
 
+--- Get inner content of nearest bash substitution or variable expansion
+--- before cursor position
+--- eg:
+---     command substitution $(ab|c) -> ab
+---     variable expansion ${ab|c|} -> ab
+--- @param line string input line
+--- @param pos integer cursor pos (1-based)
+--- @return string | nil
+M.get_shell_substitution_content_before_pos = function(line, pos)
+    local i = pos
+    local char, prev2
+
+    while i > 1 do
+        char = line:sub(i, i)
+        if char == ')' or char == '}' then
+            return nil
+        end
+
+        prev2 = line:sub(i - 1, i)
+        if prev2 == '$(' or prev2 == '${' then
+            return line:sub(i + 1, pos)
+        end
+
+        i = i - 1
+    end
+end
+
 return M
