@@ -6,6 +6,7 @@ ts.setup({
     ensure_installed = { 'lua' },
     highlight = { enable = true },
 })
+
 _G.npairs = npairs
 vim.api.nvim_set_keymap(
     'i',
