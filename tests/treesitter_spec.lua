@@ -1,6 +1,5 @@
 local npairs = require('nvim-autopairs')
 local ts = require('nvim-treesitter.configs')
-local log = require('nvim-autopairs._log')
 local Rule = require('nvim-autopairs.rule')
 local ts_conds = require('nvim-autopairs.ts-conds')
 
@@ -26,11 +25,11 @@ local data = {
         linenr = 5,
         key = [["]],
         before = {
-            [[  [[ aaa| ]],
+            [==[  [[ aaa| ]==],
             [[  ]],
             ']]',
         },
-        after = [[  [[ aaa"| ]],
+        after = [==[  [[ aaa"| ]==],
     },
 
     {
@@ -47,11 +46,11 @@ local data = {
         linenr = 5,
         key = [[%]],
         before = {
-            [[ [[  abcde | ]],
+            [==[ [[  abcde | ]==],
             [[  ]],
             ']]',
         },
-        after = [[ [[  abcde %|% ]],
+        after = [==[ [[  abcde %|% ]==],
     },
     {
         name = 'ts_conds is_ts_node failed',
