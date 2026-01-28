@@ -45,12 +45,14 @@ local function setup(opt)
             :with_pair(cond.not_before_char('`', 3)),
         Rule("```.*$", "```", { "markdown", "vimwiki", "rmarkdown", "rmd", "pandoc", "quarto", "typst" }):only_cr():use_regex(true),
         Rule('"""', '"""', { "python", "elixir", "julia", "kotlin", "scala", "sbt", "toml" }):with_pair(cond.not_before_char('"', 3)),
-        Rule("'''", "'''", { "python", "toml" }):with_pair(cond.not_before_char("'", 3)),
+        Rule("'''", "'''", { "python", "meson", "toml" }):with_pair(cond.not_before_char("'", 3)),
         quote("'", "'", { "-rust", "-nix" })
             :with_pair(function(opts)
                 -- python literals string
                 local str = utils.text_sub_char(opts.line, opts.col - 1, 1)
                 if vim.bo.filetype == 'python' and str:match("[frbuFRBU]") then
+                    return true
+                elseif vim.bo.filetype == 'meson' and str:match("f") then
                     return true
                 end
             end)
