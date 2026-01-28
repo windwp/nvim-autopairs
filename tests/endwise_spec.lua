@@ -1,6 +1,6 @@
+local log = require('nvim-autopairs._log')
 local npairs = require('nvim-autopairs')
 local ts = require('nvim-treesitter.configs')
-local log = require('nvim-autopairs._log')
 
 ts.setup({
     ensure_installed = { 'lua' },

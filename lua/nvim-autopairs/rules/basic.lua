@@ -1,5 +1,5 @@
-local Rule = require("nvim-autopairs.rule")
-local cond = require("nvim-autopairs.conds")
+local Rule = require('nvim-autopairs.rule')
+local cond = require('nvim-autopairs.conds')
 local utils = require('nvim-autopairs.utils')
 
 local function quote_creator(opt)
@@ -40,61 +40,88 @@ local function setup(opt)
     local quote = quote_creator(opt)
     local bracket = bracket_creator(opt)
     local rules = {
-        Rule("<!--", "-->", { "html", "markdown" }):with_cr(cond.none()),
-        Rule("```", "```", { "markdown", "vimwiki", "rmarkdown", "rmd", "pandoc", "quarto", "typst", "gitcommit" })
-            :with_pair(cond.not_before_char('`', 3)),
-        Rule("```.*$", "```", { "markdown", "vimwiki", "rmarkdown", "rmd", "pandoc", "quarto", "typst" }):only_cr():use_regex(true),
-        Rule('"""', '"""', { "python", "elixir", "julia", "kotlin", "scala", "sbt", "toml" }):with_pair(cond.not_before_char('"', 3)),
-        Rule("'''", "'''", { "python", "toml" }):with_pair(cond.not_before_char("'", 3)),
-        quote("'", "'", { "-rust", "-nix" })
+        Rule('<!--', '-->', { 'html', 'markdown' }):with_cr(cond.none()),
+        Rule('```', '```', {
+            'markdown',
+            'vimwiki',
+            'rmarkdown',
+            'rmd',
+            'pandoc',
+            'quarto',
+            'typst',
+            'gitcommit',
+        }):with_pair(cond.not_before_char('`', 3)),
+        Rule('```.*$', '```', {
+            'markdown',
+            'vimwiki',
+            'rmarkdown',
+            'rmd',
+            'pandoc',
+            'quarto',
+            'typst',
+        }):only_cr():use_regex(true),
+        Rule(
+            '"""',
+            '"""',
+            { 'python', 'elixir', 'julia', 'kotlin', 'scala', 'sbt', 'toml' }
+        ):with_pair(cond.not_before_char('"', 3)),
+        Rule("'''", "'''", { 'python', 'toml' }):with_pair(
+            cond.not_before_char("'", 3)
+        ),
+        quote("'", "'", { '-rust', '-nix' })
             :with_pair(function(opts)
                 -- python literals string
                 local str = utils.text_sub_char(opts.line, opts.col - 1, 1)
-                if vim.bo.filetype == 'python' and str:match("[frbuFRBU]") then
+                if vim.bo.filetype == 'python' and str:match('[frbuFRBU]') then
                     return true
                 end
             end)
-            :with_pair(cond.not_before_regex("%w")),
-        quote("'", "'", "rust"):with_pair(cond.not_before_regex("[%w<&]")):with_pair(cond.not_after_text(">")),
+            :with_pair(cond.not_before_regex('%w')),
+        quote("'", "'", 'rust')
+            :with_pair(cond.not_before_regex('[%w<&]'))
+            :with_pair(cond.not_after_text('>')),
         Rule("''", "''", 'nix'):with_move(cond.after_text("'")),
-        quote("`", "`"),
-        quote('"', '"', { "-vim", "-bash", "-sh" }),
-        quote('"', '"', { "bash", "sh" }):with_pair(function(opts)
-            -- add a constraint for quote check if input " in bash command 
+        quote('`', '`'),
+        quote('"', '"', { '-vim', '-bash', '-sh' }),
+        quote('"', '"', { 'bash', 'sh' }):with_pair(function(opts)
+            -- add a constraint for quote check if input " in bash command
             -- substitution "$()", variable expansion "${}".
-            local str = utils.get_shell_substitution_content_before_pos(opts.text, opts.col - 1)
+            local str = utils.get_shell_substitution_content_before_pos(
+                opts.text,
+                opts.col - 1
+            )
             if str then
                 return not utils.is_in_quotes(str, #str, '"')
             end
         end, 1),
-        quote('"', '"', "vim"):with_pair(cond.not_before_regex("^%s*$", -1)),
-        bracket("(", ")"),
-        bracket("[", "]"),
-        bracket("{", "}"),
-        Rule(
-            ">[%w%s]*$",
-            "^%s*</",
-            {
-                "heex",
-                "html",
-                "htmlangular",
-                "htmldjango",
-                "eruby",
-                "php",
-                "blade",
-                "typescript",
-                "typescriptreact",
-                "javascript",
-                "javascriptreact",
-                "svelte",
-                "vue",
-                "xml",
-                "rescript",
-                "astro",
-            }
-        ):only_cr():use_regex(true),
+        quote('"', '"', 'vim'):with_pair(cond.not_before_regex('^%s*$', -1)),
+        bracket('(', ')'),
+        bracket('[', ']'),
+        bracket('{', '}'),
+        Rule('>[%w%s]*$', '^%s*</', {
+            'heex',
+            'html',
+            'htmlangular',
+            'htmldjango',
+            'eruby',
+            'php',
+            'blade',
+            'typescript',
+            'typescriptreact',
+            'javascript',
+            'javascriptreact',
+            'svelte',
+            'vue',
+            'xml',
+            'rescript',
+            'astro',
+        }):only_cr():use_regex(true),
     }
     return rules
 end
 
-return { setup = setup, quote_creator = quote_creator, bracket_creator = bracket_creator }
+return {
+    setup = setup,
+    quote_creator = quote_creator,
+    bracket_creator = bracket_creator,
+}

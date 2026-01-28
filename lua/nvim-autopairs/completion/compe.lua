@@ -1,5 +1,5 @@
-local npairs = require('nvim-autopairs')
 local Completion = require('compe.completion')
+local npairs = require('nvim-autopairs')
 local utils = require('nvim-autopairs.utils')
 
 local method_kind = nil
@@ -14,8 +14,10 @@ M.completion_done = function()
     local prev_char, next_char = utils.text_cusor_line(line, col, 1, 1, false)
 
     local filetype = vim.bo.filetype
-    local char = options.map_char[filetype] or options.map_char["all"] or '('
-    if char == '' then return end
+    local char = options.map_char[filetype] or options.map_char['all'] or '('
+    if char == '' then
+        return
+    end
 
     if prev_char ~= char and next_char ~= char then
         if method_kind == nil then
@@ -32,7 +34,10 @@ M.completion_done = function()
                     and completion_item.textEdit.newText
                     and completion_item.textEdit.newText:match('[%(%[%$]')
                 )
-                or (completion_item.insertText and completion_item.insertText:match('[%(%[%$]'))
+                or (
+                    completion_item.insertText
+                    and completion_item.insertText:match('[%(%[%$]')
+                )
             then
                 return
             end
@@ -42,8 +47,16 @@ M.completion_done = function()
 end
 
 M.setup = function(opt)
-    opt = opt or { map_cr = true, map_complete = true, auto_select = false, map_char = {all = '('}}
-    if not opt.map_char then opt.map_char = {} end
+    opt = opt
+        or {
+            map_cr = true,
+            map_complete = true,
+            auto_select = false,
+            map_char = { all = '(' },
+        }
+    if not opt.map_char then
+        opt.map_char = {}
+    end
     options = opt
     local map_cr = opt.map_cr
     local map_complete = opt.map_complete
@@ -66,7 +79,10 @@ M.setup = function(opt)
         end
     else
         M.completion_confirm = function()
-            if vim.fn.pumvisible() ~= 0 and vim.fn.complete_info()['selected'] ~= -1 then
+            if
+                vim.fn.pumvisible() ~= 0
+                and vim.fn.complete_info()['selected'] ~= -1
+            then
                 return vim.fn['compe#confirm'](npairs.esc('<cr>'))
             else
                 return npairs.autopairs_cr()

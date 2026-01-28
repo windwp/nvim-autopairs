@@ -1,7 +1,8 @@
-local utils = require('nvim-autopairs.utils')
 local log = require('nvim-autopairs._log')
+local utils = require('nvim-autopairs.utils')
 local api = vim.api
-local ts_get_node_text = vim.treesitter.get_node_text or vim.treesitter.query.get_node_text
+local ts_get_node_text = vim.treesitter.get_node_text
+    or vim.treesitter.query.get_node_text
 
 local helpers = {}
 
@@ -27,7 +28,7 @@ utils.feed = function(text, num)
         result = result .. text
     end
     api.nvim_feedkeys(
-    ---@diagnostic disable-next-line: param-type-mismatch
+        ---@diagnostic disable-next-line: param-type-mismatch
         api.nvim_replace_termcodes(result, true, false, true),
         'x',
         true
@@ -52,15 +53,12 @@ end
 
 local compare_text = function(linenr, text_after, name, cursor_add, end_cursor)
     cursor_add = cursor_add or 0
-    local new_text = vim.api.nvim_buf_get_lines(
-        0,
-        linenr - 1,
-        linenr + #text_after - 1,
-        true
-    )
+    local new_text =
+        vim.api.nvim_buf_get_lines(0, linenr - 1, linenr + #text_after - 1, true)
     for i = 1, #text_after, 1 do
         local t = string.gsub(text_after[i], '%|', '')
-        if t
+        if
+            t
             and new_text[i]
             and t:gsub('%s+$', '') ~= new_text[i]:gsub('%s+$', '')
         then
@@ -148,8 +146,8 @@ _G.Test_withfile = function(test_data, cb)
                 0,
                 { pos_before.linenr, pos_before.colnr - 1 }
             )
-            if type(value.key) == "function" then
-                log.debug("call key")
+            if type(value.key) == 'function' then
+                log.debug('call key')
                 value.key()
             else
                 log.debug('insert:' .. value.key)

@@ -1,55 +1,54 @@
-local utils = require('nvim-autopairs.utils')
 local log = require('nvim-autopairs._log')
+local utils = require('nvim-autopairs.utils')
 
 local eq = assert.are.same
 
 local data = {
     {
-        text   = "add normal bracket",
-        start  = 2,
-        num    = 2,
-        result = 'dd'
-    },
-
-
-    {
-        text   = "iood",
-        start  = 1,
-        num    = 2,
-        result = 'io'
-    },
-    {
-        text   = "add normal bracket",
-        start  = 0,
-        num    = -2,
-        result = ''
+        text = 'add normal bracket',
+        start = 2,
+        num = 2,
+        result = 'dd',
     },
 
     {
-        text   = "add normal bracket",
-        start  = 3,
-        num    = -2,
-        result = 'dd'
+        text = 'iood',
+        start = 1,
+        num = 2,
+        result = 'io',
     },
     {
-        text   = [["""]],
-        start  = 3,
-        num    = -3,
-        result = '"""'
-    },
-
-    {
-        text   = [["""]],
-        start  = 3,
-        num    = 3,
-        result = '"'
+        text = 'add normal bracket',
+        start = 0,
+        num = -2,
+        result = '',
     },
 
     {
-        text   = [["""]],
-        start  = 2,
-        num    = 2,
-        result = '""'
+        text = 'add normal bracket',
+        start = 3,
+        num = -2,
+        result = 'dd',
+    },
+    {
+        text = [["""]],
+        start = 3,
+        num = -3,
+        result = '"""',
+    },
+
+    {
+        text = [["""]],
+        start = 3,
+        num = 3,
+        result = '"',
+    },
+
+    {
+        text = [["""]],
+        start = 2,
+        num = 2,
+        result = '""',
     },
 }
 

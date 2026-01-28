@@ -35,19 +35,19 @@ function Rule.new(...)
         end
     end
     opt = vim.tbl_extend('force', {
-        key_map         = "",
-        start_pair      = nil,
-        end_pair        = nil,
-        end_pair_func   = false,
-        filetypes       = nil,
-        not_filetypes   = nil,
-        move_cond       = nil,
-        del_cond        = {},
-        cr_cond         = {},
-        pair_cond       = {},
-        is_endwise      = false,
-        is_regex        = false,
-        is_multibyte    = false,
+        key_map = '',
+        start_pair = nil,
+        end_pair = nil,
+        end_pair_func = false,
+        filetypes = nil,
+        not_filetypes = nil,
+        move_cond = nil,
+        del_cond = {},
+        cr_cond = {},
+        pair_cond = {},
+        is_endwise = false,
+        is_regex = false,
+        is_multibyte = false,
         end_pair_length = nil,
     }, opt) or {}
 
@@ -97,8 +97,8 @@ end
 function Rule:use_multibyte()
     self.is_multibyte = true
     self.end_pair_length = vim.fn.strdisplaywidth(self.end_pair)
-    self.key_map = string.match(self.start_pair, "[^\128-\191][\128-\191]*$")
-    self.key_end = string.match(self.end_pair, "[%z\1-\127\194-\244][\128-\191]*")
+    self.key_map = string.match(self.start_pair, '[^\128-\191][\128-\191]*$')
+    self.key_end = string.match(self.end_pair, '[%z\1-\127\194-\244][\128-\191]*')
     return self
 end
 
@@ -148,19 +148,25 @@ function Rule:set_end_pair_length(length)
 end
 
 function Rule:with_move(cond)
-    if self.move_cond == nil then self.move_cond = {} end
+    if self.move_cond == nil then
+        self.move_cond = {}
+    end
     table.insert(self.move_cond, cond)
     return self
 end
 
 function Rule:with_del(cond)
-    if self.del_cond == nil then self.del_cond = {} end
+    if self.del_cond == nil then
+        self.del_cond = {}
+    end
     table.insert(self.del_cond, cond)
     return self
 end
 
 function Rule:with_cr(cond)
-    if self.cr_cond == nil then self.cr_cond = {} end
+    if self.cr_cond == nil then
+        self.cr_cond = {}
+    end
     table.insert(self.cr_cond, cond)
     return self
 end
@@ -170,7 +176,9 @@ end
 ---@param pos number|nil = 1. It have higher priority to another condition
 ---@return Rule
 function Rule:with_pair(cond, pos)
-    if self.pair_cond == nil then self.pair_cond = {} end
+    if self.pair_cond == nil then
+        self.pair_cond = {}
+    end
     if pos then
         table.insert(self.pair_cond, pos, cond)
     else
@@ -184,7 +192,9 @@ function Rule:only_cr(cond)
     self.pair_cond = false
     self.move_cond = false
     self.del_cond = false
-    if cond then return self:with_cr(cond) end
+    if cond then
+        return self:with_cr(cond)
+    end
     return self
 end
 

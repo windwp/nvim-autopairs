@@ -6,15 +6,17 @@ on:
       - opened
       - synchronize
       - reopened
+  push:
+    branches:
+      - master
 
-  workflow_dispatch:
 jobs:
   tests:
     runs-on: ubuntu-latest
 
     strategy:
       matrix:
-        neovim_version: ["stable", "v0.11.0" ]
+        neovim_version: ["stable", "v0.11.0"]
 
     steps:
       - name: Checkout
