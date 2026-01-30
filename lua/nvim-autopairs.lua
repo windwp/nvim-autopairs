@@ -1,6 +1,6 @@
+local basic_rule = require('nvim-autopairs.rules.basic')
 local log = require('nvim-autopairs._log')
 local utils = require('nvim-autopairs.utils')
-local basic_rule = require('nvim-autopairs.rules.basic')
 local api = vim.api
 local highlighter = nil
 local M = {}
@@ -45,7 +45,7 @@ M.setup = function(opt)
     if M.config.check_ts then
         local ok, ts_rule = pcall(require, 'nvim-autopairs.rules.ts_basic')
         if ok then
-            highlighter = require "vim.treesitter.highlighter"
+            highlighter = require('vim.treesitter.highlighter')
             M.config.rules = ts_rule.setup(M.config)
         end
     end
@@ -59,7 +59,9 @@ M.setup = function(opt)
     api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
         group = group,
         pattern = '*',
-        callback = function() M.on_attach() end
+        callback = function()
+            M.on_attach()
+        end,
     })
     api.nvim_create_autocmd('BufDelete', {
         group = group,
@@ -75,7 +77,9 @@ M.setup = function(opt)
     api.nvim_create_autocmd('FileType', {
         group = group,
         pattern = '*',
-        callback = function() M.force_attach() end
+        callback = function()
+            M.force_attach()
+        end,
     })
 end
 
@@ -155,7 +159,8 @@ M.force_attach = function(bufnr)
 end
 
 local del_keymaps = function()
-    local status, autopairs_keymaps = pcall(api.nvim_buf_get_var, 0, 'autopairs_keymaps')
+    local status, autopairs_keymaps =
+        pcall(api.nvim_buf_get_var, 0, 'autopairs_keymaps')
     if status and autopairs_keymaps and #autopairs_keymaps > 0 then
         for _, key in pairs(autopairs_keymaps) do
             pcall(api.nvim_buf_del_keymap, 0, 'i', key)
@@ -177,13 +182,14 @@ local function is_disable()
         return true
     end
 
-    if M.config.disable_in_macro
+    if
+        M.config.disable_in_macro
         and (vim.fn.reg_recording() ~= '' or vim.fn.reg_executing() ~= '')
     then
         return true
     end
 
-    if M.config.disable_in_replace_mode and vim.api.nvim_get_mode().mode == "R" then
+    if M.config.disable_in_replace_mode and vim.api.nvim_get_mode().mode == 'R' then
         return true
     end
 
@@ -220,7 +226,6 @@ M.set_buf_rule = function(rules, bufnr)
     M.state.rules[bufnr] = rules
 end
 
-
 M.on_attach = function(bufnr)
     -- log.debug('on_attach' .. vim.bo.filetype)
     if is_disable() then
@@ -230,7 +235,8 @@ M.on_attach = function(bufnr)
 
     local rules = {}
     for _, rule in pairs(M.config.rules) do
-        if utils.check_filetype(rule.filetypes, vim.bo.filetype)
+        if
+            utils.check_filetype(rule.filetypes, vim.bo.filetype)
             and utils.check_not_filetype(rule.not_filetypes, vim.bo.filetype)
         then
             table.insert(rules, rule)
@@ -273,8 +279,10 @@ M.on_attach = function(bufnr)
         api.nvim_buf_set_keymap(bufnr, 'i', key, '', {
             expr = true,
             noremap = true,
-            desc = "autopairs map key",
-            callback = function() return M.autopairs_map(bufnr, key) end,
+            desc = 'autopairs map key',
+            callback = function()
+                return M.autopairs_map(bufnr, key)
+            end,
         })
         table.insert(autopairs_keymaps, key)
     end
@@ -286,7 +294,11 @@ M.on_attach = function(bufnr)
                 end
                 expr_map(rule.key_map)
                 local key_end = rule.key_end or rule.end_pair:sub(1, 1)
-                if #key_end >= 1 and key_end ~= rule.key_map and rule.move_cond ~= nil then
+                if
+                    #key_end >= 1
+                    and key_end ~= rule.key_map
+                    and rule.move_cond ~= nil
+                then
                     expr_map(key_end)
                 end
             else
@@ -304,11 +316,14 @@ M.on_attach = function(bufnr)
         -- capture all key use it to trigger regex pairs
         -- it can make an issue with paste from register
         api.nvim_create_autocmd('InsertCharPre', {
-            group = api.nvim_create_augroup(string.format("autopairs_insert_%d", bufnr), { clear = true }),
+            group = api.nvim_create_augroup(
+                string.format('autopairs_insert_%d', bufnr),
+                { clear = true }
+            ),
             buffer = bufnr,
             callback = function()
                 M.autopairs_insert(bufnr, vim.v.char)
-            end
+            end,
         })
     end
 
@@ -318,38 +333,35 @@ M.on_attach = function(bufnr)
             'i',
             M.config.fast_wrap.map,
             "<esc>l<cmd>lua require('nvim-autopairs.fastwrap').show()<cr>",
-            { noremap = true, desc = "autopairs fastwrap" }
+            { noremap = true, desc = 'autopairs fastwrap' }
         )
     end
 
     if M.config.map_bs then
-        api.nvim_buf_set_keymap(
-            bufnr,
-            'i',
-            '<bs>',
-            '',
-            { callback = M.autopairs_bs, expr = true, noremap = true, desc = "autopairs delete" }
-        )
+        api.nvim_buf_set_keymap(bufnr, 'i', '<bs>', '', {
+            callback = M.autopairs_bs,
+            expr = true,
+            noremap = true,
+            desc = 'autopairs delete',
+        })
     end
 
     if M.config.map_c_h then
-        api.nvim_buf_set_keymap(
-            bufnr,
-            "i",
-            utils.key.c_h,
-            '',
-            { callback = M.autopairs_c_h, expr = true, noremap = true, desc = "autopairs delete" }
-        )
+        api.nvim_buf_set_keymap(bufnr, 'i', utils.key.c_h, '', {
+            callback = M.autopairs_c_h,
+            expr = true,
+            noremap = true,
+            desc = 'autopairs delete',
+        })
     end
 
     if M.config.map_c_w then
-        api.nvim_buf_set_keymap(
-            bufnr,
-            'i',
-            '<c-w>',
-            '',
-            { callback = M.autopairs_c_w, expr = true, noremap = true, desc = "autopairs delete" }
-        )
+        api.nvim_buf_set_keymap(bufnr, 'i', '<c-w>', '', {
+            callback = M.autopairs_c_w,
+            expr = true,
+            noremap = true,
+            desc = 'autopairs delete',
+        })
     end
     api.nvim_buf_set_var(bufnr, 'nvim-autopairs', 1)
 end
@@ -371,7 +383,8 @@ local autopairs_delete = function(bufnr, key)
                 #rule.end_pair,
                 rule.is_regex
             )
-            if utils.compare(rule.start_pair, prev_char, rule.is_regex)
+            if
+                utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and utils.compare(rule.end_pair, next_char, rule.is_regex)
                 and rule:can_del({
                     ts_node = M.state.ts_node,
@@ -454,22 +467,27 @@ M.autopairs_map = function(bufnr, char)
             -- for simple pairs, char will match end_pair
             -- for more complex pairs, user should map the wanted end char with `use_key`
             --   on a dedicated rule
-            if char_matches_rule
+            if
+                char_matches_rule
                 and utils.compare(rule.end_pair, next_char, rule.is_regex)
                 and rule:can_move(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
                 local end_pair_length = rule:get_end_pair_length(end_pair)
-                return utils.esc(utils.repeat_key(utils.key.join_right, end_pair_length))
+                return utils.esc(
+                    utils.repeat_key(utils.key.join_right, end_pair_length)
+                )
             end
 
-            if rule.key_map == char
+            if
+                rule.key_map == char
                 and utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_pair(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
                 local end_pair_length = rule:get_end_pair_length(end_pair)
-                local move_text = utils.repeat_key(utils.key.join_left, end_pair_length)
+                local move_text =
+                    utils.repeat_key(utils.key.join_left, end_pair_length)
                 if add_char == 0 then
                     move_text = ''
                     char = ''
@@ -479,12 +497,14 @@ M.autopairs_map = function(bufnr, char)
                 end
                 local result = char .. end_pair .. utils.esc(move_text)
                 if rule.is_undo then
-                    result = utils.esc(utils.key.undo_sequence) .. result .. utils.esc(utils.key.undo_sequence)
+                    result = utils.esc(utils.key.undo_sequence)
+                        .. result
+                        .. utils.esc(utils.key.undo_sequence)
                 end
                 if M.config.enable_abbr then
                     result = utils.esc(utils.key.abbr) .. result
                 end
-                log.debug("key_map :" .. result)
+                log.debug('key_map :' .. result)
                 return result
             end
         end
@@ -531,7 +551,8 @@ M.autopairs_insert = function(bufnr, char)
                 return false
             end
 
-            if utils.compare(rule.start_pair, prev_char, rule.is_regex)
+            if
+                utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_pair(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
@@ -578,26 +599,33 @@ M.autopairs_cr = function(bufnr)
             -- log.debug('prev_char' .. rule.start_pair)
             -- log.debug('prev_char' .. prev_char)
             -- log.debug('next_char' .. next_char)
-            if rule.is_endwise
+            if
+                rule.is_endwise
                 and utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and rule:can_cr(cond_opt)
             then
                 local end_pair = rule:get_end_pair(cond_opt)
                 return utils.esc(
-                    '<CR>' .. end_pair
-                    -- FIXME do i need to re indent twice #118
-                    .. '<CMD>normal! ====<CR><up><end><CR>'
+                    '<CR>'
+                        .. end_pair -- FIXME do i need to re indent twice #118
+                        .. '<CMD>normal! ====<CR><up><end><CR>'
                 )
             end
 
             cond_opt.check_endwise_ts = false
 
-            if utils.compare(rule.start_pair, prev_char, rule.is_regex)
+            if
+                utils.compare(rule.start_pair, prev_char, rule.is_regex)
                 and utils.compare(rule.end_pair, next_char, rule.is_regex)
                 and rule:can_cr(cond_opt)
             then
                 log.debug('do_cr')
-                return utils.esc(rule:get_map_cr({ rule = rule, line = line, color = col, bufnr = bufnr }))
+                return utils.esc(rule:get_map_cr({
+                    rule = rule,
+                    line = line,
+                    color = col,
+                    bufnr = bufnr,
+                }))
             end
         end
     end
@@ -609,8 +637,10 @@ M.autopairs_afterquote = function(line, key_char)
     if M.config.enable_afterquote and not utils.is_block_wise_mode() then
         line = line or utils.text_get_current_line(0)
         local _, col = utils.get_cursor()
-        local prev_char, next_char = utils.text_cusor_line(line, col + 1, 1, 1, false)
-        if utils.is_bracket(prev_char)
+        local prev_char, next_char =
+            utils.text_cusor_line(line, col + 1, 1, 1, false)
+        if
+            utils.is_bracket(prev_char)
             and utils.is_quote(next_char)
             and not utils.is_in_quotes(line, col, next_char)
         then
@@ -630,7 +660,10 @@ M.autopairs_afterquote = function(line, key_char)
             if count == 2 and index >= (#line - 2) then
                 local rules = M.get_buf_rules(api.nvim_get_current_buf())
                 for _, rule in pairs(rules) do
-                    if rule.start_pair == prev_char and char_end ~= rule.end_pair then
+                    if
+                        rule.start_pair == prev_char
+                        and char_end ~= rule.end_pair
+                    then
                         local new_text = line:sub(0, index)
                             .. rule.end_pair
                             .. line:sub(index + 1, #line)
@@ -640,7 +673,8 @@ M.autopairs_afterquote = function(line, key_char)
                             append = 'la'
                         end
                         return utils.esc(
-                            "<esc><cmd>lua require'nvim-autopairs'.autopairs_closequote_expr()<cr>" .. append
+                            "<esc><cmd>lua require'nvim-autopairs'.autopairs_closequote_expr()<cr>"
+                                .. append
                         )
                     end
                 end
@@ -661,7 +695,7 @@ end
 
 M.completion_confirm = function()
     if vim.fn.pumvisible() ~= 0 then
-        return M.esc("<cr>")
+        return M.esc('<cr>')
     else
         return M.autopairs_cr()
     end
@@ -672,7 +706,7 @@ M.map_cr = function()
         'i',
         '<CR>',
         "v:lua.require'nvim-autopairs'.completion_confirm()",
-        { expr = true, noremap = true, desc = "autopairs completion confirm" }
+        { expr = true, noremap = true, desc = 'autopairs completion confirm' }
     )
 end
 

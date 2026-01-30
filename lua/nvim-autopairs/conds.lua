@@ -1,5 +1,5 @@
-local utils = require('nvim-autopairs.utils')
 local log = require('nvim-autopairs._log')
+local utils = require('nvim-autopairs.utils')
 ---@class CondOpts
 ---@field ts_node table
 ---@field text string
@@ -39,7 +39,9 @@ end
 
 cond.before_regex = function(regex, length)
     length = length or 1
-    if length < 0 then length = nil end
+    if length < 0 then
+        length = nil
+    end
     length = length and -length
     ---@param opts CondOpts
     return function(opts)
@@ -80,7 +82,9 @@ end
 
 cond.after_regex = function(regex, length)
     length = length or 1
-    if length < 0 then length = nil end
+    if length < 0 then
+        length = nil
+    end
     ---@param opts CondOpts
     return function(opts)
         log.debug('after_regex')
@@ -117,7 +121,9 @@ end
 
 cond.not_before_regex = function(regex, length)
     length = length or 1
-    if length < 0 then length = nil end
+    if length < 0 then
+        length = nil
+    end
     length = length and -length
     ---@param opts CondOpts
     return function(opts)
@@ -132,7 +138,9 @@ end
 
 cond.not_after_regex = function(regex, length)
     length = length or 1
-    if length < 0 then length = nil end
+    if length < 0 then
+        length = nil
+    end
     ---@param opts CondOpts
     return function(opts)
         log.debug('not_after_regex')
@@ -182,9 +190,12 @@ cond.is_bracket_line = function()
     ---@param opts CondOpts
     return function(opts)
         log.debug('is_bracket_line')
-        if utils.is_bracket(opts.char) and
-            (opts.next_char == opts.rule.end_pair
-                or opts.next_char == opts.rule.start_pair)
+        if
+            utils.is_bracket(opts.char)
+            and (
+                opts.next_char == opts.rule.end_pair
+                or opts.next_char == opts.rule.start_pair
+            )
         then
             -- ((  many char |)) => add
             -- (   many char |)) => not add
@@ -204,9 +215,7 @@ cond.is_bracket_line_move = function()
     ---@param opts CondOpts
     return function(opts)
         log.debug('is_bracket_line_move')
-        if utils.is_close_bracket(opts.char)
-            and opts.char == opts.rule.end_pair
-        then
+        if utils.is_close_bracket(opts.char) and opts.char == opts.rule.end_pair then
             -- ((   many char |)) => move
             -- ((   many char |) => not move
             local is_balanced = is_brackets_balanced_around_position(
@@ -244,8 +253,8 @@ cond.not_add_quote_inside_quote = function()
     ---@param opts CondOpts
     return function(opts)
         log.debug('not_add_quote_inside_quote')
-        if utils.is_quote(opts.char)
-            and utils.is_in_quotes(opts.text, opts.col - 1)
+        if
+            utils.is_quote(opts.char) and utils.is_in_quotes(opts.text, opts.col - 1)
         then
             return false
         end
@@ -293,8 +302,9 @@ end
 cond.is_bracket_in_quote = function()
     ---@param opts CondOpts
     return function(opts)
-        log.debug("is_bracket_in_quote")
-        if utils.is_bracket(opts.char)
+        log.debug('is_bracket_in_quote')
+        if
+            utils.is_bracket(opts.char)
             and utils.is_quote(opts.next_char)
             and utils.is_in_quotes(opts.line, opts.col - 1, opts.next_char)
         then
@@ -323,8 +333,9 @@ cond.not_before_char = function(char, index)
     return function(opts)
         log.debug('not_before_char')
         local match_char = #opts.line > index
-            and opts.line:sub(#opts.line - index, #opts.line - index) or ''
-        if match_char == char and match_char ~= "" then
+                and opts.line:sub(#opts.line - index, #opts.line - index)
+            or ''
+        if match_char == char and match_char ~= '' then
             return false
         end
     end

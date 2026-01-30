@@ -1,6 +1,6 @@
+local Rule = require('nvim-autopairs.rule')
 local npairs = require('nvim-autopairs')
 local ts = require('nvim-treesitter.configs')
-local Rule = require('nvim-autopairs.rule')
 local ts_conds = require('nvim-autopairs.ts-conds')
 
 _G.npairs = npairs
@@ -82,8 +82,9 @@ local data = {
     {
         setup_func = function()
             npairs.add_rules({
-                Rule('*', '*', { 'markdown', 'markdown_inline' })
-                    :with_pair(ts_conds.is_not_in_context()),
+                Rule('*', '*', { 'markdown', 'markdown_inline' }):with_pair(
+                    ts_conds.is_not_in_context()
+                ),
             })
         end,
         name = 'ts_context markdown `*` success md_context',
@@ -97,8 +98,9 @@ local data = {
     {
         setup_func = function()
             npairs.add_rules({
-                Rule('*', '*', { 'markdown', 'markdown_inline' })
-                    :with_pair(ts_conds.is_not_in_context()),
+                Rule('*', '*', { 'markdown', 'markdown_inline' }):with_pair(
+                    ts_conds.is_not_in_context()
+                ),
             })
         end,
         name = 'ts_context codeblock `*` fail js_context',
