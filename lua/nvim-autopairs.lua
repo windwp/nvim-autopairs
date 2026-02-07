@@ -726,7 +726,7 @@ M.get_key_handler = function(key)
         return function()
             return M.autopairs_bs()
         end
-    elseif key == utils.key.c_h then
+    elseif key == '<C-h>' or key == '<c-h>' then
         return function()
             return M.autopairs_c_h()
         end
