@@ -19,6 +19,16 @@ describe('map_pair configuration', function()
         assert.truthy(status)
         assert.truthy(keymaps)
         assert.truthy(#keymaps > 0)
+        
+        -- Verify that common pair characters are mapped
+        local has_bracket = false
+        for _, keymap in ipairs(keymaps) do
+            if keymap == '(' or keymap == '{' or keymap == '[' then
+                has_bracket = true
+                break
+            end
+        end
+        assert.truthy(has_bracket, "Expected at least one bracket pair to be mapped")
     end)
 
     it('should not map keys when map_pair is false', function()
@@ -28,7 +38,7 @@ describe('map_pair configuration', function()
         -- Check that no keymaps are created for autopairs
         local status, keymaps = pcall(vim.api.nvim_buf_get_var, 0, 'autopairs_keymaps')
         if status and keymaps then
-            assert.are.same(0, #keymaps)
+            assert.are.same(0, #keymaps, "Expected no keymaps to be created when map_pair is false")
         end
     end)
 end)

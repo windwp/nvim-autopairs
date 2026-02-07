@@ -89,5 +89,3 @@ vim.keymap.set('i', '<BS>', npairs.get_key_handler('<BS>'), {
 --     noremap = true,
 --     desc = 'nvim-autopairs C-w handler'
 -- })
-
-print("Manual key mappings configured for nvim-autopairs")

@@ -737,7 +737,8 @@ M.get_key_handler = function(key)
     else
         -- For regular characters (pairs)
         return function()
-            return M.autopairs_map(nil, key)
+            local bufnr = api.nvim_get_current_buf()
+            return M.autopairs_map(bufnr, key)
         end
     end
 end
