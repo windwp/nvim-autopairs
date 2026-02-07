@@ -63,6 +63,7 @@ use {
     map_bs = true, -- map the <BS> key
     map_c_h = false, -- Map the <C-h> key to delete a pair
     map_c_w = false, -- map <c-w> to delete a pair if possible
+    map_pair = true, -- map pair keys automatically
 }
 ```
 
@@ -369,6 +370,30 @@ Before        Input         After
 require("nvim-autopairs").get_rules("'")[1].not_filetypes = { "scheme", "lisp" }
 require("nvim-autopairs").get_rules("'")[1]:with_pair(cond.not_after_text("["))
 ```
+
+### Manual Key Mapping
+
+If you want to manually control key mappings instead of letting nvim-autopairs automatically map them, you can use the `map_pair` configuration option and the `get_key_handler` API:
+
+```lua
+-- Setup nvim-autopairs without automatic key mappings
+require('nvim-autopairs').setup({
+    map_pair = false, -- disable automatic key mapping
+})
+
+local npairs = require('nvim-autopairs')
+
+-- Manually map keys using get_key_handler
+vim.keymap.set('i', '<CR>', npairs.get_key_handler('<CR>'), { expr = true, noremap = true })
+vim.keymap.set('i', '(', npairs.get_key_handler('('), { expr = true, noremap = true })
+vim.keymap.set('i', ')', npairs.get_key_handler(')'), { expr = true, noremap = true })
+vim.keymap.set('i', '[', npairs.get_key_handler('['), { expr = true, noremap = true })
+vim.keymap.set('i', '{', npairs.get_key_handler('{'), { expr = true, noremap = true })
+vim.keymap.set('i', '<BS>', npairs.get_key_handler('<BS>'), { expr = true, noremap = true })
+-- Add more mappings as needed
+```
+
+This gives you full control over which keys are mapped and when they are mapped.
 
 ### FastWrap
 
