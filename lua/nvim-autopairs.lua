@@ -735,10 +735,10 @@ end
 
 --- Get key handler function for manual keymap setup
 --- @param key string The key to handle (e.g., '<CR>', '(', etc.)
---- @return function Handler function for vim.keymap.set
+--- @return function|string Handler for vim.keymap.set
 M.get_key_handler = function(key)
     local norm_key = lower_bracket(key)
-    
+
     if norm_key == '<cr>' then
         return function()
             return M.autopairs_cr()
@@ -755,6 +755,8 @@ M.get_key_handler = function(key)
         return function()
             return M.autopairs_c_w()
         end
+    elseif norm_key == '<m-e>' then
+        return "<esc>l<cmd>lua require('nvim-autopairs.fastwrap').show()<cr>"
     else
         -- For regular characters (pairs)
         return function()
