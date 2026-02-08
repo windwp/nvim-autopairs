@@ -277,17 +277,18 @@ M.on_attach = function(bufnr)
     local enable_insert_auto = false
     local autopairs_keymaps = {}
     local expr_map = function(key)
-        if M.config.map_pair then
-            api.nvim_buf_set_keymap(bufnr, 'i', key, '', {
-                expr = true,
-                noremap = true,
-                desc = 'autopairs map key',
-                callback = function()
-                    return M.autopairs_map(bufnr, key)
-                end,
-            })
-            table.insert(autopairs_keymaps, key)
+        if not M.config.map_pair then
+            return
         end
+        api.nvim_buf_set_keymap(bufnr, 'i', key, '', {
+            expr = true,
+            noremap = true,
+            desc = 'autopairs map key',
+            callback = function()
+                return M.autopairs_map(bufnr, key)
+            end,
+        })
+        table.insert(autopairs_keymaps, key)
     end
     for _, rule in pairs(rules) do
         if rule.key_map ~= nil then
@@ -713,33 +714,30 @@ M.map_cr = function()
     )
 end
 
---- Normalize key string to lowercase for angle bracket keys
---- @param key string The key to normalize (e.g., '<CR>', '<Cr>', '<cr>')
---- @return string Normalized key
-local normalize_key = function(key)
-    -- Match angle bracket keys like <CR>, <BS>, <C-h>, etc.
-    -- Make letters inside angle brackets lowercase, except for modifier keys (C-, M-, S-)
-    local normalized = key:gsub('<([^>]+)>', function(inner)
-        -- Split by dash to handle modifier keys
-        local parts = {}
-        for part in inner:gmatch('[^-]+') do
-            -- Keep modifier prefixes (C, M, S) as uppercase, but lowercase everything else
-            if part:upper():match('^[CMS]$') then
-                table.insert(parts, part:upper())
-            else
-                table.insert(parts, part:lower())
-            end
+--- Make letters inside angle brackets lowercase, except for
+--- '<M-A>' or '<m-A>', which become '<m-A>',
+--- which is because <m-a> and <M-a> are equivalent in Neovim,
+--- but <m-a> and <m-A> are not.
+--- @param s string
+--- @return string
+local function lower_bracket(s)
+    local res, _ = s:gsub('%b<>', function(m)
+        local inner = m:sub(2, -2)
+        if inner:match('^[mM]%-%a$') then
+            inner = 'm' .. inner:sub(2)
+        else
+            inner = inner:lower()
         end
-        return '<' .. table.concat(parts, '-') .. '>'
+        return '<' .. inner .. '>'
     end)
-    return normalized
+    return res
 end
 
 --- Get key handler function for manual keymap setup
 --- @param key string The key to handle (e.g., '<CR>', '(', etc.)
 --- @return function Handler function for vim.keymap.set
 M.get_key_handler = function(key)
-    local norm_key = normalize_key(key)
+    local norm_key = lower_bracket(key)
     
     if norm_key == '<cr>' then
         return function()
@@ -749,11 +747,11 @@ M.get_key_handler = function(key)
         return function()
             return M.autopairs_bs()
         end
-    elseif norm_key == '<C-h>' then
+    elseif norm_key == '<c-h>' then
         return function()
             return M.autopairs_c_h()
         end
-    elseif norm_key == '<C-w>' then
+    elseif norm_key == '<c-w>' then
         return function()
             return M.autopairs_c_w()
         end
