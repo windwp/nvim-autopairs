@@ -276,9 +276,8 @@ M.on_attach = function(bufnr)
     del_keymaps()
     local enable_insert_auto = false
     local autopairs_keymaps = {}
-
-    if M.config.map_pair then
-        local expr_map = function(key)
+    local expr_map = function(key)
+        if M.config.map_pair then
             api.nvim_buf_set_keymap(bufnr, 'i', key, '', {
                 expr = true,
                 noremap = true,
@@ -289,83 +288,83 @@ M.on_attach = function(bufnr)
             })
             table.insert(autopairs_keymaps, key)
         end
-        for _, rule in pairs(rules) do
-            if rule.key_map ~= nil then
-                if rule.is_regex == false then
-                    if rule.key_map == '' then
-                        rule.key_map = rule.start_pair:sub(#rule.start_pair)
-                    end
+    end
+    for _, rule in pairs(rules) do
+        if rule.key_map ~= nil then
+            if rule.is_regex == false then
+                if rule.key_map == '' then
+                    rule.key_map = rule.start_pair:sub(#rule.start_pair)
+                end
+                expr_map(rule.key_map)
+                local key_end = rule.key_end or rule.end_pair:sub(1, 1)
+                if
+                    #key_end >= 1
+                    and key_end ~= rule.key_map
+                    and rule.move_cond ~= nil
+                then
+                    expr_map(key_end)
+                end
+            else
+                if rule.key_map ~= '' then
                     expr_map(rule.key_map)
-                    local key_end = rule.key_end or rule.end_pair:sub(1, 1)
-                    if
-                        #key_end >= 1
-                        and key_end ~= rule.key_map
-                        and rule.move_cond ~= nil
-                    then
-                        expr_map(key_end)
-                    end
-                else
-                    if rule.key_map ~= '' then
-                        expr_map(rule.key_map)
-                    elseif rule.is_endwise == false then
-                        enable_insert_auto = true
-                    end
+                elseif rule.is_endwise == false then
+                    enable_insert_auto = true
                 end
             end
         end
-        api.nvim_buf_set_var(bufnr, 'autopairs_keymaps', autopairs_keymaps)
+    end
+    api.nvim_buf_set_var(bufnr, 'autopairs_keymaps', autopairs_keymaps)
 
-        if enable_insert_auto then
-            -- capture all key use it to trigger regex pairs
-            -- it can make an issue with paste from register
-            api.nvim_create_autocmd('InsertCharPre', {
-                group = api.nvim_create_augroup(
-                    string.format('autopairs_insert_%d', bufnr),
-                    { clear = true }
-                ),
-                buffer = bufnr,
-                callback = function()
-                    M.autopairs_insert(bufnr, vim.v.char)
-                end,
-            })
-        end
+    if enable_insert_auto then
+        -- capture all key use it to trigger regex pairs
+        -- it can make an issue with paste from register
+        api.nvim_create_autocmd('InsertCharPre', {
+            group = api.nvim_create_augroup(
+                string.format('autopairs_insert_%d', bufnr),
+                { clear = true }
+            ),
+            buffer = bufnr,
+            callback = function()
+                M.autopairs_insert(bufnr, vim.v.char)
+            end,
+        })
+    end
 
-        if M.config.fast_wrap and M.config.fast_wrap.map then
-            api.nvim_buf_set_keymap(
-                bufnr,
-                'i',
-                M.config.fast_wrap.map,
-                "<esc>l<cmd>lua require('nvim-autopairs.fastwrap').show()<cr>",
-                { noremap = true, desc = 'autopairs fastwrap' }
-            )
-        end
+    if M.config.fast_wrap and M.config.fast_wrap.map then
+        api.nvim_buf_set_keymap(
+            bufnr,
+            'i',
+            M.config.fast_wrap.map,
+            "<esc>l<cmd>lua require('nvim-autopairs.fastwrap').show()<cr>",
+            { noremap = true, desc = 'autopairs fastwrap' }
+        )
+    end
 
-        if M.config.map_bs then
-            api.nvim_buf_set_keymap(bufnr, 'i', '<bs>', '', {
-                callback = M.autopairs_bs,
-                expr = true,
-                noremap = true,
-                desc = 'autopairs delete',
-            })
-        end
+    if M.config.map_bs then
+        api.nvim_buf_set_keymap(bufnr, 'i', '<bs>', '', {
+            callback = M.autopairs_bs,
+            expr = true,
+            noremap = true,
+            desc = 'autopairs delete',
+        })
+    end
 
-        if M.config.map_c_h then
-            api.nvim_buf_set_keymap(bufnr, 'i', utils.key.c_h, '', {
-                callback = M.autopairs_c_h,
-                expr = true,
-                noremap = true,
-                desc = 'autopairs delete',
-            })
-        end
+    if M.config.map_c_h then
+        api.nvim_buf_set_keymap(bufnr, 'i', utils.key.c_h, '', {
+            callback = M.autopairs_c_h,
+            expr = true,
+            noremap = true,
+            desc = 'autopairs delete',
+        })
+    end
 
-        if M.config.map_c_w then
-            api.nvim_buf_set_keymap(bufnr, 'i', '<c-w>', '', {
-                callback = M.autopairs_c_w,
-                expr = true,
-                noremap = true,
-                desc = 'autopairs delete',
-            })
-        end
+    if M.config.map_c_w then
+        api.nvim_buf_set_keymap(bufnr, 'i', '<c-w>', '', {
+            callback = M.autopairs_c_w,
+            expr = true,
+            noremap = true,
+            desc = 'autopairs delete',
+        })
     end
     api.nvim_buf_set_var(bufnr, 'nvim-autopairs', 1)
 end
@@ -714,23 +713,47 @@ M.map_cr = function()
     )
 end
 
+--- Normalize key string to lowercase for angle bracket keys
+--- @param key string The key to normalize (e.g., '<CR>', '<Cr>', '<cr>')
+--- @return string Normalized key
+local normalize_key = function(key)
+    -- Match angle bracket keys like <CR>, <BS>, <C-h>, etc.
+    -- Make letters inside angle brackets lowercase, except for modifier keys (C-, M-, S-)
+    local normalized = key:gsub('<([^>]+)>', function(inner)
+        -- Split by dash to handle modifier keys
+        local parts = {}
+        for part in inner:gmatch('[^-]+') do
+            -- Keep modifier prefixes (C, M, S) as uppercase, but lowercase everything else
+            if part:match('^[CMS]$') then
+                table.insert(parts, part:upper())
+            else
+                table.insert(parts, part:lower())
+            end
+        end
+        return '<' .. table.concat(parts, '-') .. '>'
+    end)
+    return normalized
+end
+
 --- Get key handler function for manual keymap setup
 --- @param key string The key to handle (e.g., '<CR>', '(', etc.)
 --- @return function Handler function for vim.keymap.set
 M.get_key_handler = function(key)
-    if key == '<CR>' or key == '<cr>' then
+    local norm_key = normalize_key(key)
+    
+    if norm_key == '<cr>' then
         return function()
             return M.autopairs_cr()
         end
-    elseif key == '<BS>' or key == '<bs>' then
+    elseif norm_key == '<bs>' then
         return function()
             return M.autopairs_bs()
         end
-    elseif key == '<C-h>' or key == '<c-h>' then
+    elseif norm_key == '<C-h>' then
         return function()
             return M.autopairs_c_h()
         end
-    elseif key == '<C-w>' or key == '<c-w>' then
+    elseif norm_key == '<C-w>' then
         return function()
             return M.autopairs_c_w()
         end

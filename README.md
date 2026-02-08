@@ -378,7 +378,11 @@ If you want to manually control key mappings instead of letting nvim-autopairs a
 ```lua
 -- Setup nvim-autopairs without automatic key mappings
 require('nvim-autopairs').setup({
-    map_pair = false, -- disable automatic key mapping
+    map_pair = false, -- disable automatic key mapping for pairs
+    map_cr = false,   -- disable automatic CR mapping
+    map_bs = false,   -- disable automatic BS mapping
+    map_c_h = false,  -- disable automatic C-h mapping
+    map_c_w = false,  -- disable automatic C-w mapping
 })
 
 local npairs = require('nvim-autopairs')
