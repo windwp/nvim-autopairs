@@ -724,7 +724,7 @@ local normalize_key = function(key)
         local parts = {}
         for part in inner:gmatch('[^-]+') do
             -- Keep modifier prefixes (C, M, S) as uppercase, but lowercase everything else
-            if part:match('^[CMS]$') then
+            if part:upper():match('^[CMS]$') then
                 table.insert(parts, part:upper())
             else
                 table.insert(parts, part:lower())
