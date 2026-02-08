@@ -16,6 +16,7 @@ local default = {
     map_c_h = false,
     map_c_w = false,
     map_cr = true,
+    map_pair = true,
     enabled = nil,
     disable_filetype = { 'TelescopePrompt', 'spectre_panel', 'snacks_picker_input' },
     disable_in_macro = true,
@@ -276,6 +277,9 @@ M.on_attach = function(bufnr)
     local enable_insert_auto = false
     local autopairs_keymaps = {}
     local expr_map = function(key)
+        if not M.config.map_pair then
+            return
+        end
         api.nvim_buf_set_keymap(bufnr, 'i', key, '', {
             expr = true,
             noremap = true,
@@ -708,6 +712,56 @@ M.map_cr = function()
         "v:lua.require'nvim-autopairs'.completion_confirm()",
         { expr = true, noremap = true, desc = 'autopairs completion confirm' }
     )
+end
+
+--- Make letters inside angle brackets lowercase, except for
+--- '<M-A>' or '<m-A>', which become '<m-A>',
+--- which is because <m-a> and <M-a> are equivalent in Neovim,
+--- but <m-a> and <m-A> are not.
+--- @param s string
+--- @return string
+local function lower_bracket(s)
+    local res, _ = s:gsub('%b<>', function(m)
+        local inner = m:sub(2, -2)
+        if inner:match('^[mM]%-%a$') then
+            inner = 'm' .. inner:sub(2)
+        else
+            inner = inner:lower()
+        end
+        return '<' .. inner .. '>'
+    end)
+    return res
+end
+
+--- Get key handler function for manual keymap setup
+--- @param key string The key to handle (e.g., '<CR>', '(', etc.)
+--- @return function Handler function for vim.keymap.set
+M.get_key_handler = function(key)
+    local norm_key = lower_bracket(key)
+    
+    if norm_key == '<cr>' then
+        return function()
+            return M.autopairs_cr()
+        end
+    elseif norm_key == '<bs>' then
+        return function()
+            return M.autopairs_bs()
+        end
+    elseif norm_key == '<c-h>' then
+        return function()
+            return M.autopairs_c_h()
+        end
+    elseif norm_key == '<c-w>' then
+        return function()
+            return M.autopairs_c_w()
+        end
+    else
+        -- For regular characters (pairs)
+        return function()
+            local bufnr = api.nvim_get_current_buf()
+            return M.autopairs_map(bufnr, key)
+        end
+    end
 end
 
 M.esc = utils.esc
