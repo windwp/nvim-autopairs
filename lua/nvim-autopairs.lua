@@ -168,7 +168,7 @@ local del_keymaps = function()
     end
 end
 
-local function is_disable()
+local function is_disable(is_new_buf)
     if M.state.disabled then
         return true
     end
@@ -180,6 +180,18 @@ local function is_disable()
 
     if vim.bo.modifiable == false then
         return true
+    end
+
+    if is_new_buf then
+        if
+            utils.check_filetype(M.config.disable_filetype, vim.bo.filetype)
+            or (M.config.enabled and not M.config.enabled(api.nvim_get_current_buf()))
+        then
+            del_keymaps()
+            M.set_buf_rule({}, 0)
+            return true
+        end
+        return false
     end
 
     if
@@ -201,14 +213,6 @@ local function is_disable()
         return true
     end
 
-    if
-        utils.check_filetype(M.config.disable_filetype, vim.bo.filetype)
-        or (M.config.enabled and not M.config.enabled(api.nvim_get_current_buf()))
-    then
-        del_keymaps()
-        M.set_buf_rule({}, 0)
-        return true
-    end
     return false
 end
 
@@ -228,7 +232,7 @@ end
 
 M.on_attach = function(bufnr)
     -- log.debug('on_attach' .. vim.bo.filetype)
-    if is_disable() then
+    if is_disable(true) then
         return
     end
     bufnr = bufnr or api.nvim_get_current_buf()
@@ -607,8 +611,8 @@ M.autopairs_cr = function(bufnr)
                 local end_pair = rule:get_end_pair(cond_opt)
                 return utils.esc(
                     '<CR>'
-                        .. end_pair -- FIXME do i need to re indent twice #118
-                        .. '<CMD>normal! ====<CR><up><end><CR>'
+                    .. end_pair -- FIXME do i need to re indent twice #118
+                    .. '<CMD>normal! ====<CR><up><end><CR>'
                 )
             end
 
@@ -674,7 +678,7 @@ M.autopairs_afterquote = function(line, key_char)
                         end
                         return utils.esc(
                             "<esc><cmd>lua require'nvim-autopairs'.autopairs_closequote_expr()<cr>"
-                                .. append
+                            .. append
                         )
                     end
                 end
