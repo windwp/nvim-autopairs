@@ -8,6 +8,12 @@ local rules = {
         'lua',
         { 'function_declaration', 'local_function', 'function' }
     ),
+    endwise(
+        'do$',
+        'end',
+        'lua',
+        { 'while_statement', 'for_statement', 'do_statement' }
+    ),
 }
 
 return rules
