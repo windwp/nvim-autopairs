@@ -209,10 +209,6 @@ local function is_disable(is_new_buf)
         return true
     end
 
-    if vim.v.count > 0 then
-        return true
-    end
-
     return false
 end
 
