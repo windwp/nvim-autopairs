@@ -42,7 +42,6 @@ _G.Test_filter = function(data)
     for _, value in pairs(data) do
         if value.only == true then
             table.insert(run_data, value)
-            break
         end
     end
     if #run_data == 0 then

@@ -45,28 +45,7 @@ local data = {
         before = [[aa| aa]],
         after  = [[aa"|" aa]]
     },
-    {
-        name     = "6 add python quote",
-        filetype = "python",
-        key      = [["]],
-        before   = [[""| ]],
-        after    = [["""|""" ]]
-    },
-    {
-        name     = "7 don't repeat python quote",
-        filetype = "python",
-        key      = [["]],
-        before   = [[a"""|""" ]],
-        after    = [[a""""|"" ]]
-    },
 
-    {
-        name     = "8 add markdown quote",
-        filetype = "markdown",
-        key      = [[`]],
-        before   = [[``| ]],
-        after    = [[```|``` ]]
-    },
     {
         name   = "9 don't add single quote with previous alphabet char",
         key    = [[']],
@@ -858,131 +837,186 @@ local data = {
         after  = [["${"|}"]],
     },
     {
-        name   = [[add " in a bash command substitution]],
-        key    = [["]],
-        before = [["$(|)"]],
-        after  = [["$("|")"]],
+        name     = [[add " in a bash command substitution]],
+        key      = [["]],
+        before   = [["$(|)"]],
+        after    = [["$("|")"]],
         filetype = "bash"
     },
     {
-        name   = [[add " in a bash command substitution, after a pair "]],
-        key    = [["]],
-        before = [["$("$cmd" |)"]],
-        after  = [["$("$cmd" "|")"]],
+        name     = [[add " in a bash command substitution, after a pair "]],
+        key      = [["]],
+        before   = [["$("$cmd" |)"]],
+        after    = [["$("$cmd" "|")"]],
         filetype = "bash"
     },
     {
-        name   = [[add " in a bash command substitution, after a open "]],
-        key    = [["]],
-        before = [["$("|)"]],
-        after  = [["$(""|)"]],
+        name     = [[add " in a bash command substitution, after a open "]],
+        key      = [["]],
+        before   = [["$("|)"]],
+        after    = [["$(""|)"]],
         filetype = "bash"
     },
     {
-        name   = [[add " after a bash command substitution]],
-        key    = [["]],
-        before = [["$("$var")" | ]],
-        after  = [["$("$var")" "|"]],
+        name     = [[add " after a bash command substitution]],
+        key      = [["]],
+        before   = [["$("$var")" | ]],
+        after    = [["$("$var")" "|"]],
         filetype = "bash"
     },
     {
-        name   = [[add " in a variable command substitution]],
-        key    = [["]],
-        before = [["${|}"]],
-        after  = [["${"|"}"]],
+        name     = [[add " in a variable command substitution]],
+        key      = [["]],
+        before   = [["${|}"]],
+        after    = [["${"|"}"]],
         filetype = "bash"
     },
     {
-        name   = [[add " in a bash variable expansion, after a pair "]],
-        key    = [["]],
-        before = [["${"$cmd" |}"]],
-        after  = [["${"$cmd" "|"}"]],
+        name     = [[add " in a bash variable expansion, after a pair "]],
+        key      = [["]],
+        before   = [["${"$cmd" |}"]],
+        after    = [["${"$cmd" "|"}"]],
         filetype = "bash"
     },
     {
-        name   = [[add " in a bash variable expansion, after a open "]],
-        key    = [["]],
-        before = [["${"|}"]],
-        after  = [["${""|}"]],
+        name     = [[add " in a bash variable expansion, after a open "]],
+        key      = [["]],
+        before   = [["${"|}"]],
+        after    = [["${""|}"]],
         filetype = "bash"
     },
     {
-        name   = [[add " in a bash variable expansion, within array.]],
-        key    = [["]],
-        before = [==["${arr[|]}"]==],
-        after  = [==["${arr["|"]}"]==],
+        name     = [[add " in a bash variable expansion, within array.]],
+        key      = [["]],
+        before   = [==["${arr[|]}"]==],
+        after    = [==["${arr["|"]}"]==],
         filetype = "bash"
     },
     {
-        name   = [[add " after a bash variable expansion]],
-        key    = [["]],
-        before = [["${"$var"}" | ]],
-        after  = [["${"$var"}" "|"]],
+        name     = [[add " after a bash variable expansion]],
+        key      = [["]],
+        before   = [["${"$var"}" | ]],
+        after    = [["${"$var"}" "|"]],
         filetype = "bash"
     },
     {
-        name   = [[add " in a bash command substitution]],
-        key    = [["]],
-        before = [["$(|)"]],
-        after  = [["$("|")"]],
+        name     = [[add " in a bash command substitution]],
+        key      = [["]],
+        before   = [["$(|)"]],
+        after    = [["$("|")"]],
         filetype = "sh"
     },
     {
-        name   = [[add " in a bash command substitution, after a pair "]],
-        key    = [["]],
-        before = [["$("$cmd" |)"]],
-        after  = [["$("$cmd" "|")"]],
+        name     = [[add " in a bash command substitution, after a pair "]],
+        key      = [["]],
+        before   = [["$("$cmd" |)"]],
+        after    = [["$("$cmd" "|")"]],
         filetype = "sh"
     },
     {
-        name   = [[add " in a bash command substitution, after a open "]],
-        key    = [["]],
-        before = [["$("|)"]],
-        after  = [["$(""|)"]],
+        name     = [[add " in a bash command substitution, after a open "]],
+        key      = [["]],
+        before   = [["$("|)"]],
+        after    = [["$(""|)"]],
         filetype = "sh"
     },
     {
-        name   = [[add " after a bash command substitution]],
-        key    = [["]],
-        before = [["$("$var")" | ]],
-        after  = [["$("$var")" "|"]],
+        name     = [[add " after a bash command substitution]],
+        key      = [["]],
+        before   = [["$("$var")" | ]],
+        after    = [["$("$var")" "|"]],
         filetype = "sh"
     },
     {
-        name   = [[add " in a variable command substitution]],
-        key    = [["]],
-        before = [["${|}"]],
-        after  = [["${"|"}"]],
+        name     = [[add " in a variable command substitution]],
+        key      = [["]],
+        before   = [["${|}"]],
+        after    = [["${"|"}"]],
         filetype = "sh"
     },
     {
-        name   = [[add " in a bash variable expansion, after a pair "]],
-        key    = [["]],
-        before = [["${"$cmd" |}"]],
-        after  = [["${"$cmd" "|"}"]],
+        name     = [[add " in a bash variable expansion, after a pair "]],
+        key      = [["]],
+        before   = [["${"$cmd" |}"]],
+        after    = [["${"$cmd" "|"}"]],
         filetype = "sh"
     },
     {
-        name   = [[add " in a bash variable expansion, after a open "]],
-        key    = [["]],
-        before = [["${"|}"]],
-        after  = [["${""|}"]],
+        name     = [[add " in a bash variable expansion, after a open "]],
+        key      = [["]],
+        before   = [["${"|}"]],
+        after    = [["${""|}"]],
         filetype = "sh"
     },
     {
-        name   = [[add " after a bash variable expansion]],
-        key    = [["]],
-        before = [["${"$var"}" | ]],
-        after  = [["${"$var"}" "|"]],
+        name     = [[add " after a bash variable expansion]],
+        key      = [["]],
+        before   = [["${"$var"}" | ]],
+        after    = [["${"$var"}" "|"]],
         filetype = "sh"
     },
     {
-        name   = [[add " in a bash variable expansion, within array.]],
-        key    = [["]],
-        before = [==["${arr[|]}"]==],
-        after  = [==["${arr["|"]}"]==],
+        name     = [[add " in a bash variable expansion, within array.]],
+        key      = [["]],
+        before   = [==["${arr[|]}"]==],
+        after    = [==["${arr["|"]}"]==],
         filetype = "sh"
     },
+    {
+        setup_func = function()
+            npairs.setup({
+                enable_moveright = false
+            })
+        end,
+        name       = "triple char ` turn of move_right",
+        filetype   = "markdown",
+        key        = [[`]],
+        before     = [[``|` ]],
+        after      = [[```|` ]]
+    },
+    {
+        setup_func = function()
+            npairs.setup({
+                enable_moveright = false
+            })
+        end,
+        name       = "triple backtick with enable_move_right=false",
+        filetype   = "markdown",
+        key        = [[`]],
+        before     = [[``| ]],
+        after      = [[```|``` ]]
+    },
+    {
+        name     = "4 char",
+        filetype = "markdown",
+        key      = [[`]],
+        before   = [[```|  ]],
+        after    = [[````|  ]]
+    },
+    {
+        -- only = true,
+        name     = "6 add python quote",
+        filetype = "python",
+        key      = [["]],
+        before   = [[""| ]],
+        after    = [["""|""" ]]
+    },
+    {
+        name     = "7 don't repeat python quote",
+        filetype = "python",
+        key      = [["]],
+        before   = [[a"""|""" ]],
+        after    = [[a""""|"" ]]
+    },
+
+    {
+        name     = "8 add markdown quote",
+        filetype = "markdown",
+        key      = [[`]],
+        before   = [[``| ]],
+        after    = [[```|``` ]]
+    },
+
 }
 
 local run_data = _G.Test_filter(data)

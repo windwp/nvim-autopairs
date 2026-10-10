@@ -50,7 +50,7 @@ local function setup(opt)
             'quarto',
             'typst',
             'gitcommit',
-        }):with_pair(cond.not_before_char('`', 3)),
+        }):with_pair(cond.tripple_char('`')),
         Rule('```.*$', '```', {
             'markdown',
             'vimwiki',
@@ -64,10 +64,8 @@ local function setup(opt)
             '"""',
             '"""',
             { 'python', 'elixir', 'julia', 'kotlin', 'scala', 'sbt', 'toml' }
-        ):with_pair(cond.not_before_char('"', 3)),
-        Rule("'''", "'''", { 'python', 'toml' }):with_pair(
-            cond.not_before_char("'", 3)
-        ),
+        ):with_pair(cond.tripple_char('"')),
+        Rule("'''", "'''", { 'python', 'toml' }):with_pair(cond.tripple_char("'")),
         quote("'", "'", { '-rust', '-nix' })
             :with_pair(function(opts)
                 -- python literals string

@@ -2,12 +2,12 @@ local log = require('nvim-autopairs._log')
 local utils = require('nvim-autopairs.utils')
 ---@class CondOpts
 ---@field ts_node table
----@field text string
+---@field text string the text after user input key
+---@field line  string current line text visible on editor
 ---@field rule table
 ---@field bufnr number
 ---@field col   number
 ---@field char  string
----@field line  string
 ---@field prev_char string
 ---@field next_char string
 ---@field is_endwise string
@@ -336,6 +336,21 @@ cond.not_before_char = function(char, index)
                 and opts.line:sub(#opts.line - index, #opts.line - index)
             or ''
         if match_char == char and match_char ~= '' then
+            return false
+        end
+    end
+end
+
+cond.tripple_char = function(char)
+    ---@param opts CondOpts
+    return function(opts)
+        log.debug('tripple_char')
+        local before_text = utils.text_sub_char(opts.text, opts.col - 1, -3)
+        local after_text = utils.text_sub_char(opts.text, opts.col - 1, 1)
+        if
+            (before_text == char .. char .. char and after_text == char)
+            or (before_text == char .. char and opts.next_char:match('^' .. char))
+        then
             return false
         end
     end
