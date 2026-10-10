@@ -14,146 +14,146 @@ _G.npairs = npairs
 local data = {
     {
         -- only = true,
-        name   = "1 add normal bracket",
+        name   = "add normal bracket",
         key    = [[{]],
         before = [[x| ]],
         after  = [[x{|} ]]
     },
 
     {
-        name   = "2 add bracket inside bracket",
+        name   = "add bracket inside bracket",
         key    = [[{]],
         before = [[{|} ]],
         after  = [[{{|}} ]]
     },
     {
-        name     = "3 test single quote ",
+        name     = "test single quote ",
         filetype = "lua",
         key      = "'",
         before   = [[data,|) ]],
         after    = [[data,'|') ]]
     },
     {
-        name   = "4 add normal bracket",
+        name   = "add normal bracket",
         key    = [[(]],
         before = [[aaaa| x ]],
         after  = [[aaaa(|) x ]]
     },
     {
-        name   = "5 add normal quote",
+        name   = "add normal quote",
         key    = [["]],
         before = [[aa| aa]],
         after  = [[aa"|" aa]]
     },
 
     {
-        name   = "9 don't add single quote with previous alphabet char",
+        name   = "don't add single quote with previous alphabet char",
         key    = [[']],
         before = [[aa| aa ]],
         after  = [[aa'| aa ]]
     },
     {
-        name   = "10 don't add single quote with alphabet char",
+        name   = "don't add single quote with alphabet char",
         key    = [[']],
         before = [[a|x ]],
         after  = [[a'|x ]]
     },
     {
-        name   = "11 don't add single quote on end line",
+        name   = "don't add single quote on end line",
         key    = [[<right>']],
         before = [[c aa|]],
         after  = [[c aa'|]]
     },
     {
-        name   = "12 don't add quote after alphabet char",
+        name   = "don't add quote after alphabet char",
         key    = [["]],
         before = [[aa  |aa]],
         after  = [[aa  "|aa]]
     },
     {
-        name   = "13 don't add quote inside quote",
+        name   = "don't add quote inside quote",
         key    = [["]],
         before = [["aa  |  aa]],
         after  = [["aa  "|  aa]]
     },
     {
-        name   = "14 add quote if not inside quote",
+        name   = "add quote if not inside quote",
         key    = [["]],
         before = [["aa " |  aa]],
         after  = [["aa " "|"  aa]]
     },
     {
-        name   = "15 don't add pair after alphabet char",
+        name   = "don't add pair after alphabet char",
         key    = [[(]],
         before = [[aa  |aa]],
         after  = [[aa  (|aa]]
     },
     {
-        name   = "16 don't add pair after dot char",
+        name   = "don't add pair after dot char",
         key    = [[(]],
         before = [[aa  |.aa]],
         after  = [[aa  (|.aa]]
     },
     {
-        name   = "17 don't add bracket have open bracket in same line",
+        name   = "don't add bracket have open bracket in same line",
         key    = [[(]],
         before = [[(   many char |))]],
         after  = [[(   many char (|))]]
     },
     {
         filetype = 'vim',
-        name = "18 add bracket inside quote when nextchar is ignore",
+        name = "add bracket inside quote when nextchar is ignore",
         key = [[{]],
         before = [["|"]],
         after = [["{|}"]]
     },
     {
         filetype = '',
-        name = "19 add bracket inside quote when next char is ignore",
+        name = "add bracket inside quote when next char is ignore",
         key = [[{]],
         before = [[" |"]],
         after = [[" {|}"]]
     },
     {
-        name   = "20 move right on quote line ",
+        name   = "move right on quote line ",
         key    = [["]],
         before = [["|"]],
         after  = [[""|]]
     },
     {
-        name   = "21 move right end line ",
+        name   = "move right end line ",
         key    = [["]],
         before = [[aaaa|"]],
         after  = [[aaaa"|]]
     },
     {
-        name   = "22 move right when inside quote",
+        name   = "move right when inside quote",
         key    = [["]],
         before = [[("abcd|")]],
         after  = [[("abcd"|)]]
     },
 
     {
-        name   = "23 move right when inside quote",
+        name   = "move right when inside quote",
         key    = [["]],
         before = [[foo("|")]],
         after  = [[foo(""|)]]
     },
     {
-        name   = "24 move right square bracket",
+        name   = "move right square bracket",
         key    = [[)]],
         before = [[("abcd|) ]],
         after  = [[("abcd)| ]]
     },
     {
-        name   = "25 move right bracket",
+        name   = "move right bracket",
         key    = [[}]],
         before = [[("abcd|}} ]],
         after  = [[("abcd}|} ]]
     },
     {
         -- ref: issue #331
-        name       = "26 move right, should not move on non-end-pair char: `§|§` with (",
+        name       = "move right, should not move on non-end-pair char: `§|§` with (",
         setup_func = function()
             npairs.add_rule(Rule("§", "§"):with_move(cond.done()))
         end,
@@ -163,7 +163,7 @@ local data = {
     },
     {
         -- ref: issue #331
-        name       = "27 move right, should not move on non-end-pair char: `#|#` with \"",
+        name       = "move right, should not move on non-end-pair char: `#|#` with \"",
         setup_func = function()
             npairs.add_rule(Rule("#", "#"):with_move(cond.done()))
         end,
@@ -173,7 +173,7 @@ local data = {
     },
     {
         -- ref: issue #331 and #330
-        name       = "28 move right, should not move on non-end-pair char: `<|>` with (",
+        name       = "move right, should not move on non-end-pair char: `<|>` with (",
         setup_func = function()
             npairs.add_rule(Rule("<", ">"):with_move(cond.done()))
         end,
@@ -182,27 +182,27 @@ local data = {
         after      = [[<(|)>]],
     },
     {
-        name   = "29 move right when inside grave with special slash",
+        name   = "move right when inside grave with special slash",
         key    = [[`]],
         before = [[(`abcd\"|`)]],
         after  = [[(`abcd\"`|)]]
     },
     {
-        name   = "30 move right when inside quote with special slash",
+        name   = "move right when inside quote with special slash",
         key    = [["]],
         before = [[("abcd\"|")]],
         after  = [[("abcd\""|)]]
     },
     {
         filetype = 'rust',
-        name = "31 move right double quote after single quote",
+        name = "move right double quote after single quote",
         key = [["]],
         before = [[ ('x').expect("|");]],
         after = [[ ('x').expect(""|);]],
     },
     {
         filetype = 'rust',
-        name = "32 move right, should not move when bracket not closing",
+        name = "move right, should not move when bracket not closing",
         key = [[}]],
         before = [[{{ |} ]],
         after = [[{{ }|} ]]
@@ -210,20 +210,20 @@ local data = {
 
     {
         filetype = 'rust',
-        name = "33 move right, should move when bracket closing",
+        name = "move right, should move when bracket closing",
         key = [[}]],
         before = [[{ }|} ]],
         after = [[{ }}| ]]
     },
     {
-        name     = "34 delete bracket",
+        name     = "delete bracket",
         filetype = "javascript",
         key      = [[<bs>]],
         before   = [[aaa(|) ]],
         after    = [[aaa| ]]
     },
     {
-        name     = "35 breakline on {",
+        name     = "breakline on {",
         filetype = "javascript",
         key      = [[<cr>]],
         before   = [[a{|}]],
@@ -237,7 +237,7 @@ local data = {
         setup_func = function()
             vim.opt.indentexpr = "nvim_treesitter#indent()"
         end,
-        name       = "36 breakline on (",
+        name       = "breakline on (",
         filetype   = "javascript",
         key        = [[<cr>]],
         before     = [[function ab(|)]],
@@ -248,7 +248,7 @@ local data = {
         }
     },
     {
-        name     = "37 breakline on ]",
+        name     = "breakline on ]",
         filetype = "javascript",
         key      = [[<cr>]],
         before   = [[a[|] ]],
@@ -259,7 +259,7 @@ local data = {
         }
     },
     {
-        name     = "38 move ) inside nested function call",
+        name     = "move ) inside nested function call",
         filetype = "javascript",
         key      = [[)]],
         before   = {
@@ -270,7 +270,7 @@ local data = {
         }
     },
     {
-        name     = "39 move } inside singleline function's params",
+        name     = "move } inside singleline function's params",
         filetype = "javascript",
         key      = [[}]],
         before   = {
@@ -281,7 +281,7 @@ local data = {
         }
     },
     {
-        name     = "40 move } inside multiline function's params",
+        name     = "move } inside multiline function's params",
         filetype = "javascript",
         key      = [[}]],
         before   = {
@@ -296,7 +296,7 @@ local data = {
         }
     },
     {
-        name     = "41 breakline on markdown ",
+        name     = "breakline on markdown ",
         filetype = "markdown",
         key      = [[<cr>]],
         before   = [[``` lua|```]],
@@ -307,7 +307,7 @@ local data = {
         }
     },
     {
-        name     = "42 breakline on < html",
+        name     = "breakline on < html",
         filetype = "html",
         key      = [[<cr>]],
         before   = [[<div>|</div>]],
@@ -318,7 +318,7 @@ local data = {
         }
     },
     {
-        name     = "43 breakline on < html with text",
+        name     = "breakline on < html with text",
         filetype = "html",
         key      = [[<cr>]],
         before   = [[<div> ads |</div>]],
@@ -329,7 +329,7 @@ local data = {
         },
     },
     {
-        name     = "44 breakline on < html with space after cursor",
+        name     = "breakline on < html with space after cursor",
         filetype = "html",
         key      = [[<cr>]],
         before   = [[<div> ads | </div>]],
@@ -340,14 +340,14 @@ local data = {
         },
     },
     {
-        name     = "45 do not mapping on > html",
+        name     = "do not mapping on > html",
         filetype = "html",
         key      = [[>]],
         before   = [[<div|  ]],
         after    = [[<div>|  ]]
     },
     {
-        name     = "46 press multiple key",
+        name     = "press multiple key",
         filetype = "html",
         key      = [[((((]],
         before   = [[a| ]],
@@ -359,7 +359,7 @@ local data = {
                 Rule('u%d%d%d%d$', 'number', 'lua'):use_regex(true),
             })
         end,
-        name       = "47 text regex",
+        name       = "text regex",
         filetype   = "lua",
         key        = "4",
         before     = [[u123| ]],
@@ -374,7 +374,7 @@ local data = {
                 end),
             })
         end,
-        name       = "48 text regex with custom end_pair",
+        name       = "text regex with custom end_pair",
         filetype   = "lua",
         key        = "4",
         before     = [[x123| ]],
@@ -388,7 +388,7 @@ local data = {
                 end),
             })
         end,
-        name       = "49 text regex with custom key",
+        name       = "text regex with custom key",
         filetype   = "vim",
         key        = "<tab>",
         before     = [[b1234s| ]],
@@ -403,7 +403,7 @@ local data = {
                 end),
             })
         end,
-        name       = "50 test move right custom char",
+        name       = "test move right custom char",
         filetype   = "vim",
         key        = "<tab>",
         before     = [[b1234s| ]],
@@ -419,7 +419,7 @@ local data = {
                     :with_move(cond.done())
             })
         end,
-        name       = "51 test move right custom char plus",
+        name       = "test move right custom char plus",
         filetype   = "vim",
         key        = "+",
         before     = [[x|+ ]],
@@ -432,7 +432,7 @@ local data = {
                     :with_move(cond.none())
             })
         end,
-        name       = "52 test javascript comment",
+        name       = "test javascript comment",
         filetype   = "javascript",
         key        = "*",
         before     = [[/*| ]],
@@ -446,7 +446,7 @@ local data = {
                     :replace_endpair(function() return "<bs><del>" end, true)
             })
         end,
-        name       = "53 test map custom key",
+        name       = "test map custom key",
         filetype   = "latex",
         key        = [[<c-h>]],
         before     = [[ abcde(|) ]],
@@ -466,7 +466,7 @@ local data = {
                     :use_regex(false, ")")
             }
         end,
-        name       = "54 test multiple move right",
+        name       = "test multiple move right",
         filetype   = "latex",
         key        = [[)]],
         before     = [[( | ) ]],
@@ -478,7 +478,7 @@ local data = {
                 enable_check_bracket_line = false
             })
         end,
-        name       = "55 test disable check bracket line",
+        name       = "test disable check bracket line",
         filetype   = "latex",
         key        = [[(]],
         before     = [[(|))) ]],
@@ -491,7 +491,7 @@ local data = {
                     :with_pair(cond.before_text("Vec"))
             })
         end,
-        name       = "56 test disable check bracket line",
+        name       = "test disable check bracket line",
         filetype   = "rust",
         key        = [[<]],
         before     = [[Vec| ]],
@@ -501,7 +501,7 @@ local data = {
         setup_func = function()
             npairs.add_rule(Rule("!", "!"):with_pair(cond.not_filetypes({ "lua" })))
         end,
-        name       = "57 disable pairs in lua",
+        name       = "disable pairs in lua",
         filetype   = "lua",
         key        = "!",
         before     = [[x| ]],
@@ -516,7 +516,7 @@ local data = {
                     :set_end_pair_length(2)
             })
         end,
-        name       = "58 mapping regex with custom end_pair_length",
+        name       = "mapping regex with custom end_pair_length",
         filetype   = "typescript",
         key        = ">",
         before     = [[(o)=| ]],
@@ -534,7 +534,7 @@ local data = {
                 end, true),
             })
         end,
-        name       = "59 mapping same pair with different key",
+        name       = "mapping same pair with different key",
         filetype   = "typescript",
         key        = "(",
         before     = [[(test|) ]],
@@ -546,7 +546,7 @@ local data = {
             npairs.clear_rules()
             npairs.add_rule(Rule("„", "”"))
         end,
-        name                  = "60 multibyte character  from custom keyboard",
+        name                  = "multibyte character  from custom keyboard",
         not_replace_term_code = true,
         key                   = "„",
         before                = [[a | ]],
@@ -558,7 +558,7 @@ local data = {
             npairs.clear_rules()
             npairs.add_rule(Rule("„", "”"):with_move(cond.done()))
         end,
-        name                  = "61 multibyte character move_right",
+        name                  = "multibyte character move_right",
         not_replace_term_code = true,
         key                   = "”",
         before                = [[a „|”xx ]],
@@ -570,7 +570,7 @@ local data = {
             npairs.clear_rules()
             npairs.add_rule(Rule("„", "”"):with_move(cond.done()))
         end,
-        name       = "62 multibyte character delete",
+        name       = "multibyte character delete",
         key        = "<bs>",
         before     = [[a „|” ]],
         after      = [[a | ]],
@@ -581,7 +581,7 @@ local data = {
             npairs.add_rule(Rule("a„", "”b"):with_move(cond.done()))
         end,
         not_replace_term_code = true,
-        name                  = "63 multibyte character and multiple ",
+        name                  = "multibyte character and multiple ",
         key                   = "„",
         before                = [[a| ]],
         after                 = [[a„|”b ]],
@@ -591,7 +591,7 @@ local data = {
         setup_func = function()
             npairs.setup({ map_c_h = true })
         end,
-        name       = "64 map <c-h>",
+        name       = "map <c-h>",
         key        = "<c-h>",
         before     = [[aa'|' ]],
         after      = [[aa| ]],
@@ -602,7 +602,7 @@ local data = {
                 map_c_w = true
             })
         end,
-        name       = "65 map <c-w>",
+        name       = "map <c-w>",
         key        = "<c-w>",
         before     = [[aa'|' ]],
         after      = [[aa| ]],
@@ -613,14 +613,14 @@ local data = {
             npairs.add_rule(Rule("x", "x", { '-vim', '-rust' }))
         end,
         filetype = 'vim',
-        name = "66 disable filetype vim",
+        name = "disable filetype vim",
         key = [[x]],
         before = [[a | ]],
         after = [[a x| ]]
     },
     {
         filetype = 'vim',
-        name = "67 undo on quote",
+        name = "undo on quote",
         key = [[{123<esc>u]],
         end_cursor = 12,
         before = [[local abc=| ]],
@@ -628,7 +628,7 @@ local data = {
     },
     {
         filetype = 'vim',
-        name = "68 undo on bracket",
+        name = "undo on bracket",
         key = [['123<esc>u]],
         end_cursor = 12,
         before = [[local abc=| ]],
@@ -636,14 +636,14 @@ local data = {
     },
     {
         filetype = 'vim',
-        name = "69 double quote on vim after char",
+        name = "double quote on vim after char",
         key = [["ab]],
         before = [[echo | ]],
         after = [[echo "ab|" ]]
     },
     {
         filetype = 'vim',
-        name = "70 double quote on vim on begin",
+        name = "double quote on vim on begin",
         key = [["ab]],
         before = [[   | aaa]],
         after = [[   "ab| aaa]]
@@ -656,7 +656,7 @@ local data = {
             )
         end,
         filetype = 'javascript',
-        name = "71 custom endwise rule",
+        name = "custom endwise rule",
         key = [[{]],
         before = [[struct abc | ]],
         after = [[struct abc {|};]],
@@ -667,7 +667,7 @@ local data = {
             npairs.add_rule(Rule("{", "}"):end_wise())
         end,
         filetype = 'javascript',
-        name = "72 custom endwise rule",
+        name = "custom endwise rule",
         key = [[<cr>]],
         before = [[function () {| ]],
         after = {
@@ -681,7 +681,7 @@ local data = {
             vim.opt.smartindent = true
         end,
         filetype = 'ps1',
-        name = "73 indent on powershell",
+        name = "indent on powershell",
         key = [[<cr>]],
         before = [[function () {|} ]],
         after = {
@@ -702,7 +702,7 @@ local data = {
             )
         end,
         filetype = 'javascript',
-        name = "74 custom endwise rule with custom end_pair",
+        name = "custom endwise rule with custom end_pair",
         key = [[<cr>]],
         before = [[function () {| ]],
         after = {
@@ -712,79 +712,79 @@ local data = {
         },
     },
     {
-        name = "75 open bracker on back tick",
+        name = "open bracker on back tick",
         key = [[(]],
         before = [[ |`abcd`]],
         after = [[ (`abcd`) ]]
     },
     {
-        name = "76 should not add bracket on line have bracket ",
+        name = "should not add bracket on line have bracket ",
         key = [[(]],
         before = [[ |(abcd))]],
         after = [[ ((abcd)) ]]
     },
     {
-        name = "77 not add bracket on line have bracket ",
+        name = "not add bracket on line have bracket ",
         key = [[(]],
         before = [[ |(abcd) ( visual)]],
         after = [[ ()(abcd) ( visual)]]
     },
     {
-        name = "78 should add single quote when it have primes char",
+        name = "should add single quote when it have primes char",
         key = [[']],
         before = [[Ben's friends say: | ]],
         after = [[Ben's friends say: '|' ]]
     },
     {
-        name       = "79 a quote with single quote string",
+        name       = "a quote with single quote string",
         key        = "'",
         before     = [[{{("It doesn't name %s", ''), 'ErrorMsg'| }},  ]],
         after      = [[{{("It doesn't name %s", ''), 'ErrorMsg''|' }},  ]],
         end_cursor = 41
     },
     {
-        name   = "80 add normal quote with '",
+        name   = "add normal quote with '",
         key    = [["]],
         before = [[aa| 'aa]],
         after  = [[aa"|" 'aa]]
     },
     {
-        name     = "81 add closing single quote for python prefixed string",
+        name     = "add closing single quote for python prefixed string",
         filetype = "python",
         key      = [[']],
         before   = [[print(f|)]],
         after    = [[print(f'|')]]
     },
     {
-        name     = "82 add closing single quote for capital python prefixed string",
+        name     = "add closing single quote for capital python prefixed string",
         filetype = "python",
         key      = [[']],
         before   = [[print(B|)]],
         after    = [[print(B'|')]]
     },
     {
-        name     = "83 don't add closing single quote for random prefix string",
+        name     = "don't add closing single quote for random prefix string",
         filetype = "python",
         key      = [[']],
         before   = [[print(s|)]],
         after    = [[print(s'|)]]
     },
     {
-        name     = "84 don't add closing single quote for other filetype prefixed string",
+        name     = "don't add closing single quote for other filetype prefixed string",
         filetype = "lua",
         key      = [[']],
         before   = [[print(f|)]],
         after    = [[print(f'|)]]
     },
     {
-        name     = "85 allow brackets in prefixed python single quote string",
+        name     = "allow brackets in prefixed python single quote string",
         filetype = "python",
         key      = [[{]],
         before   = [[print(f'|')]],
         after    = [[print(f'{|}')]]
     },
     {
-        name     = "86 move ' is working on python",
+        name     = "move ' is working on python",
         filetype = "python",
         key      = [[']],
         before   = [[('|') ]],
@@ -802,7 +802,7 @@ local data = {
         after = [[    some text before123456|789 ]],
     },
     {
-        name     = "88 disable on count mode",
+        name     = "disable on count mode",
         filetype = "txt",
         key      = function()
             local keys = vim.api.nvim_replace_termcodes('2otest({<esc>', true, true, true)
@@ -815,7 +815,7 @@ local data = {
         }
     },
     {
-        name     = "89 <cr> key on markdown",
+        name     = "<cr> key on markdown",
         filetype = "markdown",
         key      = [[<cr>]],
         before   = [[|```python ]],
@@ -987,7 +987,7 @@ local data = {
         after      = [[```|``` ]]
     },
     {
-        name     = "4 char",
+        name     = "char",
         filetype = "markdown",
         key      = [[`]],
         before   = [[```|  ]],
@@ -995,14 +995,14 @@ local data = {
     },
     {
         -- only = true,
-        name     = "6 add python quote",
+        name     = "add python quote",
         filetype = "python",
         key      = [["]],
         before   = [[""| ]],
         after    = [["""|""" ]]
     },
     {
-        name     = "7 don't repeat python quote",
+        name     = "don't repeat python quote",
         filetype = "python",
         key      = [["]],
         before   = [[a"""|""" ]],
@@ -1010,7 +1010,7 @@ local data = {
     },
 
     {
-        name     = "8 add markdown quote",
+        name     = "add markdown quote",
         filetype = "markdown",
         key      = [[`]],
         before   = [[``| ]],
