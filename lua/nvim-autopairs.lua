@@ -185,7 +185,9 @@ local function is_disable(is_new_buf)
     if is_new_buf then
         if
             utils.check_filetype(M.config.disable_filetype, vim.bo.filetype)
-            or (M.config.enabled and not M.config.enabled(api.nvim_get_current_buf()))
+            or (
+                M.config.enabled and not M.config.enabled(api.nvim_get_current_buf())
+            )
         then
             del_keymaps()
             M.set_buf_rule({}, 0)
@@ -607,8 +609,8 @@ M.autopairs_cr = function(bufnr)
                 local end_pair = rule:get_end_pair(cond_opt)
                 return utils.esc(
                     '<CR>'
-                    .. end_pair -- FIXME do i need to re indent twice #118
-                    .. '<CMD>normal! ====<CR><up><end><CR>'
+                        .. end_pair -- FIXME do i need to re indent twice #118
+                        .. '<CMD>normal! ====<CR><up><end><CR>'
                 )
             end
 
@@ -674,7 +676,7 @@ M.autopairs_afterquote = function(line, key_char)
                         end
                         return utils.esc(
                             "<esc><cmd>lua require'nvim-autopairs'.autopairs_closequote_expr()<cr>"
-                            .. append
+                                .. append
                         )
                     end
                 end
