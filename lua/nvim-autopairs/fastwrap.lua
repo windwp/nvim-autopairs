@@ -61,7 +61,6 @@ M.show = function(line)
         local list_pos = {} --holds target locations
         local index = 1
         local str_length = #line
-        local offset = -1
         for i = col + 2, #line, 1 do
             local char = line:sub(i, i)
             local char2 = line:sub(i - 1, i)
@@ -71,6 +70,8 @@ M.show = function(line)
             then
                 local key = config.keys:sub(index, index)
                 index = index + 1
+
+                local offset = -1
                 if
                     not config.manual_position
                     and (
@@ -84,10 +85,6 @@ M.show = function(line)
                     offset = 0
                 end
 
-                if config.manual_position and i == str_length then
-                    key = config.end_key
-                end
-
                 table.insert(
                     list_pos,
                     { col = i + offset, key = key, char = char, pos = i }
@@ -96,23 +93,12 @@ M.show = function(line)
         end
         log.debug(list_pos)
 
-        local end_col, end_pos
-        if config.manual_position then
-            end_col = str_length + offset
-            end_pos = str_length
-        else
-            end_col = str_length + 1
-            end_pos = str_length + 1
-        end
-        -- add end_key to list extmark
-        if #list_pos == 0 or list_pos[#list_pos].key ~= config.end_key then
-            table.insert(list_pos, {
-                col = end_col,
-                key = config.end_key,
-                pos = end_pos,
-                char = config.end_key,
-            })
-        end
+        table.insert(list_pos, {
+            col = str_length + 1,
+            key = config.end_key,
+            pos = str_length + 1,
+            char = config.end_key,
+        })
 
         -- Create a whitespace string for the current line which replaces every non whitespace
         -- character with a space and preserves tabs, so we can use it for highlighting with
@@ -125,38 +111,29 @@ M.show = function(line)
         vim.defer_fn(function()
             -- get the first char
             local char = #list_pos == 1 and config.end_key or M.getchar_handler()
+            local is_end_key = char == config.end_key or char == string.upper(config.end_key)
             vim.api.nvim_buf_clear_namespace(0, M.ns_fast_wrap, row, row + 1)
 
             for _, pos in pairs(list_pos) do
-                -- handle end_key specially
-                if char == config.end_key and char == pos.key then
-                    vim.print('Run to end!')
-                    -- M.highlight_wrap({pos = pos.pos, key = config.end_key}, row, col, #line, whitespace_line)
-                    local move_end_key = (
-                        not config.avoid_move_to_end
-                        and char == string.upper(config.end_key)
-                    )
-                    M.move_bracket(line, pos.col + 1, end_pair, move_end_key)
-                    break
-                end
-                local hl_mark = {
-                    { pos = pos.pos - 1, key = config.before_key },
-                    { pos = pos.pos + 1, key = config.after_key },
-                }
-                if
-                    config.manual_position
-                    and (char == pos.key or char == string.upper(pos.key))
-                then
-                    M.highlight_wrap(hl_mark, row, col, #line, whitespace_line)
-                    M.choose_pos(row, line, pos, end_pair)
-                    break
-                end
-                if char == pos.key then
-                    M.move_bracket(line, pos.col, end_pair, false)
-                    break
-                end
-                if char == string.upper(pos.key) then
-                    M.move_bracket(line, pos.col, end_pair, true)
+                local pos_match = char == pos.key or char == string.upper(pos.key)
+
+                if pos_match then
+                    if config.manual_position and not is_end_key then
+                        local hl_mark = {
+                            { pos = pos.pos - 1, key = config.before_key },
+                            { pos = pos.pos + 1, key = config.after_key },
+                        }
+
+                        M.highlight_wrap(hl_mark, row, col, #line, whitespace_line)
+                        M.choose_pos(row, line, pos, end_pair)
+                    else
+                        local should_move = (
+                            char == string.upper(pos.key)
+                            and not (is_end_key and config.avoid_move_to_end)
+                        )
+
+                        M.move_bracket(line, pos.col, end_pair, should_move)
+                    end
                     break
                 end
             end
@@ -225,7 +202,7 @@ M.highlight_wrap = function(tbl_pos, row, col, end_col, whitespace_line)
         end
         for _, pos in ipairs(tbl_pos) do
             virt_lines[#virt_lines + 1] =
-                { whitespace_line:sub(start + 1, pos.pos - 1), 'Normal' }
+            { whitespace_line:sub(start + 1, pos.pos - 1), 'Normal' }
             virt_lines[#virt_lines + 1] = { pos.key, config.highlight }
             start = pos.pos
         end
