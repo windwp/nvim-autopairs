@@ -377,7 +377,9 @@ local autopairs_delete = function(bufnr, key)
     local _, col = utils.get_cursor()
     local rules = M.get_buf_rules(bufnr)
     for _, rule in pairs(rules) do
-        if rule.start_pair then
+        -- skip rules that can never delete (e.g. endwise/only_cr rules have
+        -- del_cond = false) before running costly regex compares on the line
+        if rule.start_pair and rule:has_del_cond() then
             local prev_char, next_char = utils.text_cusor_line(
                 line,
                 col,
