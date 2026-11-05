@@ -230,6 +230,12 @@ function Rule:can_del(opt)
     return can_do(self.del_cond, opt)
 end
 
+--- false when can_del is guaranteed to return false (e.g. only_cr rules)
+function Rule:has_del_cond()
+    local t = type(self.del_cond)
+    return t == 'table' or t == 'function'
+end
+
 function Rule:can_cr(opt)
     return can_do(self.cr_cond, opt)
 end
